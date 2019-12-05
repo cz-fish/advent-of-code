@@ -35,6 +35,36 @@ class IntCode:
         self.output += [v]
         print(f'Output: {v}')
 
+    def i_jumptrue(self, op, params):
+        v = self.get_param(params[0], op.pmode[0])
+        p = self.get_param(params[1], op.pmode[1])
+        if v != 0:
+            self.pos = p
+
+    def i_jumpfalse(self, op, params):
+        v = self.get_param(params[0], op.pmode[0])
+        p = self.get_param(params[1], op.pmode[1])
+        if v == 0:
+            self.pos = p
+
+    def i_lessthan(self, op, params):
+        a = self.get_param(params[0], op.pmode[0])
+        b = self.get_param(params[1], op.pmode[1])
+        if a < b:
+            res = 1
+        else:
+            res = 0
+        self.state[params[2]] = res
+
+    def i_equals(self, op, params):
+        a = self.get_param(params[0], op.pmode[0])
+        b = self.get_param(params[1], op.pmode[1])
+        if a == b:
+            res = 1
+        else:
+            res = 0
+        self.state[params[2]] = res
+
     def run(self, input_fn):
         self.output = []
 
@@ -43,12 +73,16 @@ class IntCode:
             1: Instr(3, lambda op, params: self.i_add(op, params)),
             2: Instr(3, lambda op, params: self.i_mult(op, params)),
             3: Instr(1, lambda op, params: self.i_input(op, params, input_fn)),
-            4: Instr(1, lambda op, params: self.i_output(op, params))
+            4: Instr(1, lambda op, params: self.i_output(op, params)),
+            5: Instr(2, lambda op, params: self.i_jumptrue(op, params)),
+            6: Instr(2, lambda op, params: self.i_jumpfalse(op, params)),
+            7: Instr(3, lambda op, params: self.i_lessthan(op, params)),
+            8: Instr(3, lambda op, params: self.i_equals(op, params))
         }
 
-        pos = 0
+        self.pos = 0
         while True:
-            op = self.state[pos]
+            op = self.state[self.pos]
             opcode = op % 100
             pmode = [
                 (op // 100) % 10,
@@ -63,8 +97,12 @@ class IntCode:
                 return False
 
             i = instr[opcode]
-            i.fun(Op(pos, opcode, pmode), self.state[pos + 1: pos + i.numparam + 1])
+            opos = self.pos
+            self.pos += i.numparam + 1
 
-            pos += i.numparam + 1
+            i.fun(
+                Op(opos, opcode, pmode),
+                self.state[opos + 1: opos + i.numparam + 1]
+            )
 
         return True
