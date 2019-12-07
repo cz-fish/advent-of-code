@@ -30,10 +30,11 @@ class IntCode:
         v = input_fn()
         self.state[params[0]] = v
 
-    def i_output(self, op, params):
+    def i_output(self, op, params, output_fn):
         v = self.get_param(params[0], op.pmode[0])
         self.output += [v]
-        print(f'Output: {v}')
+        if output_fn:
+            output_fn(v)
 
     def i_jumptrue(self, op, params):
         v = self.get_param(params[0], op.pmode[0])
@@ -65,7 +66,7 @@ class IntCode:
             res = 0
         self.state[params[2]] = res
 
-    def run(self, input_fn):
+    def run(self, input_fn, output_fn=None):
         self.output = []
 
         instr = {
@@ -73,7 +74,7 @@ class IntCode:
             1: Instr(3, lambda op, params: self.i_add(op, params)),
             2: Instr(3, lambda op, params: self.i_mult(op, params)),
             3: Instr(1, lambda op, params: self.i_input(op, params, input_fn)),
-            4: Instr(1, lambda op, params: self.i_output(op, params)),
+            4: Instr(1, lambda op, params: self.i_output(op, params, output_fn)),
             5: Instr(2, lambda op, params: self.i_jumptrue(op, params)),
             6: Instr(2, lambda op, params: self.i_jumpfalse(op, params)),
             7: Instr(3, lambda op, params: self.i_lessthan(op, params)),
