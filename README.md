@@ -2,6 +2,7 @@
 
 ## 2019
 
+* **8** - Render image from semitransparent layers
 * **7** - Multiple IntCode machines with in/out chained
 * **6** - Tree - distance to nearest common parent
 * **5** - IntCode machine - inputs, outputs, conditionals
