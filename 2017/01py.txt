@@ -1,0 +1,20 @@
+>>> with open('01.txt', 'rt') as f:
+...   l = f.read()
+...
+>>> l = l.strip()
+>>> s = 0
+>>> for i,c in enumerate(l):
+...   if c == l[i-1]:
+...     s += ord(c) - ord('0')
+...
+>>> s
+1228
+>>> w = len(l)
+>>> s = 0
+>>> for i,c in enumerate(l):
+...   if c == l[(i+w//2)%w]:
+...     s += ord(c) - ord('0')
+...
+>>> s
+1238
+>>>
