@@ -2,6 +2,7 @@
 
 ## 2019
 
+* **10** - Asteroid grid, visibility and raycasting
 * **9** - Finalize IntCode computer
 * **8** - Render image from semitransparent layers
 * **7** - Multiple IntCode machines with in/out chained
