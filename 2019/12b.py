@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3.8
 import re
+from numpy import lcm
 
 positions = []
 with open('input12.txt', 'rt') as f:
@@ -47,5 +48,5 @@ for dim in [0,1,2]:
         #vis[k] = counter
 
 print(periods)
-
-# TODO:  lcm
+period = lcm.reduce([p[0] for p in periods])
+print(period)
