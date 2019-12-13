@@ -2,6 +2,7 @@
 
 ## 2019
 
+* **13** - Breakout game
 * **12** - N-body simulation
 * **11** - IntCode turtle graphics
 * **10** - Asteroid grid, visibility and raycasting
