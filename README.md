@@ -2,6 +2,7 @@
 
 ## 2019
 
+* **15** - Labyrinth - shortest and longest path
 * **14** - Fuel - material chain
 * **13** - Breakout game
 * **12** - N-body simulation
