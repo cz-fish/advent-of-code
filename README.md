@@ -2,6 +2,7 @@
 
 ## 2019
 
+* **14** - Fuel - material chain
 * **13** - Breakout game
 * **12** - N-body simulation
 * **11** - IntCode turtle graphics
