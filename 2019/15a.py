@@ -71,24 +71,27 @@ def update_plan(pos, val):
 
 
 def print_plan():
-    #global scr
-    #scr.clear()
+    global scr
+    scr.clear()
     for y in range(minmax[2], minmax[3] + 1):
-        line = ''
         for x in range(minmax[0], minmax[1] + 1):
+            atr = curses.color_pair(0)
             if x == 0 and y == 0:
-                line += 'S'
+                atr = curses.color_pair(4)
             elif x == pos[0] and y == pos[1]:
-                line += 'D'
+                atr = curses.color_pair(5)
             else:
                 k = f'{x},{y}'
                 if k in plan:
-                    line += plan[k]
-                else:
-                    line += ' '
-        print(line)
-    #scr.refresh()
-    #curses.napms(10)
+                    if plan[k] == '.':
+                        atr = curses.color_pair(1)
+                    elif plan[k] == '#':
+                        atr = curses.color_pair(2)
+                    elif plan[k] == 'O':
+                        atr = curses.color_pair(3)
+            scr.move(y - minmax[2], (x - minmax[0]) * 2)
+            scr.addstr('  ', atr)
+    scr.refresh()
 
 
 def get_input():
@@ -119,7 +122,6 @@ def get_input():
 
 def input_fn():
     inp = get_input()
-    # print(pos, pr[inp])
     return inp
 
 
@@ -137,8 +139,6 @@ def find_shortest_path():
             continue
 
         if plan[k] == 'O':
-            print(mindist)
-            print("min distance to O:", dist)
             return dist
 
         mindist[k] = dist
@@ -159,6 +159,7 @@ def output_fn(val):
     global pos
     global direct
     global counter
+    global scr
 
     newpos = get_newpos(pos, direct)
     update_plan(newpos, val)
@@ -168,9 +169,17 @@ def output_fn(val):
         pos = newpos[:]
 
     if val == 2:
-        print('oxygen system at', pos)
         print_plan()
-        find_shortest_path()
+        # print('oxygen system at', pos)
+        # print('dimensions', minmax)
+
+        dist = find_shortest_path()
+        size = scr.getmaxyx()
+        scr.move(size[0] - 1, 0)
+        scr.addstr(f'Oxygen at {pos}, distance {dist}')
+        scr.getch()
+        curses.endwin()
+
         sys.exit(0)
 
     #counter += 1
@@ -182,7 +191,18 @@ def output_fn(val):
     #    sys.exit(0)
 
 
-#scr = curses.initscr()
+scr = curses.initscr()
 
-mach = intcode.IntCode(program)
-mach.run(input_fn, output_fn)
+try:
+    curses.start_color()
+
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_RED)
+    curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_BLUE)
+    curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_GREEN)
+    curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_YELLOW)
+
+    mach = intcode.IntCode(program)
+    mach.run(input_fn, output_fn)
+except:
+    curses.endwin()
