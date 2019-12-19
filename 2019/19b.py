@@ -24,6 +24,15 @@ def test(x, y):
     mach.run(lambda: input_fn([x, y]))
     return mach.output[-1]
 
+# Estimation of top left corner
+# -----------------------------
+# From scanline 50, the beam is between x = 20 and x = 27.
+#  tan(beta)  = (x + 100) / y = 27 / 50
+#  tan(alpha) = x / (y + 100) = 20 / 50
+#  -> y = (100 * 50 + 100 * 20) / (27-20) = 1000
+#  -> x = 20 * (1000 + 100) / 50 = 440
+# The estimates are based on very rough rounded numbers,
+# so we start scanning a bit more to the left and up.
 
 height = 300
 left = 350
