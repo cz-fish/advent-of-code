@@ -2,6 +2,8 @@
 
 ## 2019
 
+* **19** - Tractor beam intcode
+* **18** - Maze with doors
 * **17** - Intcode ladders - robot's movement
 * **16** - FFT - recursive sums of very long array
 * **15** - Labyrinth - shortest and longest path
