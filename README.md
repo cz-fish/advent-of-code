@@ -2,6 +2,7 @@
 
 ## 2019
 
+* **21** - ASCII Intcode jumping robot - bool formulas
 * **20** - Recursive donut maze
 * **19** - Tractor beam intcode
 * **18** - Maze with doors
