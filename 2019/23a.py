@@ -47,8 +47,6 @@ def nic_thread(n):
             output = []
 
     mach.run(input_fn, output_fn)
-    results[n] = mach.output[-1]
-    # print(f'Final output of mach {n}: {results[n]}')
 
 threads = [
     threading.Thread(target=nic_thread, kwargs={'n': i})
