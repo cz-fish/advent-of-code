@@ -121,4 +121,3 @@ for t in threads:
 for t in threads:
     t.join()
 
-print(queues[255])
