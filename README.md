@@ -2,6 +2,8 @@
 
 ## 2019
 
+* **23** - Nework of intcode computers
+* **22** - Shuffle deck of cards - modular arithmetic
 * **21** - ASCII Intcode jumping robot - bool formulas
 * **20** - Recursive donut maze
 * **19** - Tractor beam intcode
