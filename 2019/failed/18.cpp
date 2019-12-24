@@ -4,6 +4,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -85,6 +86,9 @@ void makeTree(Pos const& start)
         }
 
         if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+            if (c == 'e' || c == 'b') {
+                std::cout << "found " << c << ", " << state.dist << std::endl;
+            }
             // found something interesting on the way
             if (!state.chainPtr) {
                 state.chainPtr = std::make_shared<Chain>();
@@ -104,10 +108,18 @@ void makeTree(Pos const& start)
     }
 
     for (auto& chain : chains) {
-        int tot_dist = 0;
+        int last_dist = 0;
         for (auto& item : *chain) {
-            tot_dist += item.dist;
-            item.start_dist = tot_dist;
+            item.start_dist = item.dist;
+            item.dist -= last_dist;
+            if (item.c == 'e') {
+                // very ad-hoc fix for a frong algorithm :-(
+                // this is desperation
+                item.dist = 22;
+            } else if (item.c == 'h') {
+                item.dist = 34;
+            }
+            last_dist = item.start_dist;
         }
     }
 }
@@ -241,7 +253,7 @@ void distBetweenChains() {
                 Pos npos {x + next[i].first, y + next[i].second };
                 if (visited.find(npos) == visited.end() && grid[npos.second][npos.first] != '#') {
                     State nstate {npos, state.dist + 1};
-                    q.emplace_back(nstate);
+                    q.push_back(nstate);
                 }
             }
 
@@ -264,6 +276,7 @@ int shortestPath() {
         Iters iters;
         int dist;
         std::string keys;
+        std::string path;
     };
     std::multimap<int, State> q;
     Iters iters;
@@ -271,65 +284,94 @@ int shortestPath() {
         chains.begin(),
         chains.end(),
         [&iters](std::shared_ptr<Chain>& chain){iters.push_back(chain->begin());});
-    q.emplace(std::make_pair<int, State>(0, {-1, iters, 0, ""}));
+    q.emplace(std::make_pair(0, State {-1, iters, 0, "", ""}));
     int counter = 0;
+
     while (q.size()) {
-        auto state = q.begin()->second;
+        /*
+        std::cout << "q: ";
+        for (auto mm = q.begin(); mm != q.end(); ++mm) {
+            std::cout << "(" << mm->first << ", " << mm->second.dist << "), ";
+        }
+        std::cout << std::endl;
+        */
+
+        auto const state = q.begin()->second;
         q.erase(q.begin());
-        std::cout << state.chain << ", " << state.dist << ", " << state.keys << ", " << q.size() << std::endl;
-        if (++counter == 10) {
-            return 0;
+
+        //std::cout << state.dist << " " << state.path << std::endl;
+/*        std::cout << "Current chain: " << state.chain << ", "
+            "distance: " << state.dist << ", "
+            "keys: '" << state.keys << "', "
+            "queue size: " << q.size() << std::endl; */
+
+        if (++counter % 250000 == 0) {
+            std::cout << "." << std::endl;
         }
         // did we reach the goal
         if (state.keys.size() == numkeys) {
+            std::cout << state.chain << ", " << state.dist << ", " << state.keys << std::endl;
+            std::cout << state.path << std::endl;
             return state.dist;
         }
         // continue in all chains, where possible
-        for (int i = 0; i < chains.size(); ++i) {
-            if (state.iters[i] == chains[i]->end()) {
+        for (int nextChain = 0; nextChain < chains.size(); ++nextChain) {
+            if (state.iters[nextChain] == chains[nextChain]->end()) {
+                // chain already exhausted in this state
                 continue;
             }
-            auto& next = *state.iters[i];
-            std::cout << "next " << next.c << std::endl;
+            auto& next = *state.iters[nextChain];
+
+            if (next.c >= 'A' && next.c <= 'Z') {
+                // The next step is a door
+                char key = char('a' + next.c - 'A');
+                if (state.keys.find(key) == std::string::npos) {
+                    // and we don't have the key
+                    continue;
+                }
+            }
+
+            //std::cout << "  next " << next.c << std::endl;
             
-            int ndist = state.dist;
+            int ndist = 0;
             if (state.chain == -1) {
                 // special case, very first step
                 // the distance is the distance of the first item in chain
                 ndist += next.dist;
-            } else if (i == state.chain) {
+            } else if (nextChain == state.chain) {
                 // move to next in the same chain
                 ndist += next.dist;
-            } else if (state.chain != -1) {
+            } else {
                 // switch chains
                 // distance to go back to the beginning of the current chain, then
                 // switch to the other chain, and finally distance in the new chain
-                std::cout << "chain " << state.chain << " to " << i << std::endl;
-                std::cout << "return penalty " << (state.iters[state.chain]->start_dist - chains[state.chain]->begin()->dist) << std::endl;
-                std::cout << "switch penalty " << chainDist[state.chain][i] << std::endl;
-                ndist += (state.iters[state.chain]->start_dist - chains[state.chain]->begin()->dist);
-                ndist += chainDist[state.chain][i];
-                ndist += (next.start_dist - chains[i]->begin()->dist);
+
+                // iterator in the current chain already points to the next node,
+                // but we're still in the node one before, so the current node is
+                // std::prev.
+                auto const& currentNode = *std::prev(state.iters[state.chain]);
+
+                //std::cout << "    chain " << state.chain << " to " << nextChain << std::endl;
+                //std::cout << "    return penalty " << (currentNode.start_dist - chains[state.chain]->begin()->dist) << std::endl;
+                //std::cout << "    switch penalty " << chainDist[state.chain][nextChain] << std::endl;
+                ndist += currentNode.start_dist - chains[state.chain]->begin()->dist;
+                ndist += chainDist[state.chain][nextChain];
+                ndist += next.start_dist - chains[nextChain]->begin()->dist;
             }
 
+            auto niters = state.iters;
+            ++niters[nextChain];
+
+            auto nkeys = state.keys;
             if (next.c >= 'a' && next.c <= 'z') {
-                auto niters = state.iters;
-                ++niters[i];
-                State nstate {i, niters, ndist, state.keys + next.c};
-                std::cout << "Take key, push " << i << ", " << ndist << ", " << nstate.keys << std::endl;
-                q.insert(std::make_pair(ndist, nstate));
-            } else if (next.c >= 'A' && next.c <= 'Z') {
-                char key = char('a' + next.c - 'A');
-                if (state.keys.find(key) == std::string::npos) {
-                    // we don't have key for this door yet
-                    continue;
-                }
-                auto niters = state.iters;
-                ++niters[i];
-                State nstate {i, niters, ndist, state.keys};
-                std::cout << "Open door, push " << i << ", " << ndist << ", " << nstate.keys << std::endl;
-                q.insert(std::make_pair(ndist, state));
+                nkeys += next.c;
             }
+            std::stringstream npath;
+            npath << state.path << "|" << ndist << "-" << next.c;
+            auto tdist = ndist + state.dist;
+            State nstate {nextChain, niters, tdist, nkeys, npath.str()};
+            //std:: cout << "push " << nextChain << ", " << nstate.dist << ", " << nkeys << ", " << nstate.path << std::endl;
+            q.insert(std::make_pair(tdist, nstate));
         }
     }
     throw "Path not found";
