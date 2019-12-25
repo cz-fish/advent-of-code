@@ -24,6 +24,8 @@ weights = {}
 carried_items = ''
 checkpoint = 'Security Checkpoint'
 sensitive_floor = 'Pressure-Sensitive Floor'
+item_combos = []
+current_combo = 0
 
 
 def do_weighting(lines):
@@ -195,20 +197,54 @@ def phase2_weighting():
     return '\n'.join(commands)
 
 
-def phase3_take():
-    commands = []
-    carried = []
-    for item, weight in weights.items():
-        if weight == 'heavy':
+def init_phase3():
+    global item_combos
+    eligible_items = [item for item in weights.keys() if weights[item] == 'light']
+    ll = len(eligible_items)
+    print(f'{ll} eligible items: {str(eligible_items)}')
+    for i in range(2 ** ll):
+        # only combos with 2 or more items
+        bits = bin(i).count('1')
+        if bits < 2:
             continue
+        combo = []
+        for j in range(ll):
+            if i & (2 ** j):
+                combo += [eligible_items[j]]
+        item_combos += [combo]
+    print(f'Item combos: {len(item_combos)}')
+    #for c in item_combos:
+    #    print(c)
+
+
+def phase3_take():
+    global item_combos
+    global current_combo
+
+    if current_combo >= len(item_combos):
+        print('All item combos tried')
+        sys.exit(0)
+        return None
+
+    combo = item_combos[current_combo]
+    current_combo += 1
+
+    print('Combo:', combo)
+    commands = []
+    for item in combo:
         commands += go_path(all_items[item]) + \
             [f'take {item}'] + \
             go_back(all_items[item])
-        carried += [item]
     commands += go_path(plan[checkpoint].path) + \
-        ['west']
+        ['west'] + \
+        go_back(plan[checkpoint].path)
+    for item in combo:
+        commands += go_path(all_items[item]) + \
+            [f'drop {item}'] + \
+            go_back(all_items[item])
+
     global carried_items
-    carried_items = ','.join(carried)
+    carried_items = ','.join(combo)
     return '\n'.join(commands)
 
 
@@ -225,6 +261,7 @@ def get_next_input():
         if res is not None:
             return res
         phase = 3
+        init_phase3()
     if phase == 3:
         res = phase3_take()
         return res
