@@ -3,13 +3,21 @@
 grid = []
 pos = {}
 
-with open('input18.txt', 'rt') as f:
+starts = '@!$%'
+nstarts = 0
+
+with open('input18b.txt', 'rt') as f:
     y = 0
     for ln in f.readlines():
         ln = ln.strip()
         for x, c in enumerate(ln):
-            if c == '@' or (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z'):
+            if (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z'):
                 pos[c] = (x, y)
+            if c == '@':
+                st = starts[nstarts]
+                nstarts += 1
+                pos[st] = (x, y)
+                ln = ln[:x] + st + ln[x+1:]
         grid += [ln]
         y += 1
 
@@ -42,10 +50,12 @@ unlocked = set(doors)
 all_dists = {}
 for k in pos.keys():
     all_dists[k] = paths_from(k, unlocked)
+for s in starts:
+    all_dists[s][s] = 0
 
-def build_tree(root_symbol):
+def build_tree(tree, root_symbol):
     p = pos[root_symbol]
-    tree = {root_symbol: ['', '']}
+    tree[root_symbol] = ['', '*', root_symbol]
     q = [(p[0], p[1], 0, root_symbol)]
     qpos = 0
     visited = set()
@@ -58,14 +68,13 @@ def build_tree(root_symbol):
         if (c >= 'A' and c <= 'Z') or (c >= 'a' and c <= 'z'):
             prev = path[-1]
             tree[prev][0] += c
-            tree[c] = ['', prev]
+            tree[c] = ['', prev, root_symbol]
             path += c
         visited.add((x, y))
         for next in [(x, y-1), (x+1, y), (x, y+1), (x-1, y)]:
             if next in visited:
                 continue
             q += [(next[0], next[1], dist+1, path)]
-    return tree
 
 def print_node(tree, node, leaders):
     root = tree[node][0]
@@ -87,7 +96,7 @@ def print_node(tree, node, leaders):
 
 
 def print_tree(tree):
-    print_node(tree, '@', '')
+    print_node(tree, '*', '')
 
 def remove_from_tree(tree, removals):
     for n in tree.keys():
@@ -160,7 +169,15 @@ def prune_tree(tree):
     return useful_keys
 
 def shortest_path(tree, start, num_keys):
-    q = [(0, start, '', '', start)]
+    robots = {}
+    opts = ''
+    q = []
+    for s in starts:
+        robots[s] = s
+    for s in starts:
+        q += [(0, s, '',
+            ''.join([tree[x][0] for x in starts if x != s]), s, robots)]
+    #q = [(0, start, '', '', start, robots)]
     loops = 0
     while q:
         loops += 1
@@ -168,7 +185,8 @@ def shortest_path(tree, start, num_keys):
         #    return 0
         if loops % 1000 == 0:
             print('loops', loops, 'queue', len(q))
-        dist, node, mykeys, options, path = q[0]
+        dist, node, mykeys, options, path, robots = q[0]
+        myrobot = tree[node][2]
         #print(q[0])
         q = q[1:]
         if len(mykeys) == num_keys:
@@ -181,17 +199,32 @@ def shortest_path(tree, start, num_keys):
                 if key not in mykeys:
                     # door is locked
                     continue
-            add_dist = all_dists[node][o]
+            nextrobot = tree[o][2]
+            if nextrobot == myrobot:
+                # same robot
+                add_dist = all_dists[node][o]
+            else:
+                # switching robot
+                add_dist = all_dists[robots[nextrobot]][o]
             newkeys = mykeys[:]
             if o in keys:
                 newkeys += o
             newoptions = options.replace(o, '')
-            q += [(dist + add_dist, o, newkeys, newoptions, path + o)]
+            nrobots = {}
+            for rob in robots.keys():
+                if rob == nextrobot:
+                    nrobots[rob] = o
+                else:
+                    nrobots[rob] = robots[rob]
+            q += [(dist + add_dist, o, newkeys, newoptions, path + o, nrobots)]
         q.sort(key=lambda n: n[0])
     raise "Path not found"
 
 
-tree = build_tree('@')
+tree = {'*': [starts, '', ' ']}
+for s in starts:
+    build_tree(tree, s)
+
 print_tree(tree)
 remaining_keys = prune_tree(tree)
 print("------")
@@ -199,5 +232,4 @@ print("pruned")
 print("------")
 print_tree(tree)
 print(f'remaining keys: {len(remaining_keys)}')
-dist = shortest_path(tree, '@', len(remaining_keys))
-
+dist = shortest_path(tree, '*', len(remaining_keys))
