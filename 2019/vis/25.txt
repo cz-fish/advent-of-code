@@ -1,0 +1,69 @@
+== Pressure-Sensitive Floor ==
+Analyzing...
+
+Doors here lead:
+- east
+
+A loud, robotic voice says "Alert! Droids on this ship are heavier than the detected value!" and you are ejected back to the checkpoint.
+
+
+== Pressure-Sensitive Floor ==
+Analyzing...
+
+Doors here lead:
+- east
+
+A loud, robotic voice says "Alert! Droids on this ship are lighter than the detected value!" and you are ejected back to the checkpoint.
+
+
+----
+
+['', '', "The giant electromagnet is stuck to you.  You can't move!!", '', 'Command?']
+
+===============
+
+Room(name='Hull Breach', desc='', directions=['north', 'east', 'south'], items=[], path='')
+Room(name='Hot Chocolate Fountain', desc='', directions=['north', 'south', 'west'], items=['spool of cat6'], path='E')
+Room(name='Crew Quarters', desc='', directions=['north'], items=[], path='ES')
+Room(name='Corridor', desc='', directions=['north', 'south', 'west'], items=['escape pod'], path='EN')
+Room(name='Gift Wrapping Center', desc='', directions=['south'], items=['hypercube'], path='ENN')
+Room(name='Passages', desc='', directions=['east'], items=[], path='ENW')
+Room(name='Storage', desc='', directions=['north', 'east', 'south'], items=['infinite loop'], path='S')
+Room(name='Navigation', desc='', directions=['west'], items=['space heater'], path='SE')
+Room(name='Stables', desc='', directions=['north', 'south'], items=[], path='SS')
+Room(name='Sick Bay', desc='', directions=['north', 'east'], items=['giant electromagnet'], path='SSS')
+Room(name='Hallway', desc='', directions=['east', 'west'], items=[], path='SSSE')
+Room(name='Holodeck', desc='', directions=['west'], items=['planetoid'], path='SSSEE')
+Room(name='Kitchen', desc='', directions=['north', 'south', 'west'], items=['festive hat'], path='N')
+Room(name='Warp Drive Maintenance', desc='', directions=['south'], items=['molten lava'], path='NN')
+Room(name='Observatory', desc='', directions=['north', 'east'], items=['dark matter'], path='NW')
+Room(name='Science Lab', desc='', directions=['east', 'south'], items=['photons'], path='NWN')
+Room(name='Engineering', desc='', directions=['east', 'west'], items=['semiconductor'], path='NWNE')
+Room(name='Arcade', desc='', directions=['north', 'west'], items=['sand'], path='NWNEE')
+Room(name='Security Checkpoint', desc='', directions=['south', 'west'], items=[], path='NWNEEN')
+End of exploration, all rooms discovered
+You take the festive hat.
+Command?
+Items: festive hat, result: light
+You take the space heater.
+Command?
+Items: space heater, result: light
+You take the sand.
+Command?
+Items: sand, result: light
+You take the spool of cat6.
+Command?
+Items: spool of cat6, result: heavy
+You take the hypercube.
+Command?
+Items: hypercube, result: light
+You take the semiconductor.
+Command?
+Items: semiconductor, result: light
+You take the planetoid.
+Command?
+Items: planetoid, result: light
+You take the dark matter.
+Command?
+Items: dark matter, result: heavy
+End of weighting, all items weighted and returned
