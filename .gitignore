@@ -1,2 +1,7 @@
 *.pyc
 misc/
+2017/bin
+2017/bin-linux
+2017/obj
+2017/obj-linux
+**/.ionide
