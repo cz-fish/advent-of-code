@@ -7,10 +7,11 @@ open AoC2017
 let main argv =
     printfn "AoC 2017"
     
-    // : Map<string, unit->int) 
     let days = dict [
         ("01a", Day01.partA);
-        ("01b", Day01.partB)
+        ("01b", Day01.partB);
+        ("02a", Day02.partA);
+        ("02b", Day02.partB);
     ]
 
     let mutable dayFunction = fun() -> 1
