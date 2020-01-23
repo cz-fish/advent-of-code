@@ -33,6 +33,7 @@
 
 ## 2017
 
+* **4** - Passwords - non-repeating strings and anagrams
 * **3** - Manhattan distance on spiral
 * **2** - Grid checksums - min, max and divisors
 * **1** - Find pairs of same digits in a number
