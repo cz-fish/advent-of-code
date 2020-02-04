@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Compile Include="../03.fs"/>
+    <Compile Include="../05.fs"/>
     <Compile Include="tests.fs"/>
   </ItemGroup>
 

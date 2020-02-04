@@ -34,22 +34,22 @@ module Day03 =
         0
 
     [<Test>]
-    let ``findCoords: 1 is in the middle``() =
+    let ``03a: findCoords: 1 is in the middle``() =
         Assert.AreEqual( (0, 0), findCoords 1 )
     [<Test>]
-    let ``findCoords: 2 is on (1, 0)``() =
+    let ``03a: findCoords: 2 is on (1, 0)``() =
         Assert.AreEqual( (1, 0), findCoords 2 )
     [<Test>]
-    let ``findCoords: 12 is on (2, -1)``() =
+    let ``03a: findCoords: 12 is on (2, -1)``() =
         Assert.AreEqual( (2, -1), findCoords 12 )
     [<Test>]
-    let ``findCoords: 17 is on (-2, -2)``() =
+    let ``03a: findCoords: 17 is on (-2, -2)``() =
         Assert.AreEqual( (-2, -2), findCoords 17 )
     [<Test>]
-    let ``findCoords: 19 is on (-2, 0)``() =
+    let ``03a: findCoords: 19 is on (-2, 0)``() =
         Assert.AreEqual( (-2, 0), findCoords 19 )
     [<Test>]
-    let ``findCoords: 25 is on (2, 2)``() =
+    let ``03a: findCoords: 25 is on (2, 2)``() =
         Assert.AreEqual( (2, 2), findCoords 25 )
 
     // ---- part B ----
@@ -122,22 +122,22 @@ module Day03 =
         0
 
     [<Test>]
-    let ``spiral value at pos 1 is 1``() =
+    let ``03b: spiral value at pos 1 is 1``() =
         Assert.AreEqual(1, generateSpiral 1 sumsGenerator)
     [<Test>]
-    let ``spiral value at pos 2 is 1``() =
+    let ``03b: spiral value at pos 2 is 1``() =
         Assert.AreEqual(1, generateSpiral 2 sumsGenerator)
     [<Test>]
-    let ``spiral value at pos 4 is 4``() =
+    let ``03b: spiral value at pos 4 is 4``() =
         Assert.AreEqual(4, generateSpiral 4 sumsGenerator)
     [<Test>]
-    let ``spiral value at pos 9 is 25``() =
+    let ``03b: spiral value at pos 9 is 25``() =
         Assert.AreEqual(25, generateSpiral 9 sumsGenerator)
     [<Test>]
-    let ``spiral value at pos 18 is 304``() =
+    let ``03b: spiral value at pos 18 is 304``() =
         Assert.AreEqual(304, generateSpiral 18 sumsGenerator)
     [<Test>]
-    let ``spiral value at pos 22 is 747``() =
+    let ``03b: spiral value at pos 22 is 747``() =
         Assert.AreEqual(747, generateSpiral 22 sumsGenerator)
 
     // ---- partB ----
@@ -165,14 +165,14 @@ module Day03 =
         0
 
     [<Test>]
-    let ``first value greater than 1 is 2``() =
+    let ``03b: first value greater than 1 is 2``() =
         Assert.AreEqual(2, firstValueGreaterThan 1)
     [<Test>]
-    let ``first value greater than 7 is 10``() =
+    let ``03b: first value greater than 7 is 10``() =
         Assert.AreEqual(10, firstValueGreaterThan 7)
     [<Test>]
-    let ``first value greater than 22 is 23``() =
+    let ``03b: first value greater than 22 is 23``() =
         Assert.AreEqual(23, firstValueGreaterThan 22)
     [<Test>]
-    let ``first value greater than 59 is 122``() =
+    let ``03b: first value greater than 59 is 122``() =
         Assert.AreEqual(122, firstValueGreaterThan 59)
