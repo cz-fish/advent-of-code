@@ -12,6 +12,7 @@
     <Compile Include="02.fs" />
     <Compile Include="03.fs" />
     <Compile Include="04.fs" />
+    <Compile Include="05.fs" />
     <Compile Include="aoc2017.fs" />
   </ItemGroup>
 

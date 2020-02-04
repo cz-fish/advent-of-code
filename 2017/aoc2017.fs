@@ -15,6 +15,8 @@ let main argv =
         ("03a", Day03.partA);
         ("03b", Day03.partB);
         ("04", Day04.day04);
+        ("05a", Day05.partA);
+        ("05b", Day05.partB);
     ]
 
     let mutable dayFunction = fun() -> 1
