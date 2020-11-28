@@ -26,14 +26,14 @@ module Day06 =
         let nextState = oneStep state
         let nextStateStr = key nextState
         //printfn "%d %A" length nextState
-        if Set.contains nextStateStr encountered then
-            length
+        if Map.containsKey nextStateStr encountered then
+            length, length - encountered.[nextStateStr]
         else
-            partA' nextState (Set.add nextStateStr encountered) (length + 1)
+            partA' nextState (encountered.Add(nextStateStr, length)) (length + 1)
 
-    let partA () =
+    let day06 () =
         let config = loadFile()
-        let encountered = Set.ofList [key config]
-        let result = partA' config encountered 1
-        printfn "loop after %d" result
+        let encountered = Map.ofList [key config, 0]
+        let loopAfter, loopSize = partA' config encountered 1
+        printfn "loop after %d, loop size %d" loopAfter loopSize
         0
