@@ -1,5 +1,8 @@
 # Advent of Code
 
+## 2020
+* **1** - Do they add up?
+
 ## 2019
 
 * **25** - Intcode text Adventure
@@ -33,6 +36,7 @@
 
 ## 2017
 
+* **6** - redistributing memory blocks - infinite loop
 * **5** - Incrementing instructions
 * **4** - Passwords - non-repeating strings and anagrams
 * **3** - Manhattan distance on spiral
