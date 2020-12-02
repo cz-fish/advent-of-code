@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **2** - Password validation - count characters
 * **1** - Do they add up?
 
 ## 2019
