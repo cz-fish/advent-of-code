@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **5** - binary space partition
 * **4** - Passport validator
 * **3** - Counting trees on slope
 * **2** - Password validation - count characters
