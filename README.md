@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **6** - find any, find all
 * **5** - binary space partition
 * **4** - Passport validator
 * **3** - Counting trees on slope
