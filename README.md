@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **7** - graph of bags inside bags
 * **6** - find any, find all
 * **5** - binary space partition
 * **4** - Passport validator
