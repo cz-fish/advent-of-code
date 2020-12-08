@@ -23,6 +23,10 @@ class Input:
         """Get input as a list of trimmed strings"""
         return self.lines[:]
 
+    def get_valid_lines(self) -> List[str]:
+        """Get input as a list of trimmed strings, removing empty lines"""
+        return [ln for ln in self.lines if ln]
+
     def get_groups(self) -> List[List[str]]:
         """Get input as a list of groups. Input is assumed to be
            separated by blank lines. Each group is a list of strings"""
