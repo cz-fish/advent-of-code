@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **8** - assembly with infinite loop
 * **7** - graph of bags inside bags
 * **6** - find any, find all
 * **5** - binary space partition
