@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **10** - power adapters, tribonacci
 * **9** - sums in sequences of numbers
 * **8** - assembly with infinite loop
 * **7** - graph of bags inside bags
