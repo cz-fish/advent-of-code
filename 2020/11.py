@@ -16,45 +16,20 @@ L.LLLLL.LL"""])
 
 # inp.use_test(0)
 
-grid = Grid(inp.get_lines())
-print(grid.w, grid.h)
+orig_grid = Grid(inp.get_lines())
 
 
-def game_step(grid):
-    gr = Grid([''.join(grid.grid[r]) for r in range(grid.h)])
-    changed = 0
-    for r in range(gr.h):
-        for c in range(gr.w):
-            p = gr.get(r, c)
-            if p == '.':
+def surrounding_seats_part1(grid):
+    visible_seats = defaultdict(list)
+    for r in range(grid.h):
+        for c in range(grid.w):
+            if grid.get(r, c) == '.':
                 continue
-            nc = gr.neighbors8(r, c)
-            count = sum([1 for a, b in nc if gr.get(a, b) == '#'])
-            if p == 'L' and count == 0:
-                grid.grid[r][c] = '#'
-                changed += 1
-            elif p == '#' and count >= 4:
-                grid.grid[r][c] = 'L'
-                changed += 1
-    return changed
+            visible_seats[(r, c)] = grid.neighbors8(r, c)
+    return visible_seats
 
 
-# Part 1
-"""
-while True:
-    changed = game_step(grid)
-    if changed == 0:
-        count = sum([sum(
-            [1 for c in r if c == '#'])
-            for r in grid.grid])
-        print(f"Part 1: occupied {count}")
-        break
-"""
-
-
-# Part 2
-
-def find_seats(grid):
+def surrounding_seats_part2(grid):
     visible_seats = defaultdict(list)
     for r in range(grid.h):
         for c in range(grid.w):
@@ -79,33 +54,37 @@ def find_seats(grid):
     return visible_seats
 
 
-def game_step_part2(grid, vis_seats):
-    gr = Grid([''.join(grid.grid[r]) for r in range(grid.h)])
-    changed = 0
-    for r in range(gr.h):
-        for c in range(gr.w):
-            p = gr.get(r, c)
+def game_step(grid, vis_seats, threshold):
+    updates = {}
+    for r in range(grid.h):
+        for c in range(grid.w):
+            p = grid.get(r, c)
             if p == '.':
                 continue
-            count = sum([1 for y, x in vis_seats[(r, c)] if gr.get(y, x) == '#'])
+            count = sum([1 for y, x in vis_seats[(r, c)] if grid.get(y, x) == '#'])
             if p == 'L' and count == 0:
-                grid.grid[r][c] = '#'
-                changed += 1
-            elif p == '#' and count >= 5:
-                grid.grid[r][c] = 'L'
-                changed += 1
+                updates[(r, c)] = '#'
+            elif p == '#' and count >= threshold:
+                updates[(r, c)] = 'L'
+    changed = len(updates)
+    for (r, c), v in updates.items():
+        grid.grid[r][c] = v
     return changed
 
 
-vis_seats = find_seats(grid)
-while True:
-    changed = game_step_part2(grid, vis_seats)
-    if changed == 0:
-        count = sum([sum(
-            [1 for c in r if c == '#'])
-            for r in grid.grid])
-        print(f"Part 2: occupied {count}")
-        break
-#print(vis_seats)
-#print(vis_seats[(7, 7)])
+def count_occupied(grid, vis_seats, threshold):
+    while True:
+        changed = game_step(grid, vis_seats, threshold)
+        if changed == 0:
+            count = sum([sum(
+                [1 for c in r if c == '#'])
+                for r in grid.grid])
+            return count
 
+grid = Grid.copygrid(orig_grid)
+occupied = count_occupied(grid, surrounding_seats_part1(grid), 4)
+print(f"Part 1: occupied {occupied}")
+
+grid = Grid.copygrid(orig_grid)
+occupied = count_occupied(grid, surrounding_seats_part2(grid), 5)
+print(f"Part 2: occupied {occupied}")
