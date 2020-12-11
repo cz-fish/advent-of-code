@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **11** - game of life with seats
 * **10** - power adapters, tribonacci
 * **9** - sums in sequences of numbers
 * **8** - assembly with infinite loop
