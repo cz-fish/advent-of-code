@@ -31,6 +31,11 @@ class Grid:
         self.w = max_width
         self.h = len(self.grid)
 
+    @classmethod
+    def copygrid(cls, other):
+        lines = [''.join(row) for row in other.grid]
+        return Grid(lines, other.max_width == other.min_width)
+
     def get(self, row:int, col:int) -> any:
         """Get value at the given coords"""
         return self.grid[row][col]
