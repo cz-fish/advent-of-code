@@ -1,0 +1,21 @@
+#!/usr/bin/python3.8
+
+from aoc import Env
+
+e = Env({{day}})
+
+
+def part1(input):
+    pass
+
+
+e.run_tests(1, part1)
+e.run_main(1, part1)
+
+
+def part2(input):
+    pass
+
+
+# e.run_tests(2, part2)
+# e.run_main(2, part2)
