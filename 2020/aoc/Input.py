@@ -12,12 +12,19 @@ class Input:
         ]
         self.test_num = None
         self._read_file(fname)
+        self.lines = self._orig_lines
 
-    def use_test(self, test_num: int):
+    def use_test(self, test_num: int) -> None:
         """Use test data (one of the tests passed to the constructor)
            instead of the default input from the file"""
         assert(test_num < len(self.tests))
         self.lines = self.tests[test_num]
+
+    def use_main_input(self) -> None:
+        """Use the main problem input. This is the default, but could be
+           replaced by tests (using `use_test` method). Calling this
+           method will revert back to the main input."""
+        self.lines = self._orig_lines
 
     def get_lines(self) -> List[str]:
         """Get input as a list of trimmed strings"""
@@ -63,4 +70,4 @@ class Input:
 
     def _read_file(self, fname: str) -> None:
         with open(fname, 'rt') as f:
-            self.lines = [ln.strip() for ln in f.readlines()]
+            self._orig_lines = [ln.strip() for ln in f.readlines()]

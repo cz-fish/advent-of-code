@@ -1,25 +1,22 @@
 #!/usr/bin/python3.8
 
-from aoc import Input
+from aoc import Env
 
-inp = Input('input13.txt', [
-    """939
-7,13,x,x,59,x,31,19""",  # 1068781
-    """0
-17,x,13,19""",  # 3417
-    """0
-67,7,59,61""",  # 754018
-    """0
-67,x,7,59,61""",  # 779210
-    """0
-67,7,x,59,61""",  # 1261476
-    """0
-1789,37,47,1889""",  # 1202161486
-    """0
-3,5"""  # 9
-])
-
-# inp.use_test(0)
+e = Env(13)
+e.T("""939
+7,13,x,x,59,x,31,19""", 295, 1068781)
+e.T("""0
+17,x,13,19""", None, 3417)
+e.T("""0
+67,7,59,61""", None, 754018)
+e.T("""0
+67,x,7,59,61""", None, 779210)
+e.T("""0
+67,7,x,59,61""", None, 1261476)
+e.T("""0
+1789,37,47,1889""",  None, 1202161486)
+e.T("""0
+3,5""", None, 9)
 
 
 def parse_input(inp):
@@ -29,22 +26,28 @@ def parse_input(inp):
     return timestamp, buses
 
 
-timestamp, buses = parse_input(inp)
-busNums = [bus[0] for bus in buses]
+def part1(input):
+    timestamp, buses = parse_input(input)
+    busNums = [bus[0] for bus in buses]
 
-print(f"timestamp {timestamp}, buses: {busNums}")
+    print(f"timestamp {timestamp}, buses: {busNums}")
 
-### Part 1
-best = None
-for bus in busNums:
-    nextDepart = bus - (timestamp % bus)
-    if best is None or best[0] > nextDepart:
-        best = [nextDepart, bus]
+    best = None
+    for bus in busNums:
+        nextDepart = bus - (timestamp % bus)
+        if best is None or best[0] > nextDepart:
+            best = [nextDepart, bus]
 
-print(f"Part 1: next bus {best[1]} in {best[0]} minutes: {best[0] * best[1]}")
+    result = best[0] * best[1]
+    print(f"Part 1: next bus {best[1]} in {best[0]} minutes: {result}")
+    return result
 
 
-### Part 2
+e.run_tests(1, part1)
+e.run_main(1, part1)
+
+
+# --- Part 2---
 def chinese_remainders(buses):
 
     def bezout(num, base):
@@ -91,14 +94,10 @@ def chinese_remainders(buses):
     return a1
 
 
-do_tests = False
-# do_tests = True
-if do_tests:
-    for case in range(7):
-        inp.use_test(case)
-        _, buses = parse_input(inp)
-        solution = chinese_remainders(buses)
-        print(f"{buses}\n-> {solution}")
-else:
-    solution = chinese_remainders(buses)
-    print(f"Part 2: {solution}")
+def part2(input):
+    _, buses = parse_input(input)
+    return chinese_remainders(buses)
+
+
+e.run_tests(2, part2)
+e.run_main(2, part2)
