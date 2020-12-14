@@ -6,9 +6,10 @@ class Modular:
     def bezout(cls, m: int, n: int) -> Tuple[int, int]:
         """Bezout's identity
         For
-            a * m + b * n = 1,
+            a * m + b * n = gcd(m, n),
         find some integers a and b that satisfy the equation.
-        There are infinitely many solutions."""
+        There are infinitely many solutions.
+        When m, n are co-prime, gcd = 1."""
 
         # Extended Euclidean algorithm
         s = 0
@@ -27,8 +28,9 @@ class Modular:
     @classmethod
     def mult_inverse(cls, a: int, n: int) -> int:
         """For an integer `a` and base `n`, return multiplicative
-        inverse of `a` modulo `n`, such that
-            a * a' = 1 (mod n)"""
+        inverse `a'` of `a` modulo `n`, such that
+            a * a' = 1 (mod n)
+        This is assuming that `a` and `n` are co-prime."""
         res, _ = Modular.bezout(a, n)
         return res % n
 
@@ -41,6 +43,7 @@ class Modular:
             ...
             x = a_k (mod n_k)
         Find x that satisfies all of them.
+        This is assuming that all of `n_j` are pair-wise co-prime.
         The input parameter `coef` is a list of tuples (`a_j`, `n_j`)
         for each equation."""
 
