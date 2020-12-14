@@ -77,3 +77,5 @@ def test_neighbors_8():
     gr = Grid(TEST_GRID_IRREG, rectangular=False)
     n = sorted(gr.neighbors8(0, 5))
     assert(n == [(0, 4), (1, 4), (1, 5), (1, 6)])
+
+# TODO: test grid copy

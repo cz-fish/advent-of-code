@@ -65,3 +65,5 @@ foo
     i = inp.get_ints_tolerant(-1)
     assert(len(i) == 5)
     assert(i == [123, 456, 7, -1, 3])
+
+# TODO: use_main_input, get_valid_lines
