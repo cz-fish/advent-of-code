@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **14** - binary masks
 * **13** - Bus schhedule - Chinese remainders problem
 * **12** - ship navigation
 * **11** - game of life with seats
