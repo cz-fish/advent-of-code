@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **15** - Van Eck sequence
 * **14** - binary masks
 * **13** - Bus schhedule - Chinese remainders problem
 * **12** - ship navigation
