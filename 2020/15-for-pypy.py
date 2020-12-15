@@ -2,15 +2,17 @@
 
 # Note: https://oeis.org/A181391
 
-from aoc import Env
-import numpy
+# Stripped down and hardcoded for pypy.
+#   c:\apps\pypy3.7-v7.3.3-win32\pypy3.exe 15-for-pypy.py
+#   > 2424 0.7239582
+# (first run - compilation - takes quite a bit of time, but
+#  repeated runs are under 1 second)
 
-e = Env(15)
-e.T("0,3,6", 436, 175594)
+from timeit import default_timer as timer
 
 
 def van_eck(start, K):
-    memory = numpy.zeros(K, dtype=int)
+    memory = [0] * K
 
     for i, x in enumerate(start):
         memory[x] = i + 1
@@ -32,20 +34,7 @@ def van_eck(start, K):
     return last_said
 
 
-def get_start_vector(input):
-    line = input.get_valid_lines()[0]
-    return [int(x) for x in line.split(',')]
-
-
-def part1(input):
-    return van_eck(get_start_vector(input), 2020)
-
-
-def part2(input):
-    return van_eck(get_start_vector(input), 30000000)
-
-
-e.run_tests(1, part1)
-e.run_main(1, part1)
-e.run_tests(2, part2)
-e.run_main(2, part2)
+start = timer()
+res = van_eck([13,16,0,12,15,1], 30000000)
+end = timer()
+print(res, end-start)
