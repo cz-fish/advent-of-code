@@ -3,6 +3,7 @@ from typing import Callable, List, NamedTuple, Optional, Type
 
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
+YELLOW = "\033[0;33m"
 CLR = "\033[0m"
 
 # The result of each AOC puzzle is assume to be int
@@ -76,4 +77,4 @@ class Env:
         input = self._ensure_input()
         input.use_main_input()
         result = code(input)
-        print(f"Day {self._day} Part {part}: {result}")
+        print(f"{YELLOW}Day {self._day} Part {part}: {result}{CLR}")
