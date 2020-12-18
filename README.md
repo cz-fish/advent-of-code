@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **18** - expressions in elf math
 * **17** - game of life in 3d and 4d
 * **16** - ticket validation
 * **15** - Van Eck sequence
