@@ -5,3 +5,4 @@ misc/
 **/obj/
 **/obj-linux/
 **/.ionide
+*.gif
