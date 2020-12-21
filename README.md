@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **21** - ingredient/allergen sudoku
 * **20** - fractured image, monsters in a grid
 * **19** - regular and not so regular rule matching
 * **18** - expressions in elf math
