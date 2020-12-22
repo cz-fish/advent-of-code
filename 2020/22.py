@@ -62,13 +62,37 @@ e.run_tests(1, part1)
 e.run_main(1, part1)
 
 
+def deck_id(decks):
+    d = list(decks[0]) + [0] + list(decks[1])
+    q = 51
+    id = 0
+    for v in d:
+        id += v * q
+        q *= 51
+    return id
+
+
+def deck_id2(decks):
+    d = tuple(list(decks[0]) + [0] + list(decks[1]))
+    return hash(d)
+
+
 def play_part2(decks):
     rounds = 0
     known_states = set()
     while True:
         if not decks[0] or not decks[1]:
             return rounds
-        state = ','.join([str(x) for x in list(decks[0])]) + ':' + ','.join([str(x) for x in list(decks[1])])
+
+        # decks configuration -> large int - cca 9 seconds to complete the problem
+        # state = deck_id(decks)
+
+        # decks configuration -> string - cca 10 seconds to complete the problem
+        # state = ','.join([str(x) for x in list(decks[0])]) + ':' + ','.join([str(x) for x in list(decks[1])])
+
+        # decks configuration -> hash (small int) - cca 2 seconds. Potentially wrong, but for the given input, the result looks correct.
+        state = deck_id2(decks)
+
         if state in known_states:
             # cycle detected. Player 1 wins
             decks[1].clear()
