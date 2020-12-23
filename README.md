@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **23** - shell game
 * **22** - crab card game
 * **21** - ingredient/allergen sudoku
 * **20** - fractured image, monsters in a grid
