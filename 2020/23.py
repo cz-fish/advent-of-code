@@ -5,58 +5,6 @@ from aoc import Env
 e = Env(23)
 e.T("389125467", 67384529, 149245887792)
 
-max_steps = 100
-digits = 9
-how_many = 3
-
-
-def make_step(current_id, config):
-    new_id = current_id
-    current = config[current_id]
-
-    # take next 3
-    take = (config + config)[current_id + 1 : current_id + how_many + 1]
-    if current_id >= digits - how_many:
-        skip = how_many - (digits - current_id) + 1
-        config = config[skip : current_id + 1]
-        new_id -= skip
-    else:
-        config = config[:current_id+1] + config[current_id + how_many + 1:]
-    # print(f'taken 3: {take}, rest: {config}, current_id {current_id}, new_id {new_id}')
-    where = (current - 2) % digits + 1
-    while where not in config:
-        where = (where - 2) % digits + 1
-    idx = config.index(where) + 1
-    # print(f'looked for {where}, found it at {idx}')
-    config = config[:idx] + take + config[idx:]
-    if idx <= new_id:
-        new_id += how_many
-    # print(f'pasted: {config}, new_id: {new_id}')
-
-    # shift config so that new_id is at the same position as current_id was
-    while new_id != current_id:
-        config = [config[-1]] + config[:-1]
-        new_id = (new_id + 1) % digits
-
-    return config
-
-
-def part1(input):
-    config = [int(c) for c in input.get_valid_lines()[0]]
-    assert len(config) == digits
-    for i in range(max_steps):
-        config = make_step(i % digits, config)
-    res_string = ''.join([str(x) for x in config])
-    idx = res_string.index('1')
-    res_string *= 2
-    res = int(res_string[idx + 1: idx + digits])
-    print(f"{max_steps}: {res_string} -> {res}")
-    return res
-
-
-e.run_tests(1, part1)
-e.run_main(1, part1)
-
 
 class Node:
     def __init__(self, val):
@@ -65,23 +13,25 @@ class Node:
         self.next = None
 
 
-def make_nodes(start):
+def make_nodes(start, add_to_million):
     for v in start:
         yield Node(v)
-    for i in range(max(start) + 1, 1_000_001):
-        yield Node(i)
+    if add_to_million:
+        for i in range(max(start) + 1, 1_000_001):
+            yield Node(i)
 
 
-def make_move_pt2(current, nodemap):
+def make_move(current, nodemap):
+    maxnum = len(nodemap)
     current_node = nodemap[current]
     taken = [current_node.next, current_node.next.next, current_node.next.next.next]
     taken_vals = [x.val for x in taken]
     current_node.next = current_node.next.next.next.next
     current_node.next.prev = current_node
 
-    where = (current - 2) % 1_000_000 + 1
+    where = (current - 2) % maxnum + 1
     while where in taken_vals:
-        where = (where - 2) % 1_000_000 + 1
+        where = (where - 2) % maxnum + 1
 
     after_node = nodemap[where]
     before_node = after_node.next
@@ -91,13 +41,13 @@ def make_move_pt2(current, nodemap):
     taken[-1].next = before_node
 
 
-def part2(input):
+def make_circle(input, add_to_million):
     start = [int(c) for c in input.get_valid_lines()[0]]
     nodemap = {}
     # Make circle of cups
     first = None
     prev = None
-    for node in make_nodes(start):
+    for node in make_nodes(start, add_to_million):
         nodemap[node.val] = node
         if first is None:
             first = node
@@ -107,10 +57,32 @@ def part2(input):
         prev = node
     prev.next = first
     first.prev = prev
+    return start[0], nodemap
 
-    current = start[0]
+
+def part1(input):
+    current, nodemap = make_circle(input, add_to_million=False)
+    for _ in range(100):
+        make_move(current, nodemap)
+        current = nodemap[current].next.val
+
+    current = nodemap[1].next
+    result = 0
+    while current.val != 1:
+        result = result * 10 + current.val
+        current = current.next
+    return result
+
+
+e.run_tests(1, part1)
+e.run_main(1, part1)
+
+
+def part2(input):
+    current, nodemap = make_circle(input, add_to_million=True)
+
     for _ in range(10_000_000):
-        make_move_pt2(current, nodemap)
+        make_move(current, nodemap)
         current = nodemap[current].next.val
 
     node1 = nodemap[1]
