@@ -56,7 +56,8 @@
 * **1** - Recurrent formula
 
 ## 2018
-
+* **2** - string checksum - one letter differences
+* **1** - sum of ints
 
 ## 2017
 
