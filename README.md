@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2020
+* **25** - crack the encryption
 * **24** - hexagonal game of life
 * **23** - shell game
 * **22** - crab card game
