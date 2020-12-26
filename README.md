@@ -56,6 +56,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **3** - overlapping rectangles of fabric
 * **2** - string checksum - one letter differences
 * **1** - sum of ints
 
