@@ -56,6 +56,8 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **5** - candy crush
+* **4** - sleeping guards
 * **3** - overlapping rectangles of fabric
 * **2** - string checksum - one letter differences
 * **1** - sum of ints
