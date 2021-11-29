@@ -1,5 +1,5 @@
 from aoc.input import Input
-from typing import Callable, List, NamedTuple, Optional, Type
+from typing import Any, Callable, List, NamedTuple, Optional, Type
 
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
@@ -9,6 +9,7 @@ CLR = "\033[0m"
 # The result of each AOC puzzle is assume to be int
 ResultType: Type[int] = int
 OptResultType = Optional[ResultType]
+OptParamType = Optional[Any]
 
 
 # Specification of custom test case
@@ -17,15 +18,17 @@ class TestSpec(NamedTuple):
     input: str
     res1: OptResultType
     res2: OptResultType
+    param: OptParamType
 
 
 class Env:
     """Environment for constructing input, test cases, and executing both
        test cases and the real problem input"""
 
-    def __init__(self, day: int, tests: List[TestSpec] = []):
+    def __init__(self, day: int, tests: List[TestSpec] = [], param = None):
         self._day = day
         self._tests = tests
+        self._param = param
         self._inp = None
 
     def _ensure_input(self) -> Input:
@@ -36,15 +39,15 @@ class Env:
             self._inp = Input(f"input{self._day:02}.txt", [t.input for t in self._tests])
         return self._inp
 
-    def T(self, input: str, result_p1: OptResultType, result_p2: OptResultType) -> None:
+    def T(self, input: str, result_p1: OptResultType, result_p2: OptResultType, param: OptParamType = None) -> None:
         """Define a test case"""
         assert self._inp is None, "Cannot define more test cases once input is constructed"
-        self._tests += [TestSpec(input=input, res1=result_p1, res2=result_p2)]
+        self._tests += [TestSpec(input=input, res1=result_p1, res2=result_p2, param=param)]
 
     def test_spec(self, test: TestSpec) -> None:
         """Define a test case (as a TestSpec tuple)"""
         assert self._inp is None, "Cannot define more test cases once input is constructed"
-        self._tests += [TestSpec(input=test.input, res1=test.res1, res2=test.res2)]
+        self._tests += [TestSpec(input=test.input, res1=test.res1, res2=test.res2, param=test.param)]
 
     def run_tests(self, part: int, code: Callable[[Input], ResultType]) -> None:
         """Run given code on all tests that have defined expected result for the given
@@ -62,6 +65,7 @@ class Env:
                 continue
 
             input.use_test(i)
+            self.active_param = test.param
             try:
                 result = code(input)
                 if result != expect:
@@ -76,5 +80,9 @@ class Env:
         """Run given code on the main problem input"""
         input = self._ensure_input()
         input.use_main_input()
+        self.active_param = self._param
         result = code(input)
         print(f"{YELLOW}Day {self._day} Part {part}: {result}{CLR}")
+
+    def get_param(self) -> Any:
+        return self.active_param
