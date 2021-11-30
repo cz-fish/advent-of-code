@@ -56,6 +56,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **7** - dependency graph
 * **6** - Manhattan distances from coordinates
 * **5** - candy crush
 * **4** - sleeping guards
