@@ -56,6 +56,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **8** - summing trees
 * **7** - dependency graph
 * **6** - Manhattan distances from coordinates
 * **5** - candy crush
