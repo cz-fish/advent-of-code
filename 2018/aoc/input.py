@@ -67,6 +67,16 @@ class Input:
             else:
                 ints += [default]
         return ints
+    
+    def get_all_ints(self) -> List[int]:
+        """Get a list of all ints found in the input. There
+           can be more than one int per line."""
+        ints = []
+        r = re.compile(r'\d+')
+        for ln in self.lines:
+            m = r.findall(ln)
+            ints += [int(x) for x in m]
+        return ints
 
     def _read_file(self, fname: str) -> None:
         with open(fname, 'rt') as f:
