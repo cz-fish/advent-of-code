@@ -1,6 +1,6 @@
 from aoc import Input
 
-IFILE = '../input01.txt'
+IFILE = '../../2020/input01.txt'
 
 
 def test_read_file():
@@ -65,5 +65,16 @@ foo
     i = inp.get_ints_tolerant(-1)
     assert(len(i) == 5)
     assert(i == [123, 456, 7, -1, 3])
+
+
+def test_get_all_ints():
+    inp = Input(IFILE, ["""1 2 3 4 19 5
+1e4
+"""])
+    inp.use_test(0)
+    i = inp.get_all_ints()
+    assert(len(i) == 8)
+    assert(i == [1, 2, 3, 4, 19, 5, 1, 4])
+
 
 # TODO: use_main_input, get_valid_lines
