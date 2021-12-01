@@ -59,6 +59,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **10** - iteratively move points + counting clouds
 * **9** - game with marbles
 * **8** - summing trees
 * **7** - dependency graph
