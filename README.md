@@ -59,6 +59,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **9** - game with marbles
 * **8** - summing trees
 * **7** - dependency graph
 * **6** - Manhattan distances from coordinates
