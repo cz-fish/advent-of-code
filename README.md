@@ -1,5 +1,8 @@
 # Advent of Code
 
+## 2021
+* **1** - count positive differences
+
 ## 2020
 * **25** - crack the encryption
 * **24** - hexagonal game of life
