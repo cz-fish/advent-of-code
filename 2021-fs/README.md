@@ -1,9 +1,9 @@
-# AoC 2017 in F#
+# AoC 2021 in F#
 
 ## Build
 
 * Install dotnet core (make sure that the runtime framework version matches that in the fsproj file)
-* `dotnet build 2017.fsproj`
+* `dotnet build 2021.fsproj`
 
 ## Run
 

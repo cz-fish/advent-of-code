@@ -3,18 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp6.0</TargetFramework>
-    <RootNamespace>AoC2017</RootNamespace>
+    <RootNamespace>AoC2021</RootNamespace>
     <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="01.fs" />
-    <Compile Include="02.fs" />
-    <Compile Include="03.fs" />
-    <Compile Include="04.fs" />
-    <Compile Include="05.fs" />
-    <Compile Include="06.fs" />
-    <Compile Include="aoc2017.fs" />
+    <Compile Include="aoc2021.fs" />
   </ItemGroup>
 
   <ItemGroup>
