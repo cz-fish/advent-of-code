@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **2** - submarine navigation
 * **1** - count positive differences
 
 ## 2020
