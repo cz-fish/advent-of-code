@@ -18,7 +18,7 @@ module Day01 =
         let length = (numbers |> List.length) - 2
         let triplets = List.zip3 (numbers |> List.take length)
                                  (numbers |> List.tail |> List.take length)
-                                 (numbers |> List.tail |> List.tail)
+                                 (numbers |> List.skip 2)
                        |> List.map (fun (a,b,c) -> a+b+c)
         let res = List.zip (triplets |> List.take (length - 1))
                            (triplets |> List.tail)
