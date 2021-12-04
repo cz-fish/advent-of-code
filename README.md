@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **4** - Bingo
 * **3** = count common bits
 * **2** - submarine navigation
 * **1** - count positive differences
