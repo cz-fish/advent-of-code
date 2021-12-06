@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **6** - count multiplying lanternfish
 * **5** - Crossing lines
 * **4** - Bingo
 * **3** = count common bits
