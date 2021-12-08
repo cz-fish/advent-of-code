@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **8** - reconstruct 7-segment display
 * **7** - aligning crabs
 * **6** - count multiplying lanternfish
 * **5** - Crossing lines
