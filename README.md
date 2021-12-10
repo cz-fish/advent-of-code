@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **10** - balanced parentheses
 * **9** - finding low points and basins, counting clouds
 * **8** - reconstruct 7-segment display
 * **7** - aligning crabs
