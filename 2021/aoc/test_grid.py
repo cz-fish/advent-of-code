@@ -14,6 +14,12 @@ TEST_GRID_IRREG = [
     "  ###"
 ]
 
+TEST_GRID_NUM = [
+    "1234056",
+    "7122234",
+    "2345899",
+]
+
 
 def test_grid_construction():
     gr = Grid(TEST_GRID_RECT)
@@ -77,5 +83,11 @@ def test_neighbors_8():
     gr = Grid(TEST_GRID_IRREG, rectangular=False)
     n = sorted(gr.neighbors8(0, 5))
     assert(n == [(0, 4), (1, 4), (1, 5), (1, 6)])
+
+
+def test_int_grid():
+    gr = Grid(TEST_GRID_NUM, ints=True)
+    assert(gr.get(1, 3) == 2)
+
 
 # TODO: test grid copy

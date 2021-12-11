@@ -8,16 +8,20 @@ class Grid:
        Use `.grid` to access the grid, or the `get()` method.
     """
 
-    def __init__(self, lines: List[str], rectangular=True):
+    def __init__(self, lines: List[str], rectangular=True, ints=False):
         """Initialize the grid from a list of text lines - one
            character per cell.
            If `rectangular` is True, then each row is required
-           to have the same width."""
+           to have the same width.
+           If `ints` the grid contains ints - one digit per cell."""
         self.grid = []
         max_width = 0
         min_width = None
         for ln in lines:
-            self.grid += [list(ln)]
+            if ints:
+                self.grid += [[int(x) for x in list(ln)]]
+            else:
+                self.grid += [list(ln)]
             max_width = max(max_width, len(ln))
             if min_width is None:
                 min_width = len(ln)
