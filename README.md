@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **12** - count distinct paths through caves
 * **11** - flashing octopuses
 * **10** - balanced parentheses
 * **9** - finding low points and basins, counting clouds
