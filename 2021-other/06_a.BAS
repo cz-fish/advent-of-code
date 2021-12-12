@@ -1,0 +1,25 @@
+LET inputStr$ = "3,4,3,1,2"
+LET days% = 80
+
+DIM ageCounters(0 TO 8) AS INTEGER
+
+PRINT "AoC 2021 day 6"
+
+FOR i = 1 TO LEN(inputStr$) STEP 2
+  LET c$ = MID$(inputStr$, i, 1)
+  LET v = ASC(c$) - ASC("0")
+  LET ageCounters(v) = ageCounters(v) + 1
+NEXT i
+
+FOR i = 1 TO days%
+  LET age0 = (i + 8) MOD 9
+  LET age6 = (i + 6) MOD 9
+  ageCounters(age6) = ageCounters(age6) + ageCounters(age0)
+NEXT i
+ 
+LET sum = 0
+FOR b = 0 TO 8
+  LET sum = sum + ageCounters(b)
+NEXT b
+PRINT "After " + STR$(days%) + " days: " + STR$(sum)
+
