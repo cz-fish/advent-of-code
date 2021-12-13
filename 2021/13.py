@@ -4,6 +4,7 @@ from aoc import Env
 import re
 
 e = Env(13)
+#e = Env(13, different_input='input13_alter.txt')
 e.T("""6,10
 0,14
 9,10

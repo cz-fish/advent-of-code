@@ -25,18 +25,23 @@ class Env:
     """Environment for constructing input, test cases, and executing both
        test cases and the real problem input"""
 
-    def __init__(self, day: int, tests: List[TestSpec] = [], param = None):
+    def __init__(self, day: int, tests: List[TestSpec] = [], param=None, different_input=None):
         self._day = day
         self._tests = tests
         self._param = param
         self._inp = None
+        self._different_input = different_input
 
     def _ensure_input(self) -> Input:
         """If not already constructed, construct an aoc.Input from the
            current day number and test cases specified so far.
            Test cases defined later will be ignored."""
         if self._inp is None:
-            self._inp = Input(f"input{self._day:02}.txt", [t.input for t in self._tests])
+            if self._different_input is not None:
+                fname = self._different_input
+            else:
+                fname = f"input{self._day:02}.txt"
+            self._inp = Input(fname, [t.input for t in self._tests])
         return self._inp
 
     def T(self, input: str, result_p1: OptResultType, result_p2: OptResultType, param: OptParamType = None) -> None:
