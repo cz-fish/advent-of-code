@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **14** - insert elements into polymers
 * **13** - folding dots on paper
 * **12** - count distinct paths through caves
 * **11** - flashing octopuses
