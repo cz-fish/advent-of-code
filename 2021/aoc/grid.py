@@ -37,6 +37,7 @@ class Grid:
 
     @classmethod
     def copygrid(cls, other):
+        # FIXME: wouldn't work for grid of ints
         lines = [''.join(row) for row in other.grid]
         return Grid(lines, other.max_width == other.min_width)
 

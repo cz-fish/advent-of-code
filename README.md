@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **15** - find path with lowest cost
 * **14** - insert elements into polymers
 * **13** - folding dots on paper
 * **12** - count distinct paths through caves
