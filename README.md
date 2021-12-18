@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **18** - add snailfish numbers
 * **17** - discrete parabolas
 * **16** - binary encoded packets
 * **15** - find path with lowest cost
