@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **19** - align scanners in 3D space
 * **18** - add snailfish numbers
 * **17** - discrete parabolas
 * **16** - binary encoded packets
