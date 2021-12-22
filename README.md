@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2021
+* **22** - partitioning cube space
 * **21** - Dirac dice, 3-way universe splitting
 * **20** - enhance image with "FFT"
 * **19** - align scanners in 3D space
