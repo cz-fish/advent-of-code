@@ -1,7 +1,7 @@
 #!/usr/bin/python3.8
 
 from aoc import Env
-from collections import deque
+from collections import deque, defaultdict
 
 e = Env(21)
 e.T("""Player 1 starting position: 4
@@ -96,13 +96,86 @@ def play_dirac_dice(p1, p2):
     return wins[0], wins[1]
 
 
+def play_dirac_differently(p1, p2):
+    scores = [
+        [defaultdict(int) for _ in range(10)]
+        for _ in range(21)
+    ]
+    for points in range(20, -1, -1):
+        for pos in range(10):
+            for roll, cases in weights.items():
+                nextpos = (pos + roll) % 10
+                getpoints = nextpos + 1
+                newscore = points + getpoints
+                if newscore >= 21:
+                    scores[points][pos][1] += cases
+                else:
+                    for k, v in scores[newscore][nextpos].items():
+                        scores[points][pos][k + 1] += v * cases
+    for x in range(10):
+        print('pos', x, sorted(list(scores[0][x].items())))
+    print('--------')
+    print(p1, p2)
+
+    start_p1 = sorted(scores[0][p1 - 1].items(), key=lambda x:-x[0])
+    start_p2 = sorted(scores[0][p2 - 1].items(), key=lambda x:-x[0])
+
+    #start_p1 = sorted(scores[0][p1 - 1].items())
+    #start_p2 = sorted(scores[0][p2 - 1].items())
+
+    accu_p1 = {}
+    a = 0
+    for s, t in start_p1:
+        a += t
+        accu_p1[s] = a
+    accu_p2 = {}
+    a = 0
+    for s, t in start_p2:
+        a += t
+        accu_p2[s] = a
+    print(accu_p1.items())
+    print(accu_p2.items())
+
+    #print(p1, start_p1)
+    #print(p2, start_p2)
+    total_p1 = 0
+    for steps, v in start_p1:
+        x = accu_p2[steps] if steps in accu_p2 else 0
+        total_p1 += v * x
+        """
+        # p1 won in 'steps' steps in 'v' universes
+        # but only if p2 didn't win first. p2 must have rolled one of 3^3^steps combinations
+        # except for those that would allow p2 to win in fewer than 'steps' steps
+        s2 = (3 ** 3) ** (steps - 1)
+        if steps - 1 in accu_p2:
+            s2 -= accu_p2[steps - 1]
+        total_p1 += v * s2
+        print(f"p1 finished in {steps} steps {v} times. p2 could roll {s2} combinations and lose")
+        """
+        print(f"p1, steps {steps}, {v} * {x} = {v * x} ... {total_p1}")
+
+    total_p2 = 0
+    for steps, v in start_p2:
+        x = accu_p1[steps + 1] if steps + 1 in accu_p1 else 0
+        total_p2 += v * x
+        """
+        s1 = (3 ** 3) ** (steps)
+        if steps in start_p1:
+            s1 -= accu_p1[steps]
+        total_p2 += v * s1
+        print(f"p2 finished in {steps} steps {v} times. p1 could roll {s1} combinations and lose")
+        """
+        print(f"p2, steps {steps}, {v} * {x} = {v * x} ... {total_p2}")
+
+    return max(total_p1, total_p2)
+
+
 def part2(input):
     x = input.get_all_ints()
     p1 = x[1]
     p2 = x[3]
-    a, b = play_dirac_dice(p1, p2)
-    res = max(a, b)
-    return res
+    return max(play_dirac_dice(p1, p2))
+    return play_dirac_differently(p1, p2)
 
 
 e.run_tests(2, part2)
