@@ -1,6 +1,8 @@
 # Advent of Code
 
 ## 2021
+* **25** - moving sea-cucumbers (Biham-Middleton-Levine traffic model)
+* **24** - reverse engineer ALU - find model number
 * **23** - amphipods moving between houses
 * **22** - partitioning cube space
 * **21** - Dirac dice, 3-way universe splitting
