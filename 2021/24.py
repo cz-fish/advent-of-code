@@ -4,6 +4,44 @@ from aoc import Env
 
 e = Env(24)
 
+L = 14
+
+"""
+Assembly analysis
+
+There are 14 blocks of 18 instructions each. Each block works on one input digit, but takes a carry value from
+the previous digit. Each block has the same instructions and only 3 of them have varying parameters
+(key variables - we'll denote them A, B, C).
+Because the instructions are the same for every digit, some of them are nops for the first digit.
+
+The 'carry' from the previous digit, modulo 26 + B is compared against the current digit. For values of B
+greater than 9, this can never match, so it is guaranteed that for those digits the program will take
+branch a). For other values of B, there is a digit such that the values will match and the program will
+take branch b) instead.
+
+Branch a) increases the value of 'carry', which we require to be 0 at the end of the program, while branch
+b) keeps or reduces the 'carry' instead, so in order to reach 'carry' = 0 at the end, we want to take branch
+b) when possible (that means trying to match the digit to 'carry' % 26+B
+
+In branch a), 'carry' is multiplied by 26 and the value of C is added to the 'carry'. This is effectively
+a stack, where each item is one digit of a base-26. The digits where Z = 1 push into the stack, and the
+digits where Z = 26 pop from the stack. Notice that there is the same amount of Z=1 as Z=26 in the input.
+These form pairs in a last-in-first-out order, and from each pair, we get a formula that will give us the
+values of 2 digits of the model number.
+
+The formula is
+Di - Aj = Dj + Bi
+where Di and Dj are i-th and j-th digits (j < i, meaning that j is more significant digit)
+Aj is the A coefficient of j-th digit, and Bi is B coefficient of i-th digit.
+(Note that A of the digits where Z=1 and B of the digits where Z=26 are not used in the calculation)
+
+we get Di = Dj + Aj + Bi, where we want to either maximize (part 1) or minimize (part 2) both Di and Dj,
+while they must both be within 0 < D <= 9.
+
+Once we have constructed all 14 digits of the number, we run the program once just to verify that it
+indeed ends with checksum being 0.
+"""
+
 
 def analyze_program(program):
     digit = -1
@@ -39,6 +77,57 @@ def analyze_program(program):
         print(f"digit {i:02} [{Z:2}, {A:2}, {B:2}]  {s}")
         
 
+def get_key_variables(program):
+    assert len(program) == L * 18
+    A = []
+    B = []
+    C = []
+    for i in range(L):
+        # div z 1 (or 26)
+        s, t, v = program[i * 18 + 4].split(' ')
+        assert s == 'div' and t == 'z'
+        A += [int(v)]
+        assert A[-1] == 1 or A[-1] == 26
+        # add x VAL
+        s, t, v = program[i * 18 + 5].split(' ')
+        assert s == 'add' and t == 'x'
+        B += [int(v)]
+        # add y VAL
+        s, t, v = program[i * 18 + 15].split(' ')
+        assert s == 'add' and t == 'y'
+        C += [int(v)]
+    return A, B, C
+
+
+def solve(A, B, C, highest):
+    res = [0] * L
+    st = []
+    for i in range(L):
+        if A[i] == 1:
+            st.append((i, C[i]))
+        elif A[i] == 26:
+            assert st
+            j, w = st.pop()
+            # Di = Dj + w + Bi = Dj + x
+            # maximize or minimize Dj so that both Di and Dj are within 0 < D <= 9
+            x = w + B[i]
+            assert -8 <= x <= 8
+            if highest:
+                Dj = min(9, 9 - x)
+                Di = Dj + x
+            else:
+                Dj = max(1, 1 - x)
+                Di = Dj + x
+            assert 0 < Di <= 9
+            assert 0 < Dj <= 9
+            res[i] = Di
+            res[j] = Dj
+        else:
+            assert False
+    assert not st
+    return res
+
+
 def run_program(lines, inputs):
     reg = [0, 0, 0, 0]
     pos = 0
@@ -46,7 +135,7 @@ def run_program(lines, inputs):
         x = ln.split(' ')
         r = ord(x[1]) - ord('w')
         if x[0] == 'inp':
-            print(pos, reg)
+            # print(pos, reg)
             reg[r] = inputs[pos]
             pos += 1
         else:
@@ -76,36 +165,34 @@ def run_program(lines, inputs):
 def part1(input):
     program = input.get_valid_lines()
     analyze_program(program)
-    #number = [9, 9, 3, 9, 9, 2, 9, 9, 6, 9, 7, 5, 9, 9]
-    number = [9, 1, 3, 9, 8, 2, 9, 9, 6, 9, 7, 9, 9, 6]
-    val = run_program(program, number)
-    n = ''.join(str(x) for x in number)
-    if val == 0:
-        return f"SUCCESS: {n} -> {val}"
+    A, B, C = get_key_variables(program)
+    highest = solve(A, B, C, True)
+    check = run_program(program, highest)
+    n = ''.join(str(x) for x in highest)
+    if check == 0:
+        return n
     else:
-        return f"FAILURE: {n} -> {val}"
-    return 0
+        return None
+#    number = [9, 1, 3, 9, 8, 2, 9, 9, 6, 9, 7, 9, 9, 6]
 
 
-#e.run_tests(1, part1)
 e.run_main(1, part1)
 
 
 def part2(input):
     program = input.get_valid_lines()
-    #analyze_program(program)
-    #number = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    number = [4, 1, 1, 7, 1, 1, 8, 3, 1, 4, 1, 2, 9, 1]
-    val = run_program(program, number)
-    n = ''.join(str(x) for x in number)
-    if val == 0:
-        return f"SUCCESS: {n} -> {val}"
+    # analyze_program(program)
+    A, B, C = get_key_variables(program)
+    lowest = solve(A, B, C, False)
+    check = run_program(program, lowest)
+    n = ''.join(str(x) for x in lowest)
+    if check == 0:
+        return n
     else:
-        return f"FAILURE: {n} -> {val}"
-    return 0
+        return None
+#    number = [4, 1, 1, 7, 1, 1, 8, 3, 1, 4, 1, 2, 9, 1]
 
 
-# e.run_tests(2, part2)
 e.run_main(2, part2)
 
 """
