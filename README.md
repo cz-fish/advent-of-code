@@ -102,3 +102,6 @@
 * **3** - Manhattan distance on spiral
 * **2** - Grid checksums - min, max and divisors
 * **1** - Find pairs of same digits in a number
+
+## 2015
+* **1** - Count floors (parentheses)
