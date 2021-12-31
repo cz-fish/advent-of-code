@@ -46,6 +46,9 @@ Function parseLine (inp$, d_ptr%, w_ptr%, h_ptr%, d_seg%)
     If w% > h% Then Swap w%, h%
     If d% > w% Then Swap d%, w%
     Def Seg = d_seg%
+    ' This only copies one byte to each 2-byte variable
+    ' but it is enough, given that the numbers in the input file are small.
+    ' It also assumes that all 3 variables are in the same segment
     Poke d_ptr%, d%
     Poke w_ptr%, w%
     Poke h_ptr%, h%
