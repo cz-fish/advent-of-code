@@ -104,4 +104,5 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2015
+* **2** - wrapping presents - how much material do we need?
 * **1** - Count floors (parentheses)
