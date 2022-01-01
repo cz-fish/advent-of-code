@@ -104,6 +104,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2015
+* **4** - MD5 hashes
 * **3** - Santa walking in a grid
 * **2** - wrapping presents - how much material do we need?
 * **1** - Count floors (parentheses)
