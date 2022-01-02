@@ -104,6 +104,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2015
+* **6** - Light patterns (overlapping rectangles)
 * **5** - Count nice words
 * **4** - MD5 hashes
 * **3** - Santa walking in a grid
