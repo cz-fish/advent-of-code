@@ -103,6 +103,10 @@
 * **2** - Grid checksums - min, max and divisors
 * **1** - Find pairs of same digits in a number
 
+## 2016
+
+* **1** - Navigate in 2d street grid
+
 ## 2015
 * **6** - Light patterns (overlapping rectangles)
 * **5** - Count nice words
