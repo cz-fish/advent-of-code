@@ -104,6 +104,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **3** - Detect valid triangles
 * **2** - Move across a keypad
 * **1** - Navigate in 2d street grid
 
