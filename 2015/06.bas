@@ -1,10 +1,7 @@
 Option _Explicit
 
-' this happens to be color white
-Const TURN_ON = 15
-' this happens to be color black
-Const TURN_OFF = 0
-' this value doesn't matter
+Const TURN_ON = 1
+Const TURN_OFF = -1
 Const TOGGLE = 2
 
 ' one instruction line parsed from the input file
@@ -13,41 +10,133 @@ Type InstrType
 End Type
 
 Dim line$, drawCommand As InstrType
-
-' main buffer is what we will be drawing into
-Dim Shared mainBuffer As Long
-mainBuffer = _NewImage(1000, 1000, 256)
-_Dest mainBuffer
-Screen mainBuffer
+Dim hori(0 To 599)
+Dim vert(0 To 599)
+Dim instructions(0 To 299) As InstrType
+Dim counter%, instr_counter%
 
 Open "input06.txt" For Input As #1
+counter% = 0
+instr_counter% = 0
 Do Until EOF(1)
+    If counter% >= 600 Then
+        ' our hori and vert arrays only have space for 300*2 coordinates
+        Error 2
+    End If
+
     Line Input #1, line$
     Call parseLine(line$, drawCommand)
-    'Print "command " + str$(drawCommand.cmd) + ", [" + str$(drawCommand.minx) + _
-    '    "," + str$(drawCommand.miny) + "] .. [" + str$(drawCommand.maxx) + _
-    '    "," + str$(drawCommand.maxy) + "]"
-
-    ' draw each command from the input into our main buffer.
-    ' Turn on and turn off are straightforward, toggle is special
-    If drawCommand.cmd = TURN_ON Or drawCommand.cmd = TURN_OFF Then
-        Call fillRect(drawCommand)
-    Else
-        Call toggleRect(drawCommand)
-    End If
+    ' collect all horizontal coordinates hori and vertical ones into vert
+    hori(counter%) = drawCommand.minx
+    hori(counter% + 1) = drawCommand.maxx + 1
+    vert(counter%) = drawCommand.miny
+    vert(counter% + 1) = drawCommand.maxy + 1
+    counter% = counter% + 2
+    instructions(instr_counter%) = drawCommand
+    instr_counter% = instr_counter% + 1
 Loop
-
 Close #1
 
-' Now the screen is showing the final pattern. Press any key and we'll
-' count how many pixels it has lit, which will be the solution
-Dim key$, dots&
-key$ = Input$(1)
-dots& = countDots
-Screen 0
-Print "Lit dots" + Str$(dots&)
-End
+'If counter% < 600 Then
+'    ' we were expecting 300*2 values. If there is fewer then we might have garbage in the hori and vert arrays
+'    Error 3
+'End If
 
+' sort hori and vert
+Call mergeSort(hori())
+Call mergeSort(vert())
+
+Dim horiCount%, vertCount%
+
+horiCount% = makeUnique(hori())
+vertCount% = makeUnique(vert())
+
+'Print "hori count " + Str$(horiCount%)
+'Print "vert count " + Str$(vertCount%)
+
+Dim xi%, yi%, i%
+Dim p1_tot_br& ' total brightness according to part 1 interpretation
+Dim p2_tot_br& ' total brightness according to part 2 interpretation
+Dim p1_rec_br& ' brightness of a rectangle according to part 1 interpretation
+Dim p2_rec_br& ' brightness of a rectangle according to part 2 interpretation
+Dim rec_size& ' current rectangle size
+Dim ins As InstrType
+
+p1_tot_br& = 0
+p2_tot_br& = 0
+
+If 0 Then
+    ' Use example instead of real input
+    instr_counter% = 3
+    instructions(0).cmd = TURN_ON
+    instructions(0).minx = 0
+    instructions(0).maxx = 999
+    instructions(0).miny = 0
+    instructions(0).maxy = 999
+    instructions(1).cmd = TOGGLE
+    instructions(1).minx = 0
+    instructions(1).maxx = 999
+    instructions(1).miny = 0
+    instructions(1).maxy = 0
+    instructions(2).cmd = TURN_OFF
+    instructions(2).minx = 499
+    instructions(2).maxx = 500
+    instructions(2).miny = 499
+    instructions(2).maxy = 500
+    horiCount% = 4
+    hori(0) = 0
+    hori(1) = 499
+    hori(2) = 501
+    hori(3) = 1000
+    vertCount% = 5
+    vert(0) = 0
+    vert(1) = 1
+    vert(2) = 499
+    vert(3) = 501
+    vert(4) = 1000
+End If
+
+' for each rectangle formed by 2 consecutive horizontal and 2 consecutive vertical coordinates
+For xi% = 0 To horiCount% - 2
+    For yi% = 0 To vertCount% - 2
+        rec_size& = (hori(xi% + 1) - hori(xi%)) * (vert(yi% + 1) - vert(yi%))
+        p1_rec_br& = 0
+        p2_rec_br& = 0
+        ' for each input instruction
+        For i% = 0 To instr_counter% - 1
+            ins = instructions(i%)
+            ' if this instruction intersects the rectangle
+            If ins.minx < hori(xi% + 1) And ins.maxx >= hori(xi%) And ins.miny < vert(yi% + 1) And ins.maxy >= vert(yi%) Then
+                ' apply the brightness change of the instruction on the whole rectangle
+
+                ' Part 1 interpretation:
+                If ins.cmd = TURN_ON Then
+                    p1_rec_br& = 1
+                ElseIf ins.cmd = TURN_OFF Then
+                    p1_rec_br& = 0
+                ElseIf ins.cmd = TOGGLE Then
+                    p1_rec_br& = -p1_rec_br& + 1
+                End If
+
+                ' Part 2 interpretation:
+                p2_rec_br& = p2_rec_br& + ins.cmd
+                ' prevent underflow of 0
+                If p2_rec_br& < 0 Then
+                    p2_rec_br& = 0
+                End If
+
+            End If
+        Next i%
+        ' accumulate total brightness of the rectangle
+        p1_tot_br& = p1_tot_br& + p1_rec_br& * rec_size&
+        p2_tot_br& = p2_tot_br& + p2_rec_br& * rec_size&
+    Next yi%
+Next xi%
+
+Print "Part 1 total brightness: " + Str$(p1_tot_br&)
+Print "Part 2 total brightness: " + Str$(p2_tot_br&)
+
+End
 
 ' Parse one line of input into the instruction structure
 Sub parseLine (line$, result As InstrType)
@@ -89,43 +178,29 @@ Sub parseCoords (word$, x%, y%)
     y% = Val(Mid$(word$, n% + 1))
 End Sub
 
-' Fill a rectangle in the active buffer.
-' Because cmd.cmd has the right value, we can use it as color
-Sub fillRect (cmd As InstrType)
-    Dim i%
-    For i% = cmd.miny To cmd.maxy
-        Line (cmd.minx, i%)-(cmd.maxx, i%), cmd.cmd
-    Next i%
-End Sub
+' Given a sorted array, compact all unique (non-duplicate) values, and return the
+' new size of the compacted array. Contents of the rest of the original array, past
+' the compacted size, is undefined
+Function makeUnique (arr())
+    Dim size%
+    size% = UBound(arr) - LBound(arr) + 1
+    If size% < 2 Then
+        makeUnique = size%
+        Exit Function
+    End If
 
-' To toggle a rectangle, we first fill it with white in another buffer
-' And then copy the buffer over to our designated main buffer with the XOR operation
-Sub toggleRect (cmd As InstrType)
-    Dim buffer As Long
-    Dim img%(1000 * 1000)
-    buffer = _NewImage(1000, 1000, 256)
-    _Dest buffer
-    cmd.cmd = TURN_ON
-    Call fillRect(cmd)
-    _Source buffer
-    Get (0, 0)-(999, 999), img%()
-    cmd.cmd = TOGGLE
-    _Dest mainBuffer
-    Put (0, 0), img%(), Xor
-    _FreeImage (buffer)
-End Sub
-
-' Read the color of each pixel from the main buffer and count the white ones
-Function countDots ()
-    Dim cnt&, x%, y%
-    _Source mainBuffer
-    For x% = 0 To 999
-        For y% = 0 To 999
-            If Point(x%, y%) <> 0 Then
-                cnt& = cnt& + 1
+    Dim newSize%, currIndex%
+    newSize% = LBound(arr) + 1
+    For currIndex% = LBound(arr) + 1 To UBound(arr)
+        If arr(currIndex%) <> arr(currIndex% - 1) Then
+            If newSize% < currIndex% Then
+                arr(newSize%) = arr(currIndex%)
             End If
-        Next y%
-    Next x%
-    countDots = cnt&
+            newSize% = newSize% + 1
+        End If
+    Next
+    makeUnique = newSize%
 End Function
+
+'$INCLUDE:'lib/mergesort.bm'
 
