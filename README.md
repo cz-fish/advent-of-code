@@ -96,7 +96,6 @@
 * **1** - sum of ints
 
 ## 2017
-
 * **6** - redistributing memory blocks - infinite loop
 * **5** - Incrementing instructions
 * **4** - Passwords - non-repeating strings and anagrams
@@ -110,6 +109,7 @@
 * **1** - Navigate in 2d street grid
 
 ## 2015
+* **7** - Logical Circuit
 * **6** - Light patterns (overlapping rectangles)
 * **5** - Count nice words
 * **4** - MD5 hashes
