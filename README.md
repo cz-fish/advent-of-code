@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **11** - find square with highest value
 * **10** - iteratively move points + counting clouds
 * **9** - game with marbles
 * **8** - summing trees
