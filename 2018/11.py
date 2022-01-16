@@ -23,47 +23,26 @@ def get_all_cell_powers(serial_num):
     return all_powers
 
 
-def find_best_of_size_slowest(all_powers, size):
+def find_best_of_size(all_powers, size):
+    hei = len(all_powers)
+    wid = len(all_powers[0])
     best = None
     best_coord = None
-    for y in range(1, 302 - size):
-        for x in range(1, 302 - size):
-            value = 0
-            for z in range(size):
-                value += sum(all_powers[y-1+z][x-1:x-1+size])
+    columns = [
+        sum(all_powers[y][x] for y in range(size))
+        for x in range(wid)
+    ]
+    for y in range(hei - size + 1):
+        value = sum(columns[0:size])
+        for x in range(0, wid - size + 1):
             if best is None or value > best:
                 best = value
-                best_coord = f"{x},{y}"
-    return best_coord, best
-
-
-def count_square(all_powers, size, x, y):
-    value = 0
-    for z in range(size):
-        value += sum(all_powers[y-1+z][x-1:x-1+size])
-    return value
-
-
-def column(all_powers, x, ymin, ymax):
-    return sum(
-        all_powers[y][x-1]
-        for y in range(ymin-1, ymax-1)
-    )
-
-
-def find_best_of_size(all_powers, size):
-    best = count_square(all_powers, size, 1, 1)
-    best_coord = "1,1"
-    for y in range(1, 302 - size):
-        value = count_square(all_powers, size, 1, y)
-        if value > best:
-            best = value
-            best_coord = f"1,{y}"
-        for x in range(2, 302 - size):
-            value = value + column(all_powers, x+size-1, y, y+size) - column(all_powers, x-1, y, y+size)
-            if value > best:
-                best = value
-                best_coord = f"{x},{y}"
+                best_coord = f"{x+1},{y+1}"
+            if x < wid - size:
+                value = value - columns[x] + columns[x+size]
+        if y < hei - size:
+            for x in range(wid):
+                columns[x] = columns[x] - all_powers[y][x] + all_powers[y+size][x]
     return best_coord, best
 
 
