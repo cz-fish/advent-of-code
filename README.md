@@ -109,6 +109,7 @@
 * **1** - Navigate in 2d street grid
 
 ## 2015
+* **8** - count escaped characters in strings
 * **7** - Logical Circuit
 * **6** - Light patterns (overlapping rectangles)
 * **5** - Count nice words
