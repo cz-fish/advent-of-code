@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **12** - 1D game of life with plants
 * **11** - find square with highest value
 * **10** - iteratively move points + counting clouds
 * **9** - game with marbles
