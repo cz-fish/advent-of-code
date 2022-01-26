@@ -25,12 +25,20 @@ class Env:
     """Environment for constructing input, test cases, and executing both
        test cases and the real problem input"""
 
-    def __init__(self, day: int, tests: List[TestSpec] = [], param=None, different_input=None):
+    def __init__(self, day: int, tests: List[TestSpec] = [], param: OptParamType = None, different_input: Optional[str] = None, raw_lines: bool = False):
+        """
+        day - day of the month number
+        tests - list of test cases. Additional test cases may be added later by calling the T() method
+        param - optional parameter - can be different for each test or for the main input
+        different_input - alternative input file name to use instead of the default "input<day>.txt"
+        raw_lines - if true do not trim input lines - preserve whitespace characters. The default is to trim
+        """
         self._day = day
         self._tests = tests
         self._param = param
         self._inp = None
         self._different_input = different_input
+        self._raw_lines = raw_lines
 
     def _ensure_input(self) -> Input:
         """If not already constructed, construct an aoc.Input from the
@@ -41,7 +49,7 @@ class Env:
                 fname = self._different_input
             else:
                 fname = f"input{self._day:02}.txt"
-            self._inp = Input(fname, [t.input for t in self._tests])
+            self._inp = Input(fname, [t.input for t in self._tests], raw_lines=self._raw_lines)
         return self._inp
 
     def T(self, input: str, result_p1: OptResultType, result_p2: OptResultType, param: OptParamType = None) -> None:

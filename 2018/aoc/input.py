@@ -3,7 +3,7 @@ from typing import List
 
 
 class Input:
-    def __init__(self, fname: str, tests: List[str] = []):
+    def __init__(self, fname: str, tests: List[str] = [], raw_lines: bool = False):
         """Initialize input with the name of the input file and
            optionally also a list of other test inputs (strings)"""
         self.tests = [
@@ -11,7 +11,7 @@ class Input:
             for test in tests
         ]
         self.test_num = None
-        self._read_file(fname)
+        self._read_file(fname, raw_lines)
         self.lines = self._orig_lines
 
     def use_test(self, test_num: int) -> None:
@@ -78,6 +78,9 @@ class Input:
             ints += [int(x) for x in m]
         return ints
 
-    def _read_file(self, fname: str) -> None:
+    def _read_file(self, fname: str, raw_lines: bool) -> None:
         with open(fname, 'rt') as f:
-            self._orig_lines = [ln.strip() for ln in f.readlines()]
+            if raw_lines:
+                self._orig_lines = list(f.readlines())
+            else:
+                self._orig_lines = [ln.strip() for ln in f.readlines()]
