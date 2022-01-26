@@ -77,4 +77,44 @@ def test_get_all_ints():
     assert(i == [1, 2, 3, 4, 19, 5, 1, 4])
 
 
-# TODO: use_main_input, get_valid_lines
+def test_read_stripped_lines():
+    inp = Input(IFILE, raw_lines=False)
+    ln = inp.get_lines()
+    assert(len(ln) > 0)
+    assert(not ln[0].endswith('\n'))
+
+
+def test_read_raw_lines():
+    inp = Input(IFILE, raw_lines=True)
+    ln = inp.get_lines()
+    assert(len(ln) > 0)
+    assert(ln[0].endswith('\n'))
+
+
+def test_get_valid_lines():
+    # Note: when using the test input, the Input class doesn't do trimming, so the get_valid_lines
+    # only removes completely empty lines. For the real input, it would trim first and then remove
+    # empty lines, thus also removing lines with only whitespace characters. But we would need to
+    # test that against a real input file.
+    inp = Input(IFILE, ["""123
+
+.
+
+x"""])
+    inp.use_test(0)
+    ln = inp.get_valid_lines()
+    assert(len(ln) == 3)
+    assert(ln[0] == "123")
+    assert(ln[1] == ".")
+    assert(ln[2] == "x")
+
+
+def test_use_main_input():
+    inp = Input(IFILE, ["""123
+456"""])
+    inp.use_test(0)
+    ln = inp.get_all_ints()
+    assert(len(ln) == 2)
+    inp.use_main_input()
+    ln = inp.get_all_ints()
+    assert(len(ln) == 200)
