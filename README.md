@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **14** - mixing recipes - combining digits
 * **13** - carts going around and crashing
 * **12** - 1D game of life with plants
 * **11** - find square with highest value
