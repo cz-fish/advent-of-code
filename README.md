@@ -107,6 +107,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **5** - MD5 hashes again
 * **4** - Decode meeting room names
 * **3** - Detect valid triangles
 * **2** - Move across a keypad

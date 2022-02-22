@@ -7,6 +7,7 @@ edition = "2018"
 
 [dependencies]
 regex = "1"
+md5 = "0.7.0"
 
 [[bin]]
 name = "01"
@@ -24,3 +25,6 @@ path = "src/03.rs"
 name = "04"
 path = "src/04.rs"
 
+[[bin]]
+name = "05"
+path = "src/05.rs"
