@@ -90,4 +90,26 @@ def test_int_grid():
     assert(gr.get(1, 3) == 2)
 
 
+def test_are_neighbors4():
+    assert(Grid.are_neighbors4((3, 3), (4, 3)))
+    assert(Grid.are_neighbors4((3, 3), (2, 3)))
+    assert(Grid.are_neighbors4((3, 3), (3, 2)))
+    assert(Grid.are_neighbors4((3, 3), (3, 4)))
+    assert(not Grid.are_neighbors4((3, 3), (3, 3)))
+    assert(not Grid.are_neighbors4((3, 3), (2, 2)))
+    assert(not Grid.are_neighbors4((3, 3), (4, 2)))
+    assert(not Grid.are_neighbors4((3, 3), (10, 10)))
+
+def test_are_neighbors8():
+    assert(Grid.are_neighbors8((3, 3), (4, 3)))
+    assert(Grid.are_neighbors8((3, 3), (2, 3)))
+    assert(Grid.are_neighbors8((3, 3), (3, 2)))
+    assert(Grid.are_neighbors8((3, 3), (3, 4)))
+    assert(Grid.are_neighbors8((3, 3), (2, 2)))
+    assert(Grid.are_neighbors8((3, 3), (2, 4)))
+    assert(Grid.are_neighbors8((3, 3), (4, 2)))
+    assert(Grid.are_neighbors8((3, 3), (4, 4)))
+    assert(not Grid.are_neighbors8((3, 3), (3, 3)))
+    assert(not Grid.are_neighbors8((3, 3), (10, 10)))
+
 # TODO: test grid copy
