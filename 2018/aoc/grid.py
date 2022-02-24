@@ -98,3 +98,19 @@ class Grid:
         return self._neighborCoords(row, col, wrap, outside,
             [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)])
 
+    @classmethod
+    def are_neighbors4(cls, pos1:Tuple[int, int], pos2:Tuple[int, int]) -> bool:
+        """Return True if the two positions are neighbors, horizontally or vertically.
+           Return False if they are the same position, if they're neighbors diagonally,
+           or if they are further apart."""
+        d1 = abs(pos1[0] - pos2[0])
+        d2 = abs(pos1[1] - pos2[1])
+        return min(d1, d2) == 0 and max(d1, d2) == 1
+
+    @classmethod
+    def are_neighbors8(cls, pos1:Tuple[int, int], pos2:Tuple[int, int]) -> bool:
+        """Return True if the two positions are neighbors, horizontally, vertically, or diagonally.
+           Return False if they are the same position, or if they are further apart."""
+        d1 = abs(pos1[0] - pos2[0])
+        d2 = abs(pos1[1] - pos2[1])
+        return max(d1, d2) == 1

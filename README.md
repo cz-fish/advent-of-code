@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **15** - elves fighting goblins
 * **14** - mixing recipes - combining digits
 * **13** - carts going around and crashing
 * **12** - 1D game of life with plants
