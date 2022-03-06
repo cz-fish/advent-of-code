@@ -118,6 +118,7 @@
 * **1** - Navigate in 2d street grid
 
 ## 2015
+* **10** - Look and Say numbers
 * **9** - travelling salesman
 * **8** - count escaped characters in strings
 * **7** - Logical Circuit
