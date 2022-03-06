@@ -1,11 +1,9 @@
-const fs = require('fs');
-const assert = require('assert');
-
-const useTestInput = false;
+const fs = require("fs");
+const assert = require("assert");
 
 function makeGraph(lines) {
 	const graph = {};
-	for (line of lines) {
+	for (let line of lines) {
 		line = line.trim();
 		if (!line) {
 			continue;
@@ -21,14 +19,11 @@ function makeGraph(lines) {
 		if (!graph[city2]) {
 			graph[city2] = [];
 		}
-		graph[city1].push({city: city2, dist:distance});
-		graph[city2].push({city: city1, dist:distance});
+		graph[city1].push({ city: city2, dist: distance });
+		graph[city2].push({ city: city1, dist: distance });
 	}
 	return graph;
 }
-
-//let global_best = null;
-//let global_path = [];
 
 function shortest(val, new_val) {
 	return (val === null || new_val < val) ? new_val : val;
@@ -45,10 +40,6 @@ function shortestPath(graph, where, visited, pathHops, distance) {
 	const pos = visited.size;
 	//console.log(`where ${where} dist ${distance} target ${pathHops} pos ${pos}`);
 	if (pos === pathHops) {
-		//if (global_best === null || distance < global_best) {
-		//	global_best = distance;
-		//	console.log(`path ${distance}: ` + JSON.stringify(global_path));
-		//}
 		return distance;
 	}
 	let best = null;
@@ -60,10 +51,8 @@ function shortestPath(graph, where, visited, pathHops, distance) {
 			continue;
 		}
 		visited.add(nextCity);
-		//global_path.push(nextCity);
 		let len = shortestPath(graph, nextCity, visited, pathHops, distance + addDist);
 		visited.delete(nextCity);
-		//global_path.pop();
 		best = comparison_fn(best, len);
 	}
 	if (best === null) {
@@ -75,7 +64,6 @@ function shortestPath(graph, where, visited, pathHops, distance) {
 function find_best_path(input) {
 	const lines = input.split('\n');
 	const graph = makeGraph(lines);
-	//console.log(JSON.stringify(graph, null, 4));
 	const pathHops = Object.keys(graph).length;
 	let best = null;
 	const visited = new Set();
@@ -88,25 +76,29 @@ function find_best_path(input) {
 	return best;
 }
 
-if (useTestInput){
-  const example = "London to Dublin = 464\n\London to Belfast = 518\n\Dublin to Belfast = 141";
-  comparison_fn = shortest;
-  const res_part1 = find_best_path(example);
-  console.log(`Test part 1 expected 605, got ${res_part1}`);
-  comparison_fn = longest;
-  const res_part2 = find_best_path(example);
-  console.log(`Test part 2 expected 982, got ${res_part2}`);
-} else {
-  fs.readFile('/storage/emulated/0/wrk/input09-2015.txt', 'utf8' , (err, data) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    comparison_fn = shortest;
-    const res_part1 = find_best_path(data);
-    console.log(`Part 1 result ${res_part1}`);
-    comparison_fn = longest;
-    const res_part2 = find_best_path(data);
-    console.log(`Part 2 result ${res_part2}`);
-  })
-}
+// -- Test --
+const example = "London to Dublin = 464\n\London to Belfast = 518\n\Dublin to Belfast = 141";
+// part 1
+comparison_fn = shortest;
+const test_res_part1 = find_best_path(example);
+console.log(`Test part 1 expected 605, got ${test_res_part1}`);
+assert.equal(test_res_part1, 605);
+// part 2
+comparison_fn = longest;
+const test_res_part2 = find_best_path(example);
+console.log(`Test part 2 expected 982, got ${test_res_part2}`);
+assert.equal(test_res_part2, 982);
+
+// -- Actual input --
+fs.readFile('./input09.txt', 'utf8', (err, data) => {
+	if (err) {
+		console.error(err);
+		return;
+	}
+	comparison_fn = shortest;
+	const res_part1 = find_best_path(data);
+	console.log(`Part 1 result ${res_part1}`);
+	comparison_fn = longest;
+	const res_part2 = find_best_path(data);
+	console.log(`Part 2 result ${res_part2}`);
+})
