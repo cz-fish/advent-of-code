@@ -2,12 +2,9 @@
   "name": "aoc-2015",
   "version": "1.0.0",
   "description": "AoC 2015 solutions",
-  "main": "11.js",
-  "directories": {
-    "lib": "lib"
-  },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "bin": "node ./aoc2015.js"
   },
   "author": "",
   "license": "ISC",
