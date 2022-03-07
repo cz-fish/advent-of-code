@@ -45,36 +45,40 @@ function is_valid_password(pwd) {
   let trip = 0;
   for (let i = 1; i < PWD_LENGTH; i++) {
     if (i > 1) {
-      const a = pwd.charCodeAt(i-2);
-      const b = pwd.charCodeAt(i-1);
+      const a = pwd.charCodeAt(i - 2);
+      const b = pwd.charCodeAt(i - 1);
       const c = pwd.charCodeAt(i);
       if (a === b - 1 && b === c - 1) {
         trip++;
       }
     }
-    const d = pwd.charCodeAt(i-1);
+    const d = pwd.charCodeAt(i - 1);
     const e = pwd.charCodeAt(i);
-    if (d === e && !pairs.has(i-2)) {
-      pairs.add(i-1);
+    if (d === e && !pairs.has(i - 2)) {
+      pairs.add(i - 1);
     }
   }
   return trip > 0 && pairs.size > 1;
 }
 
-exports.increment_password = increment_password;
-exports.next_valid_password = next_valid_password;
-exports.is_valid_password = is_valid_password;
-
-if (require.main === module) {
-  // The main is this module, i.e. this module was ran directly (as opposed to
-  // running through require).
-
+function run() {
   // Real puzzle input
   const input = "vzbxkghb";
 
   const part1_res = next_valid_password(input);
   console.log(`Part 1: ${part1_res}`);
- 
+
   const part2_res = next_valid_password(part1_res);
   console.log(`Part 2: ${part2_res}`);
+}
+
+exports.increment_password = increment_password;
+exports.next_valid_password = next_valid_password;
+exports.is_valid_password = is_valid_password;
+exports.run = run;
+
+if (require.main === module) {
+  // The main is this module, i.e. this module was ran directly (as opposed to
+  // running through require).
+  run();
 }
