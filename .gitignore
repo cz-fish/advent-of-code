@@ -9,3 +9,5 @@ misc/
 *.xlsx
 *.exe
 2016/target/
+**/node_modules/
+2015/package-lock.json
