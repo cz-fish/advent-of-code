@@ -1,0 +1,17 @@
+{
+  "name": "aoc-2015",
+  "version": "1.0.0",
+  "description": "AoC 2015 solutions",
+  "main": "11.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^27.5.1"
+  }
+}
