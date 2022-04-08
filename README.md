@@ -108,6 +108,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **10** - Network of bots passing numbers
 * **9** - Word expansion
 * **8** - Rotate pixels on small display
 * **7** - Find palindromes of size 3 and 4
