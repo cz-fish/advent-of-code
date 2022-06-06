@@ -83,6 +83,8 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **17** - water sinking in the soil
+* **16** - decode assembly
 * **15** - elves fighting goblins
 * **14** - mixing recipes - combining digits
 * **13** - carts going around and crashing
