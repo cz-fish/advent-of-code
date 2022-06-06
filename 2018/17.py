@@ -28,7 +28,28 @@ y=10, x=492..508
 x=495, y=4..7
 x=503, y=4..7
 y=4, x=495..503
-y=7, x=495..503""", 0, None)
+y=7, x=495..503""", 102, None)
+
+e.T("""x=499 y=2..3
+x=501 y=2..3
+y=3 x=499..501
+x=500 y=5..6
+x=502 y=5..6
+y=6 x=500..502
+x=495 y=8..10
+x=505 y=8..10
+y=10 x=495..505
+x=510 y=2..10""", 0, None)
+
+e.T("""x=497 y=2..3
+x=503 y=2..3
+y=3 x=497..503
+x=492 y=6..12
+x=508 y=7..12
+y=12 x=492..508
+x=498 y=5..8
+x=502 y=6..8
+y=8 x=498..502""", 109, None)
 
 
 def get_lines(input):
@@ -90,13 +111,24 @@ def paint_ground_lines(grid, hor, ver):
             grid.grid[y][x] = '#'
 
 
+def print_ground(grid, hor_limit, ver_limit):
+    xrange = (max(0, hor_limit[0]-1), hor_limit[1]+2)
+    yrange = (0, ver_limit[1]+1)
+    print(f"x from {xrange[0]} to {xrange[1]}")
+    print(f"y from {yrange[0]} to {yrange[1]}")
+    for y in range(yrange[0], yrange[1]):
+        line = ''.join([grid.grid[y][x] for x in range(xrange[0], xrange[1])])
+        print(line)
+
+
 def flood_ground(grid, spring, ver_limit):
     maxy = ver_limit[1]
     streams = deque()
     streams.append((spring, 'V'))
-    # Some points will be visited multiple times, but we don't want
-    # the number of combinations to explode, so keep track of points
-    # that have already been explored.
+    # Some points will be visited multiple times. But they can only be
+    # used as streams twice - that is once vertically, and possibly
+    # once more horizontally. This set lists the streams that have already
+    # been used, together with which direction.
     springs_used = set()
     # Lowest depth where the current basin has overflown.
     # Prevent multiple columns in a basin rising to different heights.
@@ -104,10 +136,10 @@ def flood_ground(grid, spring, ver_limit):
     #outflow = 0
     while streams:
         pos, ori = streams.popleft()
-        if pos in springs_used:
+        if (pos, ori) in springs_used:
             continue
         # print (pos, ori)
-        springs_used.add(pos)
+        springs_used.add((pos, ori))
         x, y = pos
         if ori == 'V':
             # vertical flow
@@ -128,7 +160,7 @@ def flood_ground(grid, spring, ver_limit):
             for d in [-1, 1]:
                 _x = x + d
                 while True:
-                    assert x >= 0 and x < grid.w
+                    assert _x >= 0 and _x < grid.w, f"x ({_x}) out of range [0, {grid.w})"
                     if grid.grid[y][_x] == '#':
                         # clay barrier reached
                         stops += [_x - d]
@@ -152,16 +184,6 @@ def flood_ground(grid, spring, ver_limit):
     grid.grid[spring[1]][spring[0]] = '+'
 
 
-def print_ground(grid, hor_limit, ver_limit):
-    xrange = (max(0, hor_limit[0]-1), hor_limit[1]+2)
-    yrange = (0, ver_limit[1]+1)
-    print(f"x from {xrange[0]} to {xrange[1]}")
-    print(f"y from {yrange[0]} to {yrange[1]}")
-    for y in range(yrange[0], yrange[1]):
-        line = ''.join([grid.grid[y][x] for x in range(xrange[0], xrange[1])])
-        print(line)
-
-
 def count_wet(grid, hor_limit, ver_limit):
     xrange = (max(0, hor_limit[0]-1), hor_limit[1]+2)
     yrange = (ver_limit[0], ver_limit[1]+1)
@@ -169,6 +191,16 @@ def count_wet(grid, hor_limit, ver_limit):
     for y in range(yrange[0], yrange[1]):
         counter += sum([1 for x in range(xrange[0], xrange[1]) if grid.grid[y][x] == '~'])
     return counter
+
+
+def sanity_check_solution(grid, ver_limit):
+    # Check that there is at least one overflow at the very bottom of the grid
+    for x in range(0, grid.w):
+        if grid.grid[ver_limit[1]][x] == '~':
+            print(f'wet at {x}, {ver_limit[1]}')
+            return True
+    else:
+        assert False, f"Water didn't overflow to level {ver_limit[1]}"
 
 
 def part1(input):
@@ -179,6 +211,7 @@ def part1(input):
     grid = Grid(['.' * width for _ in range(height)])
     paint_ground_lines(grid, hor, ver)
     flood_ground(grid, SPRING, ver_limit)
+    sanity_check_solution(grid, ver_limit)
     print_ground(grid, hor_limit, ver_limit)
     return count_wet(grid, hor_limit, ver_limit)
 
@@ -186,6 +219,7 @@ def part1(input):
 e.run_tests(1, part1)
 #e.run_main(1, part1)
 
+# 35771 too high
 
 def part2(input):
     pass
