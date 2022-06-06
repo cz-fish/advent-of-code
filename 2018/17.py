@@ -7,6 +7,7 @@ from collections import deque
 SPRING = (500, 0)
 
 e = Env(17)
+
 e.T("""x=495, y=2..7
 y=7, x=495..501
 x=501, y=3..7
@@ -14,13 +15,14 @@ x=498, y=2..4
 x=506, y=1..2
 x=498, y=10..13
 x=504, y=10..13
-y=13, x=498..504""", 57, None)
+y=13, x=498..504""", 57, 14+15)
 
-e.T("""x=495 y=2..7""", 6, None)
+e.T("""x=495 y=2..7""", 6, 0)
 
-e.T("""x=500 y=2..7""", 12, None)
+e.T("""x=500 y=2..7""", 12, 0)
+
 e.T("""x=500 y=4..9
-x=495 y=2..4""", 16, None)
+x=495 y=2..4""", 16, 0)
 
 e.T("""x=492, y=2..10
 x=508, y=2..10
@@ -28,7 +30,7 @@ y=10, x=492..508
 x=495, y=4..7
 x=503, y=4..7
 y=4, x=495..503
-y=7, x=495..503""", 102, None)
+y=7, x=495..503""", 102, 15*4+6*4)
 
 e.T("""x=499 y=2..3
 x=501 y=2..3
@@ -39,7 +41,7 @@ y=6 x=500..502
 x=495 y=8..10
 x=505 y=8..10
 y=10 x=495..505
-x=510 y=2..10""", 0, None)
+x=510 y=2..10""", 55, 1+1+9*2)
 
 e.T("""x=497 y=2..3
 x=503 y=2..3
@@ -49,7 +51,7 @@ x=508 y=7..12
 y=12 x=492..508
 x=498 y=5..8
 x=502 y=6..8
-y=8 x=498..502""", 109, None)
+y=8 x=498..502""", 109, 5+5*5+15*3)
 
 
 def get_lines(input):
@@ -114,116 +116,121 @@ def paint_ground_lines(grid, hor, ver):
 def print_ground(grid, hor_limit, ver_limit):
     xrange = (max(0, hor_limit[0]-1), hor_limit[1]+2)
     yrange = (0, ver_limit[1]+1)
-    print(f"x from {xrange[0]} to {xrange[1]}")
-    print(f"y from {yrange[0]} to {yrange[1]}")
+    #print(f"x from {xrange[0]} to {xrange[1]}")
+    #print(f"y from {yrange[0]} to {yrange[1]}")
     for y in range(yrange[0], yrange[1]):
         line = ''.join([grid.grid[y][x] for x in range(xrange[0], xrange[1])])
         print(line)
+
+
+def find_line_boundary(grid, x, y, delta):
+    while grid.grid[y][x] in '.|':
+        if grid.grid[y+1][x] in '.|':
+            return x, False
+        x += delta
+    return x - delta, True
+
+
+def fill_pot(grid, x, y):
+    # Make horizontal lines of water blocks from the starting position x, y
+    # left and right until the nearest obstacle in each direction. If neither
+    # side or just one side is blocked, then this is a top wet line. If both
+    # sides are blocked then the line belongs to a basin, and the water flows
+    # one more level up. Repeat this process until the top level line is found.
+    # Each pot should have either one or two overflows (the end of the top line
+    # that is not obstructed), and the coordinates of these are returned.
+    overflows = []
+    while not overflows:
+        assert y > 0, f"overflowing too high up when filling up pot at x={x}"
+        lbound, lblocked = find_line_boundary(grid, x-1, y, -1)
+        rbound, rblocked = find_line_boundary(grid, x+1, y, 1)
+        if not lblocked:
+            overflows.append((lbound, y))
+        if not rblocked:
+            overflows.append((rbound, y))
+        char = '~' if not overflows else '|'
+        for _x in range(lbound, rbound+1):
+            grid.grid[y][_x] = char
+        y -= 1
+    return overflows
 
 
 def flood_ground(grid, spring, ver_limit):
     maxy = ver_limit[1]
     streams = deque()
     streams.append((spring, 'V'))
-    # Some points will be visited multiple times. But they can only be
-    # used as streams twice - that is once vertically, and possibly
-    # once more horizontally. This set lists the streams that have already
-    # been used, together with which direction.
-    springs_used = set()
-    # Lowest depth where the current basin has overflown.
-    # Prevent multiple columns in a basin rising to different heights.
-    # This would be necessary if water pressure applied, but it doesn't.
-    #outflow = 0
+
     while streams:
         pos, ori = streams.popleft()
-        if (pos, ori) in springs_used:
-            continue
         # print (pos, ori)
-        springs_used.add((pos, ori))
         x, y = pos
         if ori == 'V':
             # vertical flow
             y += 1
             while y <= maxy and grid.grid[y][x] == '.':
-                grid.grid[y][x] = '~'
+                grid.grid[y][x] = '|'
                 y += 1
-            if y <= maxy:
+            # We've found the edge of the map, or an obstacle
+            # If it's an obstacle, and it isn't another vertical
+            # stream already, then add a horizontal stream at that point
+            if y <= maxy and grid.grid[y][x] != '|':
                 streams.append(((x, y-1), 'H'))
         else:
             # horizontal flow
             assert y > 0
-            #if y < outflow:
-            #    continue
-            grid.grid[y][x] = '~'
-            # go left and right
-            stops = []
-            for d in [-1, 1]:
-                _x = x + d
-                while True:
-                    assert _x >= 0 and _x < grid.w, f"x ({_x}) out of range [0, {grid.w})"
-                    if grid.grid[y][_x] == '#':
-                        # clay barrier reached
-                        stops += [_x - d]
-                        break
-                    grid.grid[y][_x] = '~'
-                    if grid.grid[y+1][_x] == '.':
-                        streams.append(((_x, y), 'V'))
-                        #outflow = max(outflow, y)
-                        break
-                    _x += d
-            # flow up if blocked on both ends
-            if len(stops) == 2:
-                # The water only rises along the vertical flow
-                streams.append(((x, y-1), 'H'))
-                # If water pressure would have applied, then this
-                # would be the solution instead. But it doesn't.
-                #for _x in range(stops[0], stops[1]+1):
-                #    if grid.grid[y-1][_x] != '#':
-                #        streams.append(((_x, y-1), 'H'))
+            overflows = fill_pot(grid, x, y)
+            for overflow in overflows:
+                streams.append((overflow, 'V'))
 
     grid.grid[spring[1]][spring[0]] = '+'
 
 
-def count_wet(grid, hor_limit, ver_limit):
+def count_wet(grid, hor_limit, ver_limit, dry_only=False):
+    significant = '~' if dry_only else '~|'
     xrange = (max(0, hor_limit[0]-1), hor_limit[1]+2)
     yrange = (ver_limit[0], ver_limit[1]+1)
     counter = 0
     for y in range(yrange[0], yrange[1]):
-        counter += sum([1 for x in range(xrange[0], xrange[1]) if grid.grid[y][x] == '~'])
+        counter += sum([1 for x in range(xrange[0], xrange[1]) if grid.grid[y][x] in significant])
     return counter
 
 
 def sanity_check_solution(grid, ver_limit):
     # Check that there is at least one overflow at the very bottom of the grid
     for x in range(0, grid.w):
-        if grid.grid[ver_limit[1]][x] == '~':
-            print(f'wet at {x}, {ver_limit[1]}')
+        if grid.grid[ver_limit[1]][x] == '|':
+            #print(f'wet at {x}, {ver_limit[1]}')
             return True
     else:
         assert False, f"Water didn't overflow to level {ver_limit[1]}"
 
 
-def part1(input):
+def common_part(input):
     hor, ver, hor_limit, ver_limit = get_lines(input)
     width = hor_limit[1] + 2
     height = ver_limit[1] + 1
-    #print(width, height)
     grid = Grid(['.' * width for _ in range(height)])
     paint_ground_lines(grid, hor, ver)
     flood_ground(grid, SPRING, ver_limit)
+    # uncomment to see the magic
+    #print_ground(grid, hor_limit, ver_limit)
     sanity_check_solution(grid, ver_limit)
-    print_ground(grid, hor_limit, ver_limit)
+    return grid, hor_limit, ver_limit
+
+
+def part1(input):
+    grid, hor_limit, ver_limit = common_part(input)
     return count_wet(grid, hor_limit, ver_limit)
 
 
 e.run_tests(1, part1)
-#e.run_main(1, part1)
+e.run_main(1, part1)
 
-# 35771 too high
 
 def part2(input):
-    pass
+    grid, hor_limit, ver_limit = common_part(input)
+    return count_wet(grid, hor_limit, ver_limit, dry_only=True)
 
 
-# e.run_tests(2, part2)
-# e.run_main(2, part2)
+e.run_tests(2, part2)
+e.run_main(2, part2)
