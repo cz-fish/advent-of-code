@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **18** - 3-state game of life with plasma effects
 * **17** - water sinking in the soil
 * **16** - decode assembly
 * **15** - elves fighting goblins
