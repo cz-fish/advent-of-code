@@ -105,10 +105,19 @@ class WristwatchComputer:
         # increment instruction pointer
         self.reg[self.ip_index] += 1
     
-    def run(self, program: List[Tuple[int, int, int, int]], instr_map: Dict[int, str]):
+    def run_with_mapping(self, program: List[Tuple[int, int, int, int]], instr_map: Dict[int, str]):
+        # Run program where instruction opcodes are encoded as integers with
+        # a dictionary provided
         self.reg[self.ip_index] = 0
         while self.reg[self.ip_index] >= 0 and self.reg[self.ip_index] < len(program):
             opnum, s1, s2, dst = program[self.reg[self.ip_index]]
             assert opnum in instr_map
             opcode = instr_map[opnum]
             self.step((opcode, s1, s2, dst))
+    
+    def run(self, program: List[Tuple[str, int, int, int]]):
+        self.reg[self.ip_index] = 0
+        while self.reg[self.ip_index] >= 0 and self.reg[self.ip_index] < len(program):
+            opcode, s1, s2, dst = program[self.reg[self.ip_index]]
+            self.step((opcode, s1, s2, dst))
+

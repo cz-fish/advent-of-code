@@ -106,7 +106,7 @@ def part2(input):
     for k, v in mapping.items():
         print(f"{k} -> {v}")
     comp = WristwatchComputer()
-    comp.run(program, mapping)
+    comp.run_with_mapping(program, mapping)
     return comp.reg[0]
 
 
