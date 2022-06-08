@@ -107,13 +107,15 @@ class WristwatchComputer:
     
     def run_with_mapping(self, program: List[Tuple[int, int, int, int]], instr_map: Dict[int, str]):
         # Run program where instruction opcodes are encoded as integers with
-        # a dictionary provided
-        self.reg[self.ip_index] = 0
-        while self.reg[self.ip_index] >= 0 and self.reg[self.ip_index] < len(program):
-            opnum, s1, s2, dst = program[self.reg[self.ip_index]]
+        # a dictionary provided.
+
+        # Translate opnums to opcodes and then just run normally.
+        real_program = []
+        for opnum, s1, s2, dst in program:
             assert opnum in instr_map
             opcode = instr_map[opnum]
-            self.step((opcode, s1, s2, dst))
+            real_program.append((opcode, s1, s2, dst))
+        self.run(real_program)
     
     def run(self, program: List[Tuple[str, int, int, int]]):
         self.reg[self.ip_index] = 0
