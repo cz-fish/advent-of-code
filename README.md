@@ -83,9 +83,10 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **19** - wristwatch computer: instruction pointer, loops, assembly analysis
 * **18** - 3-state game of life with plasma effects
 * **17** - water sinking in the soil
-* **16** - decode assembly
+* **16** - wristwatch computer: figure out assembly opcodes
 * **15** - elves fighting goblins
 * **14** - mixing recipes - combining digits
 * **13** - carts going around and crashing
