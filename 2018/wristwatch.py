@@ -37,6 +37,11 @@ eqrr (equal register/register) sets register C to 1 if register A is equal to re
 # expanded to 6 on day 19
 NUM_REGISTERS = 6
 
+IntInstruction = Tuple[int, int, int, int]
+Instruction = Tuple[str, int, int, int]
+IntProgram = List[IntInstruction]
+Program = List[Instruction]
+
 class WristwatchComputer:
     def __init__(self, instr_ptr=None):
         self.reg = [0] * NUM_REGISTERS
@@ -65,8 +70,10 @@ class WristwatchComputer:
         # If fewer than NUM_REGISTERS provided, pad with zeroes
         self.reg = (reg + [0] * NUM_REGISTERS)[:NUM_REGISTERS]
 
-    def step(self, instruction: Tuple[str, int, int, int]):
+    def step(self, instruction: Tuple[str, int, int, int]) -> str:
         op, s1, s2, dst = instruction
+
+        effect = str(self.reg) + "\t" + str(instruction) + "\t"
 
         if op == 'seti' or op[2] == 'i':
             # seti, gtir, eqir have s1 as a value
@@ -104,10 +111,10 @@ class WristwatchComputer:
             assert False, f"Invalid instruction {instruction}"
 
         self.reg[dst] = val
-        # increment instruction pointer
-        self.reg[self.ip_index] += 1
+        effect += str(self.reg)
+        return effect
     
-    def run_with_mapping(self, program: List[Tuple[int, int, int, int]], instr_map: Dict[int, str]):
+    def run_with_mapping(self, program: IntProgram, instr_map: Dict[int, str]):
         # Run program where instruction opcodes are encoded as integers with
         # a dictionary provided.
 
@@ -119,9 +126,76 @@ class WristwatchComputer:
             real_program.append((opcode, s1, s2, dst))
         self.run(real_program)
     
-    def run(self, program: List[Tuple[str, int, int, int]]):
-        self.reg[self.ip_index] = 0
-        while self.reg[self.ip_index] >= 0 and self.reg[self.ip_index] < len(program):
-            opcode, s1, s2, dst = program[self.reg[self.ip_index]]
-            self.step((opcode, s1, s2, dst))
+    def run(self, program: Program, print_as_you_go=False, break_after=None):
+        instrptr = 0
+        cycles = 0
+        while instrptr >= 0 and instrptr < len(program):
+            # update instruction pointer register
+            self.reg[self.ip_index] = instrptr
+            opcode, s1, s2, dst = program[instrptr]
+            effect = self.step((opcode, s1, s2, dst))
+            if print_as_you_go:
+                print(f"{cycles}\t{instrptr}\t{effect}")
+            instrptr = self.reg[self.ip_index] + 1
+            cycles += 1
+            if break_after is not None and cycles == break_after:
+                break
+        return cycles
+
+    def explain_instruction(self, instruction: Instruction) -> str:
+        op, s1, s2, dst = instruction
+
+        reg_map = self.get_register_map()
+
+        if op == 'seti' or op[2] == 'i':
+            # seti, gtir, eqir have s1 as a value
+            first = str(s1)
+        else:
+            # all other instructions treat it as register
+            first = reg_map[s1]
+        
+        if op[3] == 'i':
+            second = str(s2)
+        elif op[3] == 'r':
+            second = reg_map[s2]
+
+        expr = None
+        if op[0] == 'a':
+            expr = f"{first} + {second}"
+        elif op[0] == 'm':
+            expr = f"{first} * {second}"
+        elif op[0] == 'b':
+            if op[1] == 'a':
+                expr = f"{first} & {second}"
+            elif op[1] == 'o':
+                expr = f"{first} | {second}"
+        elif op[0] == 's':
+            expr = first
+        elif op[0] in 'eg':
+            if op[0] == 'g':
+                expr = f"{first} > {second} ?"
+            else:
+                expr = f"{first} == {second} ?"
+        else:
+            assert False, f"Invalid opcode {op}, instruction {instruction}"
+        
+        if expr is None:
+            assert False, f"Invalid instruction {instruction}"
+
+        if dst == self.ip_index:
+            return f"jmp {expr} (+1)"
+        else:
+            return f"{expr} -> {reg_map[dst]}"
+
+    def get_register_map(self) -> Dict[int, str]:
+        # Map register numbers to letters A..E, skipping the register that represents the instruction pointer
+        reg_map = dict(zip([i for i in range(NUM_REGISTERS) if i != self.ip_index], [chr(ord('A') + x) for x in range(NUM_REGISTERS - 1)]))
+        # Name the instruction pointer register IP
+        reg_map[self.ip_index] = "IP"
+        return reg_map
+
+    def explain_program(self, program: Program) -> List[str]:
+        reg_map = self.get_register_map()
+        return [', '.join([f"{reg_map[i]}: {self.reg[i]}" for i in range(NUM_REGISTERS)])] + \
+            [f"[{i}]\t" + self.explain_instruction(instr) for i, instr in enumerate(program)]
 
