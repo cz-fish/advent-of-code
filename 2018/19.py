@@ -58,12 +58,85 @@ def part2(input):
     ip, program = parse_program(input)
     comp = WristwatchComputer(ip)
     comp.reg[0] = 1
+    # This only rewrites the program into a more readable form (see below)
     for expl in comp.explain_program(program):
         print(expl)
-    #comp.run(program, True)
+    # ... but we're not going to run the program, because it would take too long
+    #comp.run(program)
     #return comp.reg[0]
 
-e.run_tests(2, part2)
+    # TODO: given the algorithm explained below is always the same, just with different constants,
+    #       extract the constants from thse interesting instructions: 17, 20, 21, 23, 31
+    #       and actually implement a solver that will calculate the constant value and factorization
+
+
+#e.run_tests(2, part2)
 e.run_main(2, part2)
 
-# 10551288 too low
+"""
+A: 1, B: 0, C: 0, D: 0, IP: 0, E: 0
+[0]     jmp IP + 16 (+1)
+[1]     1 -> D
+[2]     1 -> E
+[3]     D * E -> B
+[4]     B == C ? -> B
+[5]     jmp B + IP (+1)
+[6]     jmp IP + 1 (+1)
+[7]     D + A -> A
+[8]     E + 1 -> E
+[9]     E > C ? -> B
+[10]    jmp IP + B (+1)
+[11]    jmp 2 (+1)
+[12]    D + 1 -> D
+[13]    D > C ? -> B
+[14]    jmp B + IP (+1)
+[15]    jmp 1 (+1)
+[16]    jmp IP * IP (+1)
+[17]    C + 2 -> C
+[18]    C * C -> C
+[19]    IP * C -> C
+[20]    C * 11 -> C
+[21]    B + 2 -> B
+[22]    B * IP -> B
+[23]    B + 7 -> B
+[24]    C + B -> C
+[25]    jmp IP + A (+1)
+[26]    jmp 0 (+1)
+[27]    IP -> B
+[28]    B * IP -> B
+[29]    IP + B -> B
+[30]    IP * B -> B
+[31]    B * 14 -> B
+[32]    B * IP -> B
+[33]    C + B -> C
+[34]    0 -> A
+[35]    jmp 0 (+1)
+
+-----
+initialization (instructions 17 to 35):
+
+C = 2 * 2 * 19 * 11 (=836)
+B = 2 * 22 + 7 (=51)
+C = 836 + 51 = 887
+if part2:
+    B = (27 * 28 + 29) * 30 * 14 * 32 (=10550400)
+    C = 887 + 10550400 (=10551287)
+A = 0 (reset result. Initial value 1 was only used for the above 'if')
+
+-----
+loops: (instructions 1 to 16, equivalent program):
+
+for (D = 1; D <= C; D++):
+    for (E = 1; E <= C; E++):
+        if D * E == C:
+            A += D
+
+A is the result.
+
+-----
+analysis:
+
+A is the sum of all factors of C.
+In part1, C = 887, which is prime, so the only factors are 1, 887. Therefore A = 888
+In part2, C = 10551287. Prime factors 127, 251, 331. Result = 1 + 127 + 251 + 331 + 31877 + 42037 + 83081 + 10551287 = 10708992
+"""
