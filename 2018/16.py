@@ -44,9 +44,9 @@ def which_opcodes(observed):
     possible = []
     for opcode in WristwatchComputer.all_instructions():
         comp = WristwatchComputer()
-        comp.reg = list(before)
+        comp.set_regs(list(before))
         comp.step((opcode, instr[1], instr[2], instr[3]))
-        if comp.reg == list(after):
+        if comp.reg[:4] == list(after):
             possible.append(opcode)
     return possible
 
