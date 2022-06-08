@@ -68,7 +68,13 @@ class WristwatchComputer:
     def step(self, instruction: Tuple[str, int, int, int]):
         op, s1, s2, dst = instruction
 
-        first = self.reg[s1]
+        if op == 'seti' or op[2] == 'i':
+            # seti, gtir, eqir have s1 as a value
+            first = s1
+        else:
+            # all other instructions treat it as register
+            first = self.reg[s1]
+
         if op[3] == 'i':
             second = s2
         elif op[3] == 'r':
@@ -85,12 +91,8 @@ class WristwatchComputer:
             elif op[1] == 'o':
                 val = first | second
         elif op[0] == 's':
-            if op[3] == 'i':
-                first = s1
             val = first
         elif op[0] in 'eg':
-            if op[2] == 'i':
-                first = s1
             if op[0] == 'g':
                 val = 1 if first > second else 0
             else:
