@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from aoc import Env, Integers
 from wristwatch import WristwatchComputer
 
 e = Env(19)
@@ -36,8 +36,8 @@ def part1(input):
     return comp.reg[0]
 
 
-e.run_tests(1, part1)
-e.run_main(1, part1)
+#e.run_tests(1, part1)
+#e.run_main(1, part1)
 
 """
 tail of part 1
@@ -65,9 +65,28 @@ def part2(input):
     #comp.run(program)
     #return comp.reg[0]
 
-    # TODO: given the algorithm explained below is always the same, just with different constants,
-    #       extract the constants from thse interesting instructions: 17, 20, 21, 23, 31
-    #       and actually implement a solver that will calculate the constant value and factorization
+    # Analytical solution for both parts. Full explanation of the program at the bottom
+    # Given the algorithm explained below is always the same, just with different constants,
+    # extract the constants from thse interesting instructions: 17, 20, 21, 23, 31
+    # and actually implement a solver that will calculate the constant value and factorization
+    parameters = [
+        program[17][2], # [17] C + _x -> C
+        program[20][2], # [20] C * _x -> C
+        program[21][2], # [21] B + _x -> B
+        program[23][2], # [23] B + _x -> B
+        program[31][2], # [31] B * _x -> B
+    ]
+
+    a, b, c, d, e = parameters
+    part1_magic_value = a * a * 19 * b + c * 22 + d
+    part2_magic_value = part1_magic_value + (27 * 28 + 29) * 30 * e * 32
+
+    print(f"paramters: {parameters}")
+
+    divisors = Integers.all_divisors(part1_magic_value)
+    print(f"Part 1: magic: {part1_magic_value}, divisors {divisors}, result: {sum(divisors)}")
+    divisors = Integers.all_divisors(part2_magic_value)
+    print(f"Part 2: magic: {part2_magic_value}, divisors {divisors}, result: {sum(divisors)}")
 
 
 #e.run_tests(2, part2)
