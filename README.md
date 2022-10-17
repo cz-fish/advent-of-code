@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **20** - regex maze
 * **19** - wristwatch computer: instruction pointer, loops, assembly analysis
 * **18** - 3-state game of life with plasma effects
 * **17** - water sinking in the soil
