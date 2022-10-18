@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **21** - wristwatch computer: assembly analysis
 * **20** - regex maze
 * **19** - wristwatch computer: instruction pointer, loops, assembly analysis
 * **18** - 3-state game of life with plasma effects

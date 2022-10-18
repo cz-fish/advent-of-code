@@ -157,7 +157,10 @@ class WristwatchComputer:
         if op[3] == 'i':
             second = str(s2)
         elif op[3] == 'r':
-            second = reg_map[s2]
+            if s2 not in reg_map:
+                second = '_'
+            else:
+                second = reg_map[s2]
 
         expr = None
         if op[0] == 'a':
@@ -199,3 +202,17 @@ class WristwatchComputer:
         return [', '.join([f"{reg_map[i]}: {self.reg[i]}" for i in range(NUM_REGISTERS)])] + \
             [f"[{i}]\t" + self.explain_instruction(instr) for i, instr in enumerate(program)]
 
+
+def parse_program(lines):
+    ip = None
+    program = []
+    for ln in lines:
+        if ln.startswith('#ip '):
+            assert ip is None, f"instruction pointer given twice - previous {ip}, now {ln}"
+            ip = int(ln[4:])
+        else:
+            parts = ln.split(' ')
+            assert len(parts) == 4, f"wrong instruction format {ln}"
+            program.append((parts[0], int(parts[1]), int(parts[2]), int(parts[3])))
+    assert ip is not None, "Expected instruction pointer declaration, but didn't find it!"
+    return ip, program
