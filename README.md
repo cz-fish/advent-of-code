@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **22** - pathfinding in randomly generated terrain
 * **21** - wristwatch computer: assembly analysis
 * **20** - regex maze
 * **19** - wristwatch computer: instruction pointer, loops, assembly analysis
