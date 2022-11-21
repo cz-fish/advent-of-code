@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **23** - nanobot cloud with manhattan distances
 * **22** - pathfinding in randomly generated terrain
 * **21** - wristwatch computer: assembly analysis
 * **20** - regex maze
