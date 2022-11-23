@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **24** - battle of the immune system
 * **23** - nanobot cloud with manhattan distances
 * **22** - pathfinding in randomly generated terrain
 * **21** - wristwatch computer: assembly analysis
