@@ -10,7 +10,10 @@ e.T("""Immune System:
 
 Infection:
 801 units each with 4706 hit points (weak to radiation) with an attack that does 116 bludgeoning damage at initiative 1
-4485 units each with 2961 hit points (immune to radiation; weak to fire, cold) with an attack that does 12 slashing damage at initiative 4""", 5216, 51)
+4485 units each with 2961 hit points (immune to radiation; weak to fire, cold) with an attack that does 12 slashing damage at initiative 4""",
+    5216,
+    51,
+    param='test')
 
 IS = 'IS'
 INF = 'INF'
@@ -27,6 +30,9 @@ class Group:
         self.atk_type = atk_type
         self.initiative = initiative
     
+    def copy_with_boost(self, boost):
+        return Group(self.army, self.id, self.units, self.hp, self.immune, self.weak, self.atk + boost, self.atk_type, self.initiative)
+
     def power(self):
         return self.units * self.atk
 
@@ -139,6 +145,7 @@ def battle_round(armies):
         for i, group in enumerate(armies[army]):
             all_groups.append((group.initiative, army, i, group))
     # attack in order of initiative
+    tie = True
     all_groups.sort(reverse=True)
     for (_, army, index, group) in all_groups:
         if group.units <= 0:
@@ -153,7 +160,13 @@ def battle_round(armies):
         dmg = calculate_damage(group, target_group)
         units_killed = min(target_group.units, dmg // target_group.hp)
         target_group.units -= units_killed
+        if units_killed > 0:
+            tie = False
         #print(f"{army} group {index} deals {dmg} dmg to {enemy_army} group {target_idx} and kills {units_killed} units")
+
+    if tie:
+        # nobody killed anybody; this would be a tie
+        return {}
 
     # return remaining armies
     remaining_is = [g for g in armies[IS] if g.units > 0]
@@ -183,7 +196,7 @@ def part1(input):
         #print_armies(armies)
     print(f"Finished after {round} rounds")
     # print_armies(armies)
-    assert len(armies) == 1, f"Got {len(armies)} at the end of the battle"
+    assert len(armies) == 1, f"Got a tie. {len(armies)} armies at the end of the battle"
     winners = list(armies.values())[0]
     return sum([group.units for group in winners])
 
@@ -191,10 +204,46 @@ def part1(input):
 e.run_tests(1, part1)
 e.run_main(1, part1)
 
+def copy_armies_with_boost(original_armies, boost):
+    armies = {
+        IS: [],
+        INF: []
+    }
+    for group in original_armies[IS]:
+        armies[IS].append(group.copy_with_boost(boost))
+    for group in original_armies[INF]:
+        armies[INF].append(group.copy_with_boost(0))
+    return armies
+
+
+def run_with_boost(original_armies, boost):
+    armies = copy_armies_with_boost(original_armies, boost)
+    while len(armies) == 2:
+        armies = battle_round(armies)
+    if IS not in armies:
+        # Either IS lost, or there was a tie, which is as good as a loss
+        return 0
+    return sum([group.units for group in armies[IS]])
+
 
 def part2(input):
-    pass
+    is_test = e.get_param() == 'test'
+    armies = make_armies(input)
+    min_boost = 0
+    max_boost = 20000
+    assert run_with_boost(armies, min_boost) == 0, "Already won without any boost"
+    assert run_with_boost(armies, max_boost) > 0, f"Max boost too low, cannot win with boost={max_boost}"
+    while max_boost - min_boost > 1:
+        boost = (max_boost + min_boost) // 2
+        res = run_with_boost(armies, boost)
+        if not is_test:
+            print(f"Boost [{min_boost} {boost} {max_boost}], result {res}")
+        if res > 0:
+            max_boost = boost
+        else:
+            min_boost = boost
+    return run_with_boost(armies, max_boost)
 
 
-# e.run_tests(2, part2)
-# e.run_main(2, part2)
+e.run_tests(2, part2)
+e.run_main(2, part2)
