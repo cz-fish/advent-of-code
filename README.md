@@ -83,6 +83,7 @@
 * **1** - Recurrent formula
 
 ## 2018
+* **25** - count connected components
 * **24** - battle of the immune system
 * **23** - nanobot cloud with manhattan distances
 * **22** - pathfinding in randomly generated terrain
