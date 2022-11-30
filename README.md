@@ -130,6 +130,7 @@
 * **1** - Navigate in 2d street grid
 
 ## 2015
+* **17** - choose pots - kind of knapsack
 * **16** - Aunt Sue
 * **15** - combining cooking ingredients
 * **14** - racing reindeers
