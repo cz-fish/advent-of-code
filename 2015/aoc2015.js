@@ -5,6 +5,7 @@ const d12 = require("./12.js");
 const d13 = require("./13.js");
 const d14 = require("./14.js");
 const d15 = require("./15.js");
+const d16 = require("./16.js");
 
 const dayMap = {
     9: d09.run,
@@ -14,6 +15,7 @@ const dayMap = {
     13: d13.run,
     14: d14.run,
     15: d15.run,
+    16: d16.run,
 };
 
 process.argv.forEach(arg => {
