@@ -1,9 +1,9 @@
 const fs = require('fs');
 
-function part1() {
+function part1(data) {
 }
 
-function part2() {
+function part2(data) {
 }
 
 function run() {
