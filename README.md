@@ -1,5 +1,8 @@
 # Advent of Code
 
+## 2022
+* **1** - count calories
+
 ## 2021
 * **25** - moving sea-cucumbers (Biham-Middleton-Levine traffic model)
 * **24** - reverse engineer ALU - find model number
