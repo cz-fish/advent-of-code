@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **2** - rock paper scissors
 * **1** - count calories
 
 ## 2021
