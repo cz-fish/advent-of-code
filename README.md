@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **4** - overlapping ranges
 * **3** - organising rucksacks
 * **2** - rock paper scissors
 * **1** - count calories
