@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **5** - stacking crates
 * **4** - overlapping ranges
 * **3** - organising rucksacks
 * **2** - rock paper scissors
