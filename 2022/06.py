@@ -3,7 +3,7 @@
 from aoc import Env
 
 e = Env(6)
-e.T("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 7, 25) # The page says 19 for pt 2
+e.T("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 7, 19)
 e.T("bvwbjplbgvbhsrlpgdmjqwftvncz", 5, 23)
 e.T("nppdvjthqldpwncqszvftbrmjlhg", 6, 23)
 e.T("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 10, 29)
@@ -17,8 +17,8 @@ def find_start_packet(line, unique_cnt):
         if c in seen:
             repeat = max(repeat, seen[c])
         seen[c] = i
-        if i - repeat > unique_cnt:
-            return i
+        if i - repeat >= unique_cnt:
+            return i + 1
     assert False, "no start of packet found"
 
 
