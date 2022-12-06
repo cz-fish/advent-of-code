@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **6** - finding start of packet
 * **5** - stacking crates
 * **4** - overlapping ranges
 * **3** - organising rucksacks
