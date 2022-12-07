@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **7** - cleaning filesystem
 * **6** - finding start of packet
 * **5** - stacking crates
 * **4** - overlapping ranges
