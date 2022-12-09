@@ -1,6 +1,8 @@
 # Advent of Code
 
 ## 2022
+* **9** - snapping rope
+* **8** - tree heights for tree house
 * **7** - cleaning filesystem
 * **6** - finding start of packet
 * **5** - stacking crates
