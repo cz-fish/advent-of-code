@@ -1,6 +1,9 @@
 # Advent of Code
 
 ## 2022
+* **12** - shortest path in elevation grid
+* **11** - monkeys throwing stuff
+* **10** - display signal timings
 * **9** - snapping rope
 * **8** - tree heights for tree house
 * **7** - cleaning filesystem
