@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **13** - distress signal - sorting lists of ints
 * **12** - shortest path in elevation grid
 * **11** - monkeys throwing stuff
 * **10** - display signal timings
