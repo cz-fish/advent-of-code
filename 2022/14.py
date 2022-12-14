@@ -82,11 +82,19 @@ def sand_flood(scan, offset, max_y):
     counter = 0
     # down, left-down, right-down in this order
     fall_directions = [[0, 1], [-1, 1], [1, 1]]
+    path = []
     while True:
-        grain = [SOURCE[0], SOURCE[1]]
-        if scan[grain[1] - offset[1]][grain[0] - offset[0]] != '.':
+        if not path:
+            # first grain, start from the source
+            grain = [SOURCE[0], SOURCE[1]]
+        else:
+            # start from where the previous grain landed
+            grain = path.pop()
+
+        if scan[SOURCE[1] - offset[1]][SOURCE[0] - offset[0]] != '.':
             # source blocked
             return counter
+
         while True:
             if grain[1] >= max_y:
                 # grain falls off. Stop
@@ -95,12 +103,15 @@ def sand_flood(scan, offset, max_y):
                 nx = grain[0] + direction[0]
                 ny = grain[1] + direction[1]
                 if scan[ny - offset[1]][nx - offset[0]] == '.':
+                    path.append(grain)
                     grain = [nx, ny]
                     break
             else:
                 # nowhere to fall, settle
                 scan[grain[1] - offset[1]][grain[0] - offset[0]] = 'o'
                 counter += 1
+                # notably don't push `grain` into `path`, to restart
+                # from the position before it.
                 break
         # next grain
     # unreachable
