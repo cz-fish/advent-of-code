@@ -26,9 +26,13 @@ number = re.compile(r'-?\d+')
 def dist(x1, y1, x2, y2):
     return abs(x2-x1) + abs(y2-y1)
 
+def point_in_square(point, square):
+    return point[0] >= square[0] and point[0] <= square[2] and point[1] >= square[1] and point[1] <= square[3]
+
 
 class Sensor:
-    def __init__(self, sx, sy, bx, by):
+    def __init__(self, number, sx, sy, bx, by):
+        self.number = number
         self.sx = sx
         self.sy = sy
         self.bx = bx
@@ -57,14 +61,20 @@ class Sensor:
         """
         # if the ranges crossed, the interval will be considered empty
         return [i_min, i_max]
+    
+    def covers(self, point):
+        return self.strength >= dist(self.sx, self.sy, point[0], point[1])
+
+    def __repr__(self):
+        return f"[{self.number}: ({self.sx}, {self.sy}), {self.strength}]"
 
 
 def parse_input(lines):
     sensors = []
-    for ln in lines:
+    for i, ln in enumerate(lines):
         numbers = [int(x) for x in number.findall(ln)]
         assert len(numbers) == 4
-        sensors.append(Sensor(*numbers))
+        sensors.append(Sensor(i, *numbers))
     return sensors
 
 
@@ -106,7 +116,7 @@ def count_overlap(sensors, beacons, line):
     # sum sizes of the remaining intervals
     line_coverage = sum([i[1] - i[0] + 1 for i in intervals])
     beacons_included = count_included_beacons(intervals, beacons, line)
-    print(f"line coverage {line_coverage}, beacons included {beacons_included}")
+    #print(f"line coverage {line_coverage}, beacons included {beacons_included}")
     return line_coverage - beacons_included
 
 
@@ -160,12 +170,74 @@ def find_empty(sensors, limit):
     assert False, "no empty position found"
 
 
-def part2(input):
+def part2_slower(input):
     sensors = parse_input(input.get_valid_lines())
-    beacons = set([(s.bx, s.by) for s in sensors])
     limit = e.get_param()['limit']
     x, y = find_empty(sensors, limit)
     print(f"empty position {x}, {y}")
+    return x * 4000000 + y
+
+
+def find_empty_subdividing(sensors, square):
+    left, top, right, bottom = square
+    width = right - left
+    if width == 0:
+        # single square
+        if not sensors:
+            return left, top
+        return None, None
+    else:
+        # subdivide
+        half = width // 2
+        for subsquare in [
+            (left, top, left + half, top + half),             # top left
+            (left + half + 1, top, right, top + half),        # top right
+            (left, top + half + 1, left + half, bottom),      # bottom left
+            (left + half + 1, top + half + 1, right, bottom)  # bottom right
+        ]:
+            sleft, stop, sright, sbottom = subsquare
+            subsensors = []
+            fully_covered = False
+            for sensor in sensors:
+                corners_covered_by_sensor = sum([
+                    1 for corner in [(sleft, stop), (sright, stop), (sleft, sbottom), (sright, sbottom)]
+                    if sensor.covers(corner)])
+                if corners_covered_by_sensor == 4:
+                    fully_covered = True
+                    break
+                
+                points_inside = sum([
+                    1 for point in [
+                        (sensor.sx, sensor.sy),
+                        (sensor.sx, sensor.sy - sensor.strength),
+                        (sensor.sx + sensor.strength, sensor.sy),
+                        (sensor.sx, sensor.sy + sensor.strength),
+                        (sensor.sx - sensor.strength, sensor.sy)
+                    ] if point_in_square(point, subsquare)])
+
+                if corners_covered_by_sensor > 0 or points_inside > 0:
+                    subsensors.append(sensor)
+
+            if fully_covered:
+                # A single sensor covers the whole subsquare. There is definitely no empty position
+                # in that subsquare
+                continue
+
+            x, y = find_empty_subdividing(subsensors, subsquare)
+            if x is not None:
+                return x, y
+    return None, None
+
+
+def part2(input):
+    sensors = parse_input(input.get_valid_lines())
+    limit = e.get_param()['limit']
+    x, y = find_empty_subdividing(sensors, (0, 0, limit, limit))
+    print(f"empty position {x}, {y}")
+    # Check the result
+    for sensor in sensors:
+        if sensor.covers((x, y)):
+            assert False, f"wrong result: sensor {sensor.number} ({sensor}) covers {x} {y}"
     return x * 4000000 + y
 
 
