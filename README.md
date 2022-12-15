@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **15** - beacons and sensor coverage
 * **14** - sand flooding
 * **13** - distress signal - sorting lists of ints
 * **12** - shortest path in elevation grid
