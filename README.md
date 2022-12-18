@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **18** - count surfaces of voxelated shape
 * **17** - tetris
 * **16** - elephants turning valves in maze
 * **15** - beacons and sensor coverage
