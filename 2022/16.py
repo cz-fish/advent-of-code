@@ -29,11 +29,15 @@ class Actor:
 
 @dataclass
 class State:
-    a: Actor
-    b: Actor
+    actors: list
     value: int
     valves_turned: list
     valves_unturned: list
+
+    def __lt__(self, other):
+        a = (len(self.valves_unturned), self.value, self.actors[0].time_left + self.actors[1].time_left)
+        b = (len(other.valves_unturned), other.value, other.actors[0].time_left + other.actors[1].time_left)
+        return a < b
 
 p2best = 0
 
@@ -275,17 +279,60 @@ class SimplerMap:
         #print(current_pos + best_path)
         return best_value, current_pos + best_path
 
+    def find_some_solution(self, time_left):
+        # Find some hopefully good solution, even if it doesn't have to be the best.
+        # To be used for pruning other states
+        valves = [(v, k) for k, v in self.rates.items()]
+        valves.sort(reverse=True)
+        # Make each actor visit every other valve, from highest to lowest
+        path1 = [valves[v][1] for v in range(0, len(valves), 2)]
+        path2 = [valves[v][1] for v in range(1, len(valves), 2)]
+        # Count cost of each path
+        def take_path(path):
+            cost = 0
+            time = time_left
+            steps = 0
+            pos = 'AA'
+            for step in path:
+                time_cost = self.distances[pos][step] + 1
+                if time_cost >= time:
+                    # ran out of time
+                    break
+                pos = step
+                time -= time_cost
+                cost += self.rates[step] * time
+                steps += 1
+            return cost, steps
+        cost1, steps1 = take_path(path1)
+        cost2, steps2 = take_path(path2)
+        path1 = path1[:steps1]
+        path2 = path2[:steps2]
+        actor1 = Actor(pos=path1[-1], time_left=0, stopped=True, path=path1)
+        actor2 = Actor(pos=path2[-1], time_left=0, stopped=True, path=path2)
+        return State(
+            actors = [actor1, actor2],
+            value = cost1 + cost2,
+            valves_turned = [],
+            valves_unturned = [],
+        )
+
+
     def with_elephant_astar(self, time_left):
         a = Actor(pos='AA', time_left=time_left, stopped=False, path=['AA'])
         b = Actor(pos='AA', time_left=time_left, stopped=False, path=['AA'])
-        state = State(a=a, b=b, value=0, valves_turned=['AA'], valves_unturned=[k for k in self.rates.keys() if k != 'AA'])
-        q = [(0, state)]
+        state = State(
+            actors=[a,b],
+            value=0,
+            valves_turned=['AA'],
+            valves_unturned=[k for k in self.rates.keys() if k != 'AA']
+        )
+        q = [(-10000, state)]
 
         def estimate_value(state):
             values = sorted([self.rates[k] for k in state.valves_unturned], reverse=True)
             maxtime = max(
-                state.a.time_left if not state.a.stopped else 0,
-                state.b.time_left if not state.b.stopped else 0
+                state.actors[0].time_left if not state.actors[0].stopped else 0,
+                state.actors[1].time_left if not state.actors[1].stopped else 0
             )
             estimate = state.value
             for v in values:
@@ -293,19 +340,127 @@ class SimplerMap:
                 maxtime -= 2
             return estimate
 
+        best_state = self.find_some_solution(time_left)
+        counter = 0
         while q:
-            _, state = heapq.heappop(q)
+            # Take the most promising state from the priority queue
+            est, state = heapq.heappop(q)
+            est = -est
+            
+            counter += 1
+            if counter % 10000 == 0:
+                print(f"{counter}: best_state {best_state.value if best_state is not None else 0}, head_est {est}, q size {len(q)}")
+
+            if est < best_state.value:
+                # The (over)estimate of the value of the current state is worse
+                # than the value of the best solution so far. No need to go further,
+                # the best_state is globally best
+                break
+
             if not state.valves_unturned:
                 # Found solution
-                return state.value, state.a.path + [x + 'e' for x in state.b.path]
+                if state.value > best_state.value:
+                    best_state = state
+                continue
 
-            if len(state.values_turned) == 1:
-                # First move is always done by 'a'
-                # TODO:
-                pass
-            # TODO:
+            # First actor's move
+            active_actor = 0
+            actor = state.actors[active_actor]
+            if not actor.stopped and actor.time_left > 2:
+                # A move can be:
+                # * move to another unturned valve and turn it
+                for i, valve in enumerate(state.valves_unturned):
+                    distance = self.distances[actor.pos][valve]
+                    if actor.time_left <= distance + 1:
+                        # 'distance' minutes to get to the valve
+                        # + 1 minute to turn the valve
+                        # + 1 minute for the valve to have any effect
+                        # -> it only makes sense to go to the valve if we have more than
+                        # 'distance + 1' minutes left.
+                        continue
+                    new_actor = Actor(
+                        pos = valve,
+                        time_left = actor.time_left - distance - 1,
+                        stopped = False,
+                        path = actor.path + [valve]
+                    )
+                    value = self.rates[valve] * new_actor.time_left
+                    new_state = State(
+                        actors = [new_actor, state.actors[1]],
+                        value = state.value + value,
+                        valves_turned = state.valves_turned + [valve],
+                        valves_unturned = state.valves_unturned[:i] + state.valves_unturned[i+1:]
+                    )
+                    new_est = estimate_value(new_state)
+                    if new_est > best_state.value:
+                        # only push states that have a chance of being better than the current best
+                        heapq.heappush(q, (-new_est, new_state))
 
-        assert False, "solution not found"
+                # The following is actually not necessary
+                # We don't need the stopped property, because the code does
+                # (move + turn valve); not (turn valve + move), so it is possible
+                # to just go to a valve, turn it, and stop there.
+                """
+                # * do nothing, stop for the rest of the time
+                #   this is not permitted to be the first move of the first actor
+                if len(state.values_turned) > 1:
+                    new_actor = Actor(
+                        pos = actor.pos,
+                        time_left = 0,
+                        stopped = True,
+                        path = actor.path
+                    )
+                    new_state = State(
+                        actors = [new_actor, state.actors[1]],
+                        value = state.value,
+                        valves_unturned = state.valves_unturned
+                    )
+                    # Nothing moved, so the estimated value of the new state is the same as
+                    # the estimated value of the current state
+                    heapq.heappush(-est, new_state)
+                """
+
+            # Unless this is the very first turn, which is always taken by the first
+            # actor only (to break the symmetry of the actors, otherwise we would have
+            # two sets of identical states just with swapped actors), allow the second
+            # actor to make a move
+            if len(state.valves_turned) > 1:
+                active_actor = 1
+                actor = state.actors[active_actor]
+                if not actor.stopped and actor.time_left > 2:
+                    # A move can be:
+                    # * move to another unturned valve and turn it
+                    for i, valve in enumerate(state.valves_unturned):
+                        distance = self.distances[actor.pos][valve]
+                        if actor.time_left <= distance + 1:
+                            # 'distance' minutes to get to the valve
+                            # + 1 minute to turn the valve
+                            # + 1 minute for the valve to have any effect
+                            # -> it only makes sense to go to the valve if we have more than
+                            # 'distance + 1' minutes left.
+                            continue
+                        new_actor = Actor(
+                            pos = valve,
+                            time_left = actor.time_left - distance - 1,
+                            stopped = False,
+                            path = actor.path + [valve]
+                        )
+                        value = self.rates[valve] * new_actor.time_left
+                        new_state = State(
+                            actors = [state.actors[0], new_actor],
+                            value = state.value + value,
+                            valves_turned = state.valves_turned + [valve],
+                            valves_unturned = state.valves_unturned[:i] + state.valves_unturned[i+1:]
+                        )
+                        new_est = estimate_value(new_state)
+                        if new_est > best_state.value:
+                            # only push states that have a chance of being better than the current best
+                            heapq.heappush(q, (-new_est, new_state))
+
+        assert best_state is not None, "solution not found"
+        best_path = best_state.actors[0].path + [x + 'e' for x in best_state.actors[1].path]
+        return best_state.value, best_path
+
 
 """
     def find_best_value_with_help(self, start, elephant, time_left, elephant_time, turned_valves):
@@ -370,7 +525,9 @@ def part2(input):
     full_map = Map.make(input.get_valid_lines())
     map = SimplerMap.simplify(full_map)
     print(map)
+    # Takes about 6 hours:
     value, path = map.find_best_value_with_help('AA', 'AA', 26, 26, set(['AA']), False, False, 0, len(map.rates)-1, sum(map.rates.values()))
+    # Runs out of memory:
     #value, path = map.with_elephant_astar(26)
     print(path)
     return value
