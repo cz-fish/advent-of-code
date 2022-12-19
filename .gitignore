@@ -13,3 +13,4 @@ misc/
 2015/package-lock.json
 input*.txt
 inputs/
+**/a.out
