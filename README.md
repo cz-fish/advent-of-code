@@ -1,6 +1,8 @@
 # Advent of Code
 
 ## 2022
+* **20** - mixing numbers in a circular list
+* **19** - robots cracking geodes - material supply chain
 * **18** - count surfaces of voxelated shape
 * **17** - tetris
 * **16** - elephants turning valves in maze
