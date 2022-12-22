@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **22** - walking on a cube
 * **21** - monkey expression tree
 * **20** - mixing numbers in a circular list
 * **19** - robots cracking geodes - material supply chain
