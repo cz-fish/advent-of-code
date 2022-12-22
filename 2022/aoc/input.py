@@ -39,7 +39,7 @@ class Input:
            separated by blank lines. Each group is a list of strings"""
         groups = [[]]
         for ln in self.lines:
-            if not ln:
+            if not ln.rstrip():
                 groups += [[]]
             else:
                 groups[-1] += [ln]
@@ -81,6 +81,6 @@ class Input:
     def _read_file(self, fname: str, raw_lines: bool) -> None:
         with open(fname, 'rt') as f:
             if raw_lines:
-                self._orig_lines = list(f.readlines())
+                self._orig_lines = [ln.rstrip() for ln in f.readlines()]
             else:
                 self._orig_lines = [ln.strip() for ln in f.readlines()]
