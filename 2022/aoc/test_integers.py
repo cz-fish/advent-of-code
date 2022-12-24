@@ -18,3 +18,16 @@ def test_all_divisors():
     assert Integers.all_divisors(12) == [1, 2, 3, 4, 6, 12]
     assert Integers.all_divisors(887) == [1, 887]
     assert Integers.all_divisors(10551287) == [1, 127, 251, 331, 31877, 42037, 83081, 10551287]
+
+
+def test_gcd():
+    assert Integers.gcd(48, 18) == 6
+    assert Integers.gcd(18, 48) == 6
+    assert Integers.gcd(17, 1) == 1
+    assert Integers.gcd(0, 5) == 5
+
+
+def test_lcm():
+    assert Integers.lcm(20, 150) == 300
+    assert Integers.lcm(1, 7) == 7
+    assert Integers.lcm(4, 8) == 8
