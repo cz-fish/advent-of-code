@@ -35,3 +35,19 @@ class Integers:
             q2.append(i)
             q1 += q2
         return sorted(list(set(primes).union(other_divisors)))
+
+    @classmethod
+    def gcd(cls, a: int, b: int) -> int:
+        """Greatest common divisor of 'a' and 'b'"""
+        A = max(a, b)
+        B = min(a, b)
+        while B != 0:
+            x = A % B
+            A = B
+            B = x
+        return A
+
+    @classmethod
+    def lcm(cls, a: int, b: int) -> int:
+        """Least common multiple of 'a' and 'b'"""
+        return a * b // Integers.gcd(a, b)
