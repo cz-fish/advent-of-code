@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2022
+* **25** - snafu numbers
 * **24** - going through blizzards
 * **23** - elves spreading out - cellular automaton
 * **22** - walking on a cube
