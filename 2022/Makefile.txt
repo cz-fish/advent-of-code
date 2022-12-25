@@ -1,0 +1,16 @@
+
+all: 01
+
+.phony: all
+
+01: day1.o
+	# The program doesn't use any functions from libc, but it apparently depends
+	# on some sort of inialization that libc does.
+	# Without adding the -lc, the READ syscall doesn't return the number of bytes
+	# read, but some other number for some reason. With adding -lc, the syscall
+	# returns the number of bytes and everything works.
+	ld -o 01 $< -lc
+
+day1.o: day1.s
+	as $<
+
