@@ -14,3 +14,5 @@ misc/
 input*.txt
 inputs/
 **/a.out
+.vs/
+**/Properties/launchSettings.json
