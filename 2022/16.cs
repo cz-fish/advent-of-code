@@ -31,51 +31,59 @@ class Day16
         }
     }
 
+    private int bestOfSets(Dictionary<int, List<KeyValuePair<int, int>>> setsOfN, int n)
+    {
+        while (n > 0)
+        {
+            var set = setsOfN[n];
+            if (set.Count != 0)
+            {
+                return set.Max(x => x.Value);
+            }
+            n -= 1;
+        }
+        return 0;
+    }
+
     internal int solve(int numElephants, int time)
     {
         (var setDict, var valveConfig) = bestOucomePerValveSet(time);
-        var sets = setDict.ToList();
+        var setsOfN = new Dictionary<int, List<KeyValuePair<int, int>>>();
+        setsOfN[1] = setDict.ToList();
         var startValveConfig = valveConfig.StartConfig();
 
-        Console.WriteLine($"{sets.Count} sets");
+        Console.WriteLine($"{setsOfN[1].Count} sets of 1. Best value {bestOfSets(setsOfN, 1)}");
 
         int maxWorkers = numElephants + 1;
-        var queue = new Queue<Workload>();
-        queue.Enqueue(new Workload(0, 0, startValveConfig, -1, new List<int>()));
-        Workload best = new Workload(0, 0, 0, -1, new List<int>());
-        while (queue.Count > 0)
+
+        for (int workers = 1; workers < maxWorkers; workers++)
         {
-            var workload = queue.Dequeue();
-            if (best.value < workload.value)
+            // Take all sets of N-1 workers, and all sets of 1 worker
+            // and use them to find sets of N workers
+            var setOfNMinus1 = setsOfN[workers];
+            var setOf1 = setsOfN[1];
+            var newSet = new Dictionary<int, int>();
+            foreach ((var firstKey, var firstValue) in setOfNMinus1)
             {
-                best = workload;
-            }
-            if (workload.workers < maxWorkers)
-            {
-                for (int i = workload.lastSetAdded + 1; i < sets.Count; i++)
+                foreach ((var secondKey, var secondValue) in setOf1)
                 {
-                    var set = sets[i].Key;
-                    // All configurations include the starting valve, so the starting valve is the common element in all the sets
-                    if ((workload.valveConfig & set) == startValveConfig)
+                    if ((firstKey & secondKey) == startValveConfig)
                     {
-                        var newValue = workload.value + sets[i].Value;
-                        var newSets = workload.sets.ToList();
-                        newSets.Add(set);
-                        queue.Enqueue(new Workload(
-                            newValue,
-                            workload.workers + 1,
-                            workload.valveConfig | set,
-                            i,
-                            newSets)
-                        );
+                        var key = firstKey | secondKey;
+                        if (!newSet.ContainsKey(key) || newSet[key] < firstValue + secondValue)
+                        {
+                            newSet[key] = firstValue + secondValue;
+                        }
                     }
                 }
             }
+            setsOfN[workers + 1] = newSet.ToList();
+            Console.WriteLine($"{setsOfN[workers + 1].Count} sets of {workers + 1}. Best value {bestOfSets(setsOfN, workers + 1)}");
         }
 
-        Console.WriteLine($"Value = {best.value}, workers = {best.workers}, sets = {String.Join(", ", best.sets.Select(x=>x.ToString()))}");
-        return best.value;
-        // FIXME: return a full reconstructed path, not just a number
+        return bestOfSets(setsOfN, maxWorkers);
+     
+        // TODO: reconstruct the exact path to the best solution
     }
 
     internal int part1()
