@@ -1,311 +1,315 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-class Day16
+namespace AoC2022
 {
-    const string start = "AA";
-
-    private Graph graph;
-
-    public Day16(string inputText)
+    class Day16
     {
-        var nodes = inputText.Split("\n").Where(x => x.Length > 0).Select(line => new SimpleNode(line));
-        graph = new Graph(nodes);
-        graph.print();
-    }
+        const string start = "AA";
 
-    private class Workload
-    {
-        public int value { get; set; }
-        public int workers { get; set; }
-        public int valveConfig { get; set; }
-        public int lastSetAdded { get; set; }
-        public List<int> sets { get; set; }
-        public Workload(int value, int workers, int valveConfig,  int lastSetAdded, List<int> sets)
+        private Graph graph;
+
+        public Day16(string inputText)
         {
-            this.value = value;
-            this.workers = workers;
-            this.valveConfig = valveConfig;
-            this.lastSetAdded = lastSetAdded;
-            this.sets = sets;
+            var nodes = inputText.Split("\n").Where(x => x.Length > 0).Select(line => new SimpleNode(line));
+            graph = new Graph(nodes);
+            graph.print();
         }
-    }
 
-    private int bestOfSets(Dictionary<int, List<KeyValuePair<int, int>>> setsOfN, int n)
-    {
-        while (n > 0)
+        private class Workload
         {
-            var set = setsOfN[n];
-            if (set.Count != 0)
+            public int value { get; set; }
+            public int workers { get; set; }
+            public int valveConfig { get; set; }
+            public int lastSetAdded { get; set; }
+            public List<int> sets { get; set; }
+            public Workload(int value, int workers, int valveConfig, int lastSetAdded, List<int> sets)
             {
-                return set.Max(x => x.Value);
+                this.value = value;
+                this.workers = workers;
+                this.valveConfig = valveConfig;
+                this.lastSetAdded = lastSetAdded;
+                this.sets = sets;
             }
-            n -= 1;
         }
-        return 0;
-    }
 
-    internal int solve(int numElephants, int time)
-    {
-        (var setDict, var valveConfig) = bestOucomePerValveSet(time);
-        var setsOfN = new Dictionary<int, List<KeyValuePair<int, int>>>();
-        setsOfN[1] = setDict.ToList();
-        var startValveConfig = valveConfig.StartConfig();
-
-        Console.WriteLine($"{setsOfN[1].Count} sets of 1. Best value {bestOfSets(setsOfN, 1)}");
-
-        int maxWorkers = numElephants + 1;
-
-        for (int workers = 1; workers < maxWorkers; workers++)
+        private int bestOfSets(Dictionary<int, List<KeyValuePair<int, int>>> setsOfN, int n)
         {
-            // Take all sets of N-1 workers, and all sets of 1 worker
-            // and use them to find sets of N workers
-            var setOfNMinus1 = setsOfN[workers];
-            var setOf1 = setsOfN[1];
-            var newSet = new Dictionary<int, int>();
-            foreach ((var firstKey, var firstValue) in setOfNMinus1)
+            while (n > 0)
             {
-                foreach ((var secondKey, var secondValue) in setOf1)
+                var set = setsOfN[n];
+                if (set.Count != 0)
                 {
-                    if ((firstKey & secondKey) == startValveConfig)
+                    return set.Max(x => x.Value);
+                }
+                n -= 1;
+            }
+            return 0;
+        }
+
+        internal int solve(int numElephants, int time)
+        {
+            (var setDict, var valveConfig) = bestOucomePerValveSet(time);
+            var setsOfN = new Dictionary<int, List<KeyValuePair<int, int>>>();
+            setsOfN[1] = setDict.ToList();
+            var startValveConfig = valveConfig.StartConfig();
+
+            Console.WriteLine($"{setsOfN[1].Count} sets of 1. Best value {bestOfSets(setsOfN, 1)}");
+
+            int maxWorkers = numElephants + 1;
+
+            for (int workers = 1; workers < maxWorkers; workers++)
+            {
+                // Take all sets of N-1 workers, and all sets of 1 worker
+                // and use them to find sets of N workers
+                var setOfNMinus1 = setsOfN[workers];
+                var setOf1 = setsOfN[1];
+                var newSet = new Dictionary<int, int>();
+                foreach ((var firstKey, var firstValue) in setOfNMinus1)
+                {
+                    foreach ((var secondKey, var secondValue) in setOf1)
                     {
-                        var key = firstKey | secondKey;
-                        if (!newSet.ContainsKey(key) || newSet[key] < firstValue + secondValue)
+                        if ((firstKey & secondKey) == startValveConfig)
                         {
-                            newSet[key] = firstValue + secondValue;
+                            var key = firstKey | secondKey;
+                            if (!newSet.ContainsKey(key) || newSet[key] < firstValue + secondValue)
+                            {
+                                newSet[key] = firstValue + secondValue;
+                            }
                         }
                     }
                 }
+                setsOfN[workers + 1] = newSet.ToList();
+                Console.WriteLine($"{setsOfN[workers + 1].Count} sets of {workers + 1}. Best value {bestOfSets(setsOfN, workers + 1)}");
             }
-            setsOfN[workers + 1] = newSet.ToList();
-            Console.WriteLine($"{setsOfN[workers + 1].Count} sets of {workers + 1}. Best value {bestOfSets(setsOfN, workers + 1)}");
+
+            return bestOfSets(setsOfN, maxWorkers);
+
+            // TODO: reconstruct the exact path to the best solution
         }
 
-        return bestOfSets(setsOfN, maxWorkers);
-     
-        // TODO: reconstruct the exact path to the best solution
-    }
-
-    internal int part1()
-    {
-        return solve(0, 30);
-    }
-
-    internal int part2()
-    {
-        return solve(1, 26);
-    }
-
-    private class ValveConfig
-    {
-        private List<string> m_sortedValves;
-        private Dictionary<string, int> m_valveIndexes;
-        public int config { get; private set; }
-
-        public ValveConfig(IEnumerable<string> valves)
+        internal int part1()
         {
-            m_sortedValves = valves.ToList();
-            m_sortedValves.Sort();
+            return solve(0, 30);
+        }
 
-            // We'll be using an int as a bitset.
-            // Everything will definitely be fine if the number of bits required is less than 32.
-            Debug.Assert(m_sortedValves.Count < 32);
+        internal int part2()
+        {
+            return solve(1, 26);
+        }
 
-            config = 0;
-            m_valveIndexes = new Dictionary<string, int>();
-            for (int i = 0; i < m_sortedValves.Count; i++)
+        private class ValveConfig
+        {
+            private List<string> m_sortedValves;
+            private Dictionary<string, int> m_valveIndexes;
+            public int config { get; private set; }
+
+            public ValveConfig(IEnumerable<string> valves)
             {
-                m_valveIndexes[m_sortedValves[i]] = i;
-            }
-        }
+                m_sortedValves = valves.ToList();
+                m_sortedValves.Sort();
 
-        private ValveConfig(List<string> sortedValues, Dictionary<string, int> valveIndexes, int configValue, string newValve)
-        {
-            m_sortedValves = sortedValues;
-            m_valveIndexes = valveIndexes;
-            config = configValue;
-            var newIndex = m_valveIndexes[newValve];
-            config |= 1 << newIndex;
-        }
+                // We'll be using an int as a bitset.
+                // Everything will definitely be fine if the number of bits required is less than 32.
+                Debug.Assert(m_sortedValves.Count < 32);
 
-        public ValveConfig Add(string valve)
-        {
-            return new ValveConfig(m_sortedValves, m_valveIndexes, config, valve);
-        }
-
-        public bool Turned(string valve)
-        {
-            var valveIndex = m_valveIndexes[valve];
-            return (config & (1 << valveIndex)) > 0;
-        }
-
-        // Bitset config representing only the starting valve
-        public int StartConfig()
-        {
-            var valveIndex = m_valveIndexes[start];
-            return 1 << valveIndex;
-        }
-    }
-
-    private class VisitState
-    {
-        public string valve { get; set; }
-        public ValveConfig turnedValves { get; set; }
-        public int steam { get; set; }
-        public int timeLeft { get; set; }
-
-        public VisitState(string valve, ValveConfig turnedValves, int steam, int timeLeft)
-        {
-            this.valve = valve;
-            this.turnedValves = turnedValves;
-            this.steam = steam;
-            this.timeLeft = timeLeft;
-        }
-    }
-
-    private Tuple<Dictionary<int, int>, ValveConfig> bestOucomePerValveSet(int time)
-    {
-        var bestOutcome = new Dictionary<int, int>();
-        var queue = new Queue<VisitState>();
-        var emptyValves = new ValveConfig(graph.valveFlow.Keys);
-        queue.Enqueue(new VisitState(start, emptyValves.Add(start), 0, time));
-        while (queue.Count > 0)
-        {
-            var state = queue.Dequeue();
-            if (!bestOutcome.ContainsKey(state.turnedValves.config) || bestOutcome[state.turnedValves.config] < state.steam)
-            {
-                bestOutcome[state.turnedValves.config] = state.steam;
-            }
-            foreach (var next in graph.valveFlow.Keys)
-            {
-                if (state.turnedValves.Turned(next))
+                config = 0;
+                m_valveIndexes = new Dictionary<string, int>();
+                for (int i = 0; i < m_sortedValves.Count; i++)
                 {
-                    continue;
+                    m_valveIndexes[m_sortedValves[i]] = i;
                 }
-                var dist = graph.distances[Tuple.Create(state.valve, next)];
-                var remTime = state.timeLeft - dist - 1;
-                if (remTime <= 0)
-                {
-                    continue;
-                }
-                var extraSteam = graph.valveFlow[next] * remTime;
-                queue.Enqueue(new VisitState(next, state.turnedValves.Add(next), state.steam + extraSteam, remTime));
+            }
+
+            private ValveConfig(List<string> sortedValues, Dictionary<string, int> valveIndexes, int configValue, string newValve)
+            {
+                m_sortedValves = sortedValues;
+                m_valveIndexes = valveIndexes;
+                config = configValue;
+                var newIndex = m_valveIndexes[newValve];
+                config |= 1 << newIndex;
+            }
+
+            public ValveConfig Add(string valve)
+            {
+                return new ValveConfig(m_sortedValves, m_valveIndexes, config, valve);
+            }
+
+            public bool Turned(string valve)
+            {
+                var valveIndex = m_valveIndexes[valve];
+                return (config & (1 << valveIndex)) > 0;
+            }
+
+            // Bitset config representing only the starting valve
+            public int StartConfig()
+            {
+                var valveIndex = m_valveIndexes[start];
+                return 1 << valveIndex;
             }
         }
-        // emptyValves provides the ordering of the valves in the bitset
-        return Tuple.Create(bestOutcome, emptyValves);
-    }
 
-    private class SimpleNode
-    {
-        private static Regex rx = new Regex(@"Valve (?<valve>..) has flow rate=(?<flow>\d+); tunnels? leads? to valves? (?<next>.*)", RegexOptions.Compiled);
-
-        public string valveName { get; private set; }
-        public int flow { get; private set; }
-        public List<string> connections { get; private set; }
-
-        public SimpleNode(string line)
+        private class VisitState
         {
-            var match = rx.Match(line);
-            Debug.Assert(match.Success);
-            var groups = match.Groups;
-            valveName = groups["valve"].Value;
-            flow = int.Parse(groups["flow"].Value);
-            connections = groups["next"].Value.Split(", ").ToList();
-        }
-    }
+            public string valve { get; set; }
+            public ValveConfig turnedValves { get; set; }
+            public int steam { get; set; }
+            public int timeLeft { get; set; }
 
-    private class Graph
-    {
-        public Dictionary<string, int> valveFlow { get; private set; } = new Dictionary<string, int>();
-        public Dictionary<Tuple<string, string>, int> distances { get; private set; } = new Dictionary<Tuple<string, string>, int>();
-
-        public Graph(IEnumerable<SimpleNode> nodes)
-        {
-            // Floyd-Warshall algorithm to find distances between all pairs of nodes.
-            // Each plain edge has weight 1.
-            var allDist = new Dictionary<Tuple<string, string>, int>();
-            // Set shortest distance between all connected nodes to 1, and from each node to itself to 0
-            foreach (var node in nodes)
+            public VisitState(string valve, ValveConfig turnedValves, int steam, int timeLeft)
             {
-                if (node.flow > 0 || node.valveName == start)
-                {
-                    // In valveFlow, we collect the valves that have flow > 0, and the special case "AA"
-                    valveFlow.Add(node.valveName, node.flow);
-                }
-                foreach (var next in node.connections) {
-                    allDist.Add(Tuple.Create(node.valveName, next), 1);
-                }
-                allDist.Add(Tuple.Create(node.valveName, node.valveName), 0);
+                this.valve = valve;
+                this.turnedValves = turnedValves;
+                this.steam = steam;
+                this.timeLeft = timeLeft;
             }
-            // For each intermediate node K
-            foreach (var nodeK in nodes)
+        }
+
+        private Tuple<Dictionary<int, int>, ValveConfig> bestOucomePerValveSet(int time)
+        {
+            var bestOutcome = new Dictionary<int, int>();
+            var queue = new Queue<VisitState>();
+            var emptyValves = new ValveConfig(graph.valveFlow.Keys);
+            queue.Enqueue(new VisitState(start, emptyValves.Add(start), 0, time));
+            while (queue.Count > 0)
             {
-                // For each start node I
-                foreach (var nodeI in nodes)
+                var state = queue.Dequeue();
+                if (!bestOutcome.ContainsKey(state.turnedValves.config) || bestOutcome[state.turnedValves.config] < state.steam)
                 {
-                    var iTok = Tuple.Create(nodeI.valveName, nodeK.valveName);
-                    if (!allDist.ContainsKey(iTok)) {
+                    bestOutcome[state.turnedValves.config] = state.steam;
+                }
+                foreach (var next in graph.valveFlow.Keys)
+                {
+                    if (state.turnedValves.Turned(next))
+                    {
                         continue;
                     }
-                    var ikDistance = allDist[iTok];
-                    // For each destination node J
-                    foreach (var nodeJ in nodes)
+                    var dist = graph.distances[Tuple.Create(state.valve, next)];
+                    var remTime = state.timeLeft - dist - 1;
+                    if (remTime <= 0)
                     {
-                        var iToj = Tuple.Create(nodeI.valveName, nodeJ.valveName);
-                        var kToj = Tuple.Create(nodeK.valveName, nodeJ.valveName);
-                        if (!allDist.ContainsKey(kToj))
+                        continue;
+                    }
+                    var extraSteam = graph.valveFlow[next] * remTime;
+                    queue.Enqueue(new VisitState(next, state.turnedValves.Add(next), state.steam + extraSteam, remTime));
+                }
+            }
+            // emptyValves provides the ordering of the valves in the bitset
+            return Tuple.Create(bestOutcome, emptyValves);
+        }
+
+        private class SimpleNode
+        {
+            private static Regex rx = new Regex(@"Valve (?<valve>..) has flow rate=(?<flow>\d+); tunnels? leads? to valves? (?<next>.*)", RegexOptions.Compiled);
+
+            public string valveName { get; private set; }
+            public int flow { get; private set; }
+            public List<string> connections { get; private set; }
+
+            public SimpleNode(string line)
+            {
+                var match = rx.Match(line);
+                Debug.Assert(match.Success);
+                var groups = match.Groups;
+                valveName = groups["valve"].Value;
+                flow = int.Parse(groups["flow"].Value);
+                connections = groups["next"].Value.Split(", ").ToList();
+            }
+        }
+
+        private class Graph
+        {
+            public Dictionary<string, int> valveFlow { get; private set; } = new Dictionary<string, int>();
+            public Dictionary<Tuple<string, string>, int> distances { get; private set; } = new Dictionary<Tuple<string, string>, int>();
+
+            public Graph(IEnumerable<SimpleNode> nodes)
+            {
+                // Floyd-Warshall algorithm to find distances between all pairs of nodes.
+                // Each plain edge has weight 1.
+                var allDist = new Dictionary<Tuple<string, string>, int>();
+                // Set shortest distance between all connected nodes to 1, and from each node to itself to 0
+                foreach (var node in nodes)
+                {
+                    if (node.flow > 0 || node.valveName == start)
+                    {
+                        // In valveFlow, we collect the valves that have flow > 0, and the special case "AA"
+                        valveFlow.Add(node.valveName, node.flow);
+                    }
+                    foreach (var next in node.connections)
+                    {
+                        allDist.Add(Tuple.Create(node.valveName, next), 1);
+                    }
+                    allDist.Add(Tuple.Create(node.valveName, node.valveName), 0);
+                }
+                // For each intermediate node K
+                foreach (var nodeK in nodes)
+                {
+                    // For each start node I
+                    foreach (var nodeI in nodes)
+                    {
+                        var iTok = Tuple.Create(nodeI.valveName, nodeK.valveName);
+                        if (!allDist.ContainsKey(iTok))
                         {
                             continue;
                         }
-                        // If (i->k->j) is shorter than (i->j), make (i->k->j) the shortes path between i and j
-                        var newDist = ikDistance + allDist[kToj];
-                        if (!allDist.ContainsKey(iToj) || allDist[iToj] > newDist)
+                        var ikDistance = allDist[iTok];
+                        // For each destination node J
+                        foreach (var nodeJ in nodes)
                         {
-                            allDist[iToj] = newDist;
+                            var iToj = Tuple.Create(nodeI.valveName, nodeJ.valveName);
+                            var kToj = Tuple.Create(nodeK.valveName, nodeJ.valveName);
+                            if (!allDist.ContainsKey(kToj))
+                            {
+                                continue;
+                            }
+                            // If (i->k->j) is shorter than (i->j), make (i->k->j) the shortes path between i and j
+                            var newDist = ikDistance + allDist[kToj];
+                            if (!allDist.ContainsKey(iToj) || allDist[iToj] > newDist)
+                            {
+                                allDist[iToj] = newDist;
+                            }
                         }
+                    }
+                }
+
+                // We only care about the nodes from valveFlow, discard all other nodes
+                foreach (var nodeFrom in valveFlow.Keys)
+                {
+                    foreach (var nodeTo in valveFlow.Keys)
+                    {
+                        var pair = Tuple.Create(nodeFrom, nodeTo);
+                        distances[pair] = allDist[pair];
                     }
                 }
             }
 
-            // We only care about the nodes from valveFlow, discard all other nodes
-            foreach (var nodeFrom in valveFlow.Keys)
+            public void print()
             {
-                foreach (var nodeTo in valveFlow.Keys)
+                var keys = valveFlow.Keys.ToList();
+                keys.Sort();
+
+                Console.WriteLine($"[Graph nodes: {valveFlow.Count}]");
+
+                string flows = "  ";
+                string headings = "  ";
+                foreach (var key in keys)
                 {
-                    var pair = Tuple.Create(nodeFrom, nodeTo);
-                    distances[pair] = allDist[pair];
+                    flows += $"  {valveFlow[key],2}";
+                    headings += $"  {key,2}";
                 }
-            }
-        }
-
-        public void print()
-        {
-            var keys = valveFlow.Keys.ToList();
-            keys.Sort();
-
-            Console.WriteLine($"[Graph nodes: {valveFlow.Count}]");
-
-            string flows = "  ";
-            string headings = "  ";
-            foreach (var key in keys)
-            {
-                flows += $"  {valveFlow[key], 2}";
-                headings += $"  {key,2}";
-            }
-            Console.WriteLine(flows);
-            Console.WriteLine(headings);
-            foreach (var valve in keys)
-            {
-                var line = valve;
-                foreach (var nodeTo in keys)
+                Console.WriteLine(flows);
+                Console.WriteLine(headings);
+                foreach (var valve in keys)
                 {
-                    line += $"  {distances[Tuple.Create(valve, nodeTo)],2}";
+                    var line = valve;
+                    foreach (var nodeTo in keys)
+                    {
+                        line += $"  {distances[Tuple.Create(valve, nodeTo)],2}";
+                    }
+                    Console.WriteLine(line);
+                    //Console.WriteLine($"{valve}  {String.Join("  ", valveFlow.Keys.Select(k => distances[Tuple.Create(nodeFrom, k)].ToString()))}]");
                 }
-                Console.WriteLine(line);
-                //Console.WriteLine($"{valve}  {String.Join("  ", valveFlow.Keys.Select(k => distances[Tuple.Create(nodeFrom, k)].ToString()))}]");
             }
         }
     }
 }
-
