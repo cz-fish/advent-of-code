@@ -39,9 +39,14 @@ namespace AoC2022
             Console.WriteLine($"part1: {day19.part1()}");
             Console.WriteLine($"part2: {day19.part2()}");
 
+            //Console.WriteLine($"Total states probed: {day19.totalStatesProbed}");
+
             //Console.WriteLine($"Day 19: part1 = {day19.part1()}, part2 = {day19.part2()}");
             // expected part 1: 1081
             // expected part 2: 2415
+
+            // with stack: Total states probed: 2533026
+            // with queue: Total states probed: 2148249
         }
 
     }
