@@ -6,7 +6,7 @@
     <RootNamespace>AoC2022</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>Aoc2022</StartupObject>
+    <StartupObject>AoC2022.Aoc2022</StartupObject>
   </PropertyGroup>
 
 </Project>
