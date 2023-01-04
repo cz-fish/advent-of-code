@@ -7,6 +7,8 @@ namespace AoC2022
 {
     internal class Day19
     {
+        public long totalStatesProbed = 0;
+
         internal enum Material
         {
             Ore = 0,
@@ -166,8 +168,12 @@ namespace AoC2022
 
         internal int evaluateBlueprint(Blueprint b, int time)
         {
+            // We can use a queue or a stack for open states. It seems that using a queue reduces
+            // the number of states that we need to visit to ~85% of those needed when using a stack,
+            // at least on the given input. So we'll use the queue.
             var queue = new Queue<ProductionState>();
             queue.Enqueue(new ProductionState(time));
+
             int mostGeodes = 0;
 
             var maxRobotsNeeded = new Materials(
@@ -179,6 +185,7 @@ namespace AoC2022
 
             while (queue.Count > 0)
             {
+                totalStatesProbed++;
                 var state = queue.Dequeue();
                 if (state.resource.geode > mostGeodes)
                 {
@@ -186,6 +193,16 @@ namespace AoC2022
                 }
                 if (state.timeLeft <= 1) {
                     // No time to build anything else; end state
+                    continue;
+                }
+
+                // Prune states that are not perspective - a real time saver!
+                // If we were to build a geode robot from now on in every minute, how much could
+                // we possibly harvest?
+                var potential = (state.timeLeft - 1) * (state.timeLeft - 1 + 1) / 2;
+                if (state.resource.geode + potential <= mostGeodes)
+                {
+                    // No point continuing with this path; it cannot beat the current best
                     continue;
                 }
 
@@ -253,6 +270,7 @@ namespace AoC2022
                     {
                         resourcesLeft[Material.Geode] += newTimeLeft;
                     }
+
                     queue.Enqueue(new ProductionState(newTimeLeft, resourcesLeft, newRobots));
                 }
             }
