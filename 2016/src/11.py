@@ -102,7 +102,20 @@ class Floor:
                 for j in gens:
                     yield (2**i, 2**j, 2)
 
+        chip_and_its_gen = False
         for opt_chip, opt_gen, num_things in all_options():
+
+            if opt_chip !=0 and opt_gen != 0 and opt_chip & opt_gen == opt_chip:
+                # [this optimization reduced states from 2.7M to 2.15M in part 2]
+                # we're picking a chip and its generator
+                # If there are multiple different pairs of chips and their own
+                # generators on the same floor, we don't need to try all the options,
+                # just one of them. The solution will be equivalent, no matter what
+                # material and chip do we pick
+                if chip_and_its_gen:
+                    continue
+                chip_and_its_gen = True
+
             new_floor = self.withoutThings(opt_chip, opt_gen, num_things)
             if new_floor.is_valid():
                 yield (opt_chip, opt_gen, new_floor, num_things)
@@ -170,13 +183,15 @@ def heuristic(current, floors):
                 lowest_nonempty_floor = i
                 if current > i:
                     # we will still have to go down from current to 'i' to pick up what's there
-                    # and as we go down, we have to carry one extra item with us
-                    items += 1
                     cost += current - i
+            if i != current:
+                # [reduced number of states from 2.15M to 1.55M in part 2]
+                # When we go to this floor, we will be carrying at least one additional item with us
+                items += 1
+
             # To pick up all items, we need to visit the floor at least items -1 times
             # After each visit, when there are any items left, we still need to return to the
             # floor, which is one extra step for each additional item over 2
-            
             steps_up = max(1, items - 1)
             steps_down = max(0, items - 2)
             # All the way to the fourth floor
@@ -220,7 +235,7 @@ def min_steps_to_4_bfs(floors):
 # A*, ~31k states visited in part 1, 3.3M states visited in part 2
 def min_steps_to_4(floors):
     q = []
-    print(heuristic(0, floors))
+    print(f"Initial state cost from heuristic: {heuristic(0, floors)}")
     heapq.heappush(q, (heuristic(0, floors), 0, 0, floors))
     visited = set()
     while q:
@@ -236,6 +251,12 @@ def min_steps_to_4(floors):
         for pick_chip, pick_gener, new_source_floor, num_things in floors[current].get_one_or_two_things():
             # try to go 1 floor up or down
             for change in [1, -1]:
+
+                # [with this optimization, down from 3.3M to 2.7M states in part 2]:
+                # does it ever make sense to just carry down 2 microchips?
+                if change == -1 and pick_gener == 0 and num_things == 2:
+                    continue
+
                 new_floor_nr = current + change
                 if new_floor_nr < 0 or new_floor_nr >= 4:
                     # out of bounds
@@ -265,6 +286,7 @@ if __name__ == "__main__":
     test_value = solve(test_floors)
     print(f"Test result: {test_value}")
     assert test_value == EXPECTED, f"Test expected {EXPECTED}, got {test_value}"
+    print()
 
     # clear global state (sic)
     MATERIALS = []
@@ -275,6 +297,7 @@ if __name__ == "__main__":
     floors_pt1 = parse_input(actual_input)
     part1 = solve(floors_pt1)
     print(f"Part 1: {part1}")
+    print()
 
     # Actual part 2
     floors_pt2 = parse_input(actual_input)
