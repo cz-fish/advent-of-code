@@ -16,3 +16,4 @@ inputs/
 **/a.out
 .vs/
 **/Properties/launchSettings.json
+**/dist/
