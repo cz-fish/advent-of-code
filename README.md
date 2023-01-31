@@ -160,6 +160,7 @@
 * **1** - Navigate in 2d street grid
 
 ## 2015
+* **18** - game of life
 * **17** - choose pots - kind of knapsack
 * **16** - Aunt Sue
 * **15** - combining cooking ingredients
