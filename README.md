@@ -145,6 +145,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **14** - md5 hashes
 * **13** - navigate bitcounting maze (A*, BFS)
 * **12** - Interpretting assembly
 * **11** - Moving chipd and generators in a lift (goat and wolf problem)
