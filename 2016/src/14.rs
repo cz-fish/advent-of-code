@@ -15,6 +15,8 @@ use std::collections::VecDeque;
 
 type IndexChar = (i32, char);
 
+const PART2_STRETCH: i32 = 2016;
+
 fn find_triplet(hash: &Vec<char>) -> Option<char> {
     if hash.len() < 3 {
         return None;
@@ -56,14 +58,27 @@ fn hex_char(val: u8) -> char {
     }) as char
 }
 
+fn stretch_digest(initial: md5::Digest, loops: i32) -> md5::Digest {
+    let mut work = initial;
+    for _i in 0 .. loops {
+        let chars = work.0.iter()
+                          .flat_map(|b| [hex_char(*b >> 4) as u8, hex_char(*b & 15) as u8])
+                          .collect::<Vec<u8>>();
+        work = md5::compute(chars);
+    }
+    work
+}
+
 fn get_some_hashes(salt: &str,
+                   stretch: i32,
                    from: i32,
                    to: i32,
                    triplet_queue: &mut VecDeque<IndexChar>,
                    quintet_queue: &mut VecDeque<IndexChar>)
 {
     for i in from .. to {
-        let digest = md5::compute(format!("{}{}", salt, i));
+        let initial_digest = md5::compute(format!("{}{}", salt, i));
+        let digest = stretch_digest(initial_digest, stretch);
         let chars = digest.0.iter()
                             .flat_map(|b| [hex_char(*b >> 4), hex_char(*b & 15)])
                             .collect::<Vec<char>>();
@@ -90,7 +105,7 @@ fn is_key(val: IndexChar, quintet_queue: &VecDeque<IndexChar>) -> bool {
     false
 }
 
-fn find_nth_key(salt: &str, n: i32) -> i32 {
+fn find_nth_key(salt: &str, n: i32, stretch: i32) -> i32 {
     let mut triplet_queue = VecDeque::<IndexChar>::new();
     let mut quintet_queue = VecDeque::<IndexChar>::new();
     let mut highest_hash: i32 = 0;
@@ -100,14 +115,14 @@ fn find_nth_key(salt: &str, n: i32) -> i32 {
     while keys_found < n {
         // make sure we have any key candidates left. If not, get some more hashes until we do
         while triplet_queue.len() == 0 {
-            get_some_hashes(salt, highest_hash, highest_hash + 100, &mut triplet_queue, &mut quintet_queue);
+            get_some_hashes(salt, stretch, highest_hash, highest_hash + 100, &mut triplet_queue, &mut quintet_queue);
             highest_hash += 100;
         }
         // get the next key candidate
         let next = triplet_queue.pop_front().unwrap();
         // make sure that we have enough hashes to test the next key candidate
         if highest_hash < next.0 + 1000 {
-            get_some_hashes(salt, highest_hash, next.0 + 1000, &mut triplet_queue, &mut quintet_queue);
+            get_some_hashes(salt, stretch, highest_hash, next.0 + 1000, &mut triplet_queue, &mut quintet_queue);
             highest_hash = next.0 + 1000;
         }
         // expire all quintets that are below the current key candidate
@@ -131,8 +146,10 @@ fn find_nth_key(salt: &str, n: i32) -> i32 {
 fn main() {
     let salt = "yjdafjpo";
     let n = 64;
-    let part1 = find_nth_key(salt, n);
+    let part1 = find_nth_key(salt, n, 0);
     println!("Part 1: {}", part1);
+    let part2 = find_nth_key(salt, n, PART2_STRETCH);
+    println!("Part 2: {}", part2);
 }
 
 #[cfg(test)]
@@ -176,7 +193,7 @@ mod tests {
     fn test_get_some_hashes() {
         let mut triplet_queue = VecDeque::<IndexChar>::new();
         let mut quintet_queue = VecDeque::<IndexChar>::new();
-        get_some_hashes("abc", 0, 100, &mut triplet_queue, &mut quintet_queue);
+        get_some_hashes("abc", 0, 0, 100, &mut triplet_queue, &mut quintet_queue);
         let triplets = triplet_queue.into_iter().collect::<Vec<IndexChar>>();
 
         assert_eq!(triplets, vec![
@@ -209,7 +226,14 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(find_nth_key("abc", 1), 39);
-        assert_eq!(find_nth_key("abc", 64), 22728);
+        assert_eq!(find_nth_key("abc", 1, 0), 39);
+        assert_eq!(find_nth_key("abc", 64, 0), 22728);
+    }
+    
+    #[test]
+    fn test_part2() {
+        assert_eq!(find_nth_key("abc", 1, PART2_STRETCH), 10);
+        // Takes probably around 10 minutes to complete
+        //assert_eq!(find_nth_key("abc", 64, PART2_STRETCH), 22551);
     }
 }
