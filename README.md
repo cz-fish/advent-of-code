@@ -145,6 +145,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **17** - path in md5 maze
 * **16** - dragon curve and checksum
 * **15** - timing dropping capsule, modular
 * **14** - md5 hashes
