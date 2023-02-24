@@ -145,6 +145,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **18** - count safe spaces in procedural grid
 * **17** - path in md5 maze
 * **16** - dragon curve and checksum
 * **15** - timing dropping capsule, modular
