@@ -49,8 +49,58 @@ fn last_elf_standing(n: u32) -> u32 {
     winner + 1
 }
 
+fn last_elf_across(n: u32) -> u32 {
+    // for each elf, whether they have been eliminated or not
+    let mut eliminated: Vec<bool> = vec![false; n as usize];
+    // index of the elf whose turn it is
+    let mut turn: u32 = 0;
+    // index of the elf opposite the one that's playing
+    let mut opposite: u32 = n / 2;
+    // number of elves between playing and opposite elf; on the left from
+    // the playing elf's perspective
+    let mut left: i32 = (opposite - turn - 1) as i32;
+    // number of elves between playing and opposite elf; on the right from
+    // the playing elf's perspective
+    let mut right: i32 = (n - opposite - 1) as i32;
+
+    let next_in_game = |mut p, elim: &Vec<bool>| {
+        loop {
+            p = (p + 1) % n;
+            if elim[p as usize] == false {
+                break;
+            }
+        };
+        p
+    };
+
+    while turn != opposite {
+        // we eliminate opposite elf and move one position clockwise.
+        eliminated[opposite as usize] = true;
+        opposite = next_in_game(opposite, &eliminated);
+        // The number on the left is unchanged by this;
+        // the number on the right is decreased by 1
+        right -= 1;
+
+        // Next, the turn moves to the next elf clockwise
+        // This reduces number on the left, and increases number on the right
+        turn = next_in_game(turn, &eliminated);
+        left -= 1;
+        right += 1;
+
+        // Make sure that left and right are still even, or left is right - 1
+        if right - left > 1 {
+            opposite = next_in_game(opposite, &eliminated);
+            right -= 1;
+            left += 1;
+        }
+    }
+    // The indexes are 0 based, but we want a 1-based number of the winning elf.
+    turn + 1
+}
+
 fn main() {
     println!("Part 1: {}", last_elf_standing(INPUT));
+    println!("Part 2: {}", last_elf_across(INPUT));
 }
 
 #[cfg(test)]
@@ -65,6 +115,9 @@ mod tests {
         assert_eq!(last_elf_standing(6), 5);
         assert_eq!(last_elf_standing(13), 11);
     }
-}
 
-// 2378029 too high
+    #[test]
+    fn test_example_part2() {
+        assert_eq!(last_elf_across(5), 2);
+    }
+}
