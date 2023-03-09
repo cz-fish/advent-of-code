@@ -146,7 +146,7 @@
 
 ## 2016
 * **20** - intervals of blocked IP addresses
-* **19** - elf (kids) circle
+* **19** - elf circle - Josephus problem
 * **18** - count safe spaces in procedural grid
 * **17** - path in md5 maze
 * **16** - dragon curve and checksum
