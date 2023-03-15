@@ -145,6 +145,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **21** - password scrambling
 * **20** - intervals of blocked IP addresses
 * **19** - elf circle - Josephus problem
 * **18** - count safe spaces in procedural grid
