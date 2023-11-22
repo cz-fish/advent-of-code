@@ -145,6 +145,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **22** - moving data in grid network
 * **21** - password scrambling
 * **20** - intervals of blocked IP addresses
 * **19** - elf circle - Josephus problem
