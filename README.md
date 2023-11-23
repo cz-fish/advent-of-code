@@ -145,6 +145,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **24** - navigate robot in a maze
 * **23** - cracking safe code, self modifying assembly
 * **22** - moving data in grid network
 * **21** - password scrambling
