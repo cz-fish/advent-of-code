@@ -145,6 +145,7 @@
 * **1** - Find pairs of same digits in a number
 
 ## 2016
+* **25** - assembly signal generator
 * **24** - navigate robot in a maze
 * **23** - cracking safe code, self modifying assembly
 * **22** - moving data in grid network
