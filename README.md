@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **2** - counting colored cubes
 * **1** - parse two digit numbers
 
 ## 2022
