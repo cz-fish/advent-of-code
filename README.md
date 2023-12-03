@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **3** - find gears in grid
 * **2** - counting colored cubes
 * **1** - parse two digit numbers
 
