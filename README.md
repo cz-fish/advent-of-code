@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **5** - seed dependency chain, interval mapping
 * **4** - count winning lottery tickets
 * **3** - find gears in grid
 * **2** - counting colored cubes
