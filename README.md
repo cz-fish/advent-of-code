@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **7** - comparing poker hands
 * **6** - boat race quadratic equation
 * **5** - seed dependency chain, interval mapping
 * **4** - count winning lottery tickets
