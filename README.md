@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **8** - walking in circles in haunted desert
 * **7** - comparing poker hands
 * **6** - boat race quadratic equation
 * **5** - seed dependency chain, interval mapping
