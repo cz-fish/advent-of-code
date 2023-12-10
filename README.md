@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **10** - tracing pipe loop in a grid
 * **8** - walking in circles in haunted desert
 * **7** - comparing poker hands
 * **6** - boat race quadratic equation
