@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **11** - distances between expanding galaxies
 * **10** - tracing pipe loop in a grid
 * **9** - predict number series
 * **8** - walking in circles in haunted desert
