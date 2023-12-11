@@ -2,9 +2,6 @@
 
 from aoc import Env, Grid
 
-def eT(*a):
-    pass
-
 e = Env(10)
 e.T(""".....
 .S-7.
@@ -53,7 +50,19 @@ def find_start(grid):
             return row, ln.index('S')
     assert False, "Cannot find start S"
 
+
 def trace_from_start(grid, start, go_dir):
+    """
+    Start from the given position (`start`) in the given direction (`go_dir`,
+    0 up, 1 right, 2 down, 3 left) and trace the connected pipes. Two of the
+    possible `go_dir` directions will yield a correct trace, and another two
+    will yield an error. In the incorrect cases, the function will return -1, None, None.
+    In the correct cases, the function will return:
+    * the length of the loop,
+    * list of all corner points in order of traversal
+    * set of all points on the path
+    The two correct cases will both be the same, except they will be in opposite directions.
+    """
     offsets = {
         0: (-1, 0),
         1: (0, 1),
@@ -109,12 +118,15 @@ def trace_from_start(grid, start, go_dir):
 def part1(input):
     grid = Grid(input.get_valid_lines())
     start = find_start(grid)
+    # We don't know which shape is under S, so we try going in all 4 directions.
+    # This will produce two errors (-1) and two same correct results
     lengths = set([
         dist for dist, _, _ in [
             trace_from_start(grid, start, d) for d in range(4)
         ] if dist != -1
     ])
     assert len(lengths) == 1
+    # We only want half of the distance
     length = list(lengths)[0]
     assert length % 2 == 0
     return length // 2
@@ -125,6 +137,11 @@ e.run_main(1, part1)
 
 
 def split_path_to_segments(points):
+    """Points are in order, either clockwise or counter-clockwise. Each
+    consecutive pair of points represents one horizontal or vertical line
+    of the path. This function splits the path to horizontal and vertical segments.
+    Returned segments are sorted (vertical ones by horizontal coord first, horizontal
+    ones by vertical coord first)."""
     hor = []
     ver = []
     for i, A in enumerate(points):
@@ -139,23 +156,45 @@ def split_path_to_segments(points):
             ver.append((A[1], min(A[0], B[0]), max(A[0], B[0])))
         else:
             assert False, "path segment neither fully horizontal nor fully verical"
-    return hor, ver
+    return sorted(hor), sorted(ver)
 
 
 def point_is_in(row, col, hor, ver):
+    # Point is inside the path if either to its left or above it there is
+    # an off number of vertical, resp. horizontal lines.
+    # `hor` and `ver` lists are ordered top-down, left-right respectively.
     left = 0
     for c, m, M in ver:
-        if c < col and m <= row and M > row:
+        if c >= col:
+            break
+        if m <= row and M > row:
             left += 1
     if left % 2 == 1:
         return True
     above = 0
     for r, m, M in hor:
-        if r < row and m <= col and M > col:
+        if r >= row:
+            break
+        if m <= col and M > col:
             above += 1
     if above %2 == 1:
         return True
     return False
+
+
+def flood_fill(row, col, filled_points):
+    count = 1
+    filled_points.add((row, col))
+    stack = [(row, col)]
+    while stack:
+        r, c = stack.pop()
+        for dr, dc in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
+            pos = (r + dr, c + dc)
+            if pos not in filled_points:
+                count += 1
+                filled_points.add(pos)
+                stack.append(pos)
+    return count
 
 
 def count_inside(grid, start):
@@ -167,14 +206,21 @@ def count_inside(grid, start):
         assert False, "cannot find any vertical points"
 
     hor, ver = split_path_to_segments(corner_points)
+    min_col = ver[0][0]
+    max_col = ver[-1][0]
+    min_row = hor[0][0]
+    max_row = hor[-1][0]
 
     points_in = 0
-    for row in range(grid.h):
-        for col in range(grid.w):
-            if (row, col) not in all_points \
-              and point_is_in(row, col, hor, ver):
-                points_in += 1
-                #print(f"point is in: {row}, {col}")
+    # Go through each point in the grid except for the points on the path
+    # itself and check for each of them whether it is inside the path.
+    # Once we find a point inside, we can flood fill from it and
+    # then don't do the point_is_in check again for the other points inside
+    # the flood fill.
+    for row in range(min_row + 1, max_row):
+        for col in range(min_col + 1, max_col):
+            if (row, col) not in all_points and point_is_in(row, col, hor, ver):
+                points_in += flood_fill(row, col, all_points)
     return points_in
 
 def part2(input):
