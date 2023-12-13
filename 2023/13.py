@@ -40,18 +40,11 @@ def find_mirror(lines):
         prev = ln
     return 0
 
+
 def transpose_pattern(pattern):
     return [
         ''.join([pattern[j][i] for j in range(len(pattern))]) for i in range(len(pattern[0]))
     ]
-
-
-def find_mirror_vertical(pattern):
-    return find_mirror(transpose_pattern(pattern))
-
-
-def find_mirror_horizontal(pattern):
-    return find_mirror(pattern)
 
 
 def part1(input):
