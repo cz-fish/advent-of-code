@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **13** - finding mirror symmetry
 * **12** - fit blocks of damaged sprigs (nonogram-like)
 * **11** - distances between expanding galaxies
 * **10** - tracing pipe loop in a grid
