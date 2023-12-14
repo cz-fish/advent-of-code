@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **14** - tilt board with moving stones
 * **13** - finding mirror symmetry
 * **12** - fit blocks of damaged sprigs (nonogram-like)
 * **11** - distances between expanding galaxies
