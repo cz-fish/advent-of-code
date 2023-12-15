@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **15** - HASHMAP of lenses in boxes
 * **14** - tilt board with moving stones
 * **13** - finding mirror symmetry
 * **12** - fit blocks of damaged sprigs (nonogram-like)
