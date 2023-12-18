@@ -110,39 +110,8 @@ D 4 ()
 L 6 ()
 U 4 ()""", 33, None)
 
-def parse_line_segments(lines):
-    # input parser for part 1
-    row = 0
-    col = 0
-    m_row = 0
-    M_row = 0
-    m_col = 0
-    M_col = 0
-    segments = []
-    for ln in lines:
-        d, l, c = ln.split()
-        assert c.startswith('(') and c.endswith(')')
-        length = int(l)
-        segments.append(((row, col), d, length))
-        if d == 'R':
-            col += length
-        elif d == 'D':
-            row += length
-        elif d == 'L':
-            col -= length
-        elif d == 'U':
-            row -= length
-        else:
-            assert False, f"Wrong direction {d}"
-        m_row = min(m_row, row)
-        m_col = min(m_col, col)
-        M_row = max(M_row, row)
-        M_col = max(M_col, col)
-    return segments, (m_row, M_row, m_col, M_col)
 
-
-def parse_line_segments_from_colors(lines):
-    # input parser for part 2
+def parse_line_segments(lines, for_part2):
     row = 0
     col = 0
     m_row = 0
@@ -157,13 +126,17 @@ def parse_line_segments_from_colors(lines):
         3: 'U',
     }
     for ln in lines:
-        _, _, c = ln.split()
-        assert c.startswith('(#') and c.endswith(')')
-        color = int(c[2:-1], 16)
-        d_index = color & 0xf
-        assert d_index in directions
-        d = directions[d_index]
-        length = color // 0x10
+        d, l, c = ln.split()
+        if for_part2:
+            assert c.startswith('(#') and c.endswith(')')
+            color = int(c[2:-1], 16)
+            d_index = color & 0xf
+            assert d_index in directions
+            d = directions[d_index]
+            length = color // 0x10
+        else:
+            assert c.startswith('(') and c.endswith(')')
+            length = int(l)
         segments.append(((row, col), d, length))
         if d == 'R':
             col += length
@@ -604,7 +577,7 @@ def calculate_area(segments, limits):
 
 def part1(input):
     lines = input.get_valid_lines()
-    segments, limits = parse_line_segments(lines)
+    segments, limits = parse_line_segments(lines, False)
 
     # Draw path to a picture file
     #draw(segments, limits)
@@ -622,7 +595,7 @@ e.run_main(1, part1)
 
 def part2(input):
     lines = input.get_valid_lines()
-    segments, limits = parse_line_segments_from_colors(lines)
+    segments, limits = parse_line_segments(lines, True)
     return calculate_area(segments, limits)
 
 
