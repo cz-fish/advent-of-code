@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **18** - calculate area inside dig path
 * **17** - find path with minimal heatloss
 * **16** - reflecting and splitting light beams
 * **15** - HASHMAP of lenses in boxes
