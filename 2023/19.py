@@ -31,6 +31,10 @@ e.T("""in{x<4000:R,m<4000:R,a<4000:R,s<4000:R,A}
 
 {x=1,m=1,a=1,s=1}""", None, 1)
 
+e.T("""in{x>1:R,m>1:R,a>1:R,s>1:R,A}
+
+{x=1,m=1,a=1,s=1}""", None, 1)
+
 
 @dataclass
 class Part:
