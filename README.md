@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **20** - cables with flip flops
 * **19** - part numbers satisfying inequality conditions
 * **18** - calculate area inside dig path
 * **17** - find path with minimal heatloss

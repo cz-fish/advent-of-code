@@ -1,0 +1,173 @@
+digraph {
+    jr [shape=invtriangle,fillcolor=gray92,style=filled]
+    jr -> mq
+    jr -> xn
+    zl [shape=invtriangle,fillcolor=gray92,style=filled]
+    zl -> tz
+    zl -> cm
+    lh [shape=ellipse,color=cyan,style=filled]
+    lh -> nr
+    hx [shape=invtriangle,fillcolor=gray92,style=filled]
+    hx -> jx
+    hx -> tz
+    cm [shape=invtriangle,fillcolor=gray92,style=filled]
+    cm -> tz
+    cm -> ls
+    fk [shape=ellipse,color=cyan,style=filled]
+    fk -> nr
+    broadcaster [shape=box]
+    broadcaster -> sj
+    broadcaster -> pf
+    broadcaster -> kh
+    broadcaster -> cn
+    gz [shape=invtriangle,fillcolor=gray92,style=filled]
+    gz -> mq
+    gz -> lq
+    gb [shape=invtriangle,fillcolor=gray92,style=filled]
+    gb -> xf
+    gb -> kr
+    zc [shape=invtriangle,fillcolor=yellow,style=dashed]
+    zc -> rq
+    ln [shape=invtriangle,fillcolor=gray92,style=filled]
+    ln -> qj
+    ln -> xf
+    gq [shape=invtriangle,fillcolor=yellow,style=dashed]
+    gq -> pp
+    fb [shape=invtriangle,fillcolor=gray92,style=dashed]
+    fb -> xf
+    pf [shape=invtriangle,fillcolor=yellow,style=filled]
+    pf -> tg
+    pf -> nv
+    bc [shape=invtriangle,fillcolor=yellow,style=dashed]
+    bc -> cf
+    tz [shape=parallelogram,color=green,style=filled]
+    tz -> cn
+    tz -> fk
+    tz -> ls
+    cq [shape=invtriangle,fillcolor=gray92,style=filled]
+    cq -> fb
+    cq -> xf
+    rq [shape=invtriangle,fillcolor=gray92,style=filled]
+    rq -> tg
+    rq -> dx
+    km [shape=invtriangle,fillcolor=yellow,style=dashed]
+    km -> gq
+    mq [shape=parallelogram,color=green,style=filled]
+    mq -> gq
+    mq -> xn
+    mq -> fv
+    mq -> km
+    mq -> lh
+    mq -> xv
+    mq -> sj
+    zp [shape=invtriangle,fillcolor=gray92,style=filled]
+    zp -> mq
+    zp -> xv
+    jx [shape=invtriangle,fillcolor=gray92,style=filled]
+    jx -> tz
+    jx -> np
+    tg [shape=parallelogram,color=green,style=filled]
+    tg -> mm
+    tg -> rp
+    tg -> zc
+    tg -> pf
+    tg -> bc
+    cv [shape=invtriangle,fillcolor=gray92,style=filled]
+    cv -> sq
+    cv -> xf
+    nv [shape=invtriangle,fillcolor=gray92,style=filled]
+    nv -> ht
+    nv -> tg
+    sq [shape=invtriangle,fillcolor=yellow,style=dashed]
+    sq -> gb
+    kr [shape=invtriangle,fillcolor=yellow,style=dashed]
+    kr -> ln
+    dk [shape=invtriangle,fillcolor=yellow,style=dashed]
+    dk -> cv
+    xn [shape=invtriangle,fillcolor=yellow,style=dashed]
+    xn -> zp
+    sx [shape=invtriangle,fillcolor=gray92,style=filled]
+    sx -> xf
+    sx -> cq
+    zt [shape=invtriangle,fillcolor=gray92,style=filled]
+    zt -> tz
+    zt -> fq
+    dx [shape=invtriangle,fillcolor=gray92,style=filled]
+    dx -> tg
+    dx -> qn
+    ff [shape=ellipse,color=cyan,style=filled]
+    ff -> nr
+    bn [shape=invtriangle,fillcolor=gray92,style=filled]
+    bn -> hx
+    bn -> tz
+    fj [shape=invtriangle,fillcolor=gray92,style=filled]
+    fj -> zt
+    fj -> tz
+    ht [shape=invtriangle,fillcolor=gray92,style=filled]
+    ht -> rr
+    ht -> tg
+    fq [shape=invtriangle,fillcolor=gray92,style=filled]
+    fq -> tz
+    fq -> bn
+    kh [shape=invtriangle,fillcolor=yellow,style=filled]
+    kh -> dk
+    kh -> xf
+    sj [shape=invtriangle,fillcolor=yellow,style=filled]
+    sj -> mq
+    sj -> fv
+    vm [shape=invtriangle,fillcolor=gray92,style=filled]
+    vm -> zl
+    vm -> tz
+    mm [shape=ellipse,color=cyan,style=filled]
+    mm -> nr
+    rp [shape=invtriangle,fillcolor=yellow,style=dashed]
+    rp -> bc
+    fh [shape=invtriangle,fillcolor=yellow,style=dashed]
+    fh -> sx
+    ls [shape=invtriangle,fillcolor=yellow,style=dashed]
+    ls -> fj
+    xz [shape=invtriangle,fillcolor=gray92,style=filled]
+    xz -> mq
+    xz -> gz
+    fv [shape=invtriangle,fillcolor=yellow,style=dashed]
+    fv -> km
+    nr [shape=parallelogram,color=green,style=filled]
+    nr -> rx
+    lq [shape=invtriangle,fillcolor=gray92,style=dashed]
+    lq -> mq
+    xv [shape=invtriangle,fillcolor=yellow,style=dashed]
+    xv -> xz
+    cn [shape=invtriangle,fillcolor=yellow,style=filled]
+    cn -> tz
+    cn -> vm
+    pp [shape=invtriangle,fillcolor=gray92,style=filled]
+    pp -> jr
+    pp -> mq
+    hn [shape=invtriangle,fillcolor=gray92,style=dashed]
+    hn -> tg
+    qn [shape=invtriangle,fillcolor=gray92,style=filled]
+    qn -> hn
+    qn -> tg
+    rr [shape=invtriangle,fillcolor=gray92,style=filled]
+    rr -> rp
+    rr -> tg
+    cf [shape=invtriangle,fillcolor=gray92,style=filled]
+    cf -> tg
+    cf -> zc
+    qj [shape=invtriangle,fillcolor=gray92,style=filled]
+    qj -> fh
+    qj -> xf
+    xf [shape=parallelogram,color=green,style=filled]
+    xf -> sq
+    xf -> dk
+    xf -> fh
+    xf -> ff
+    xf -> kh
+    xf -> kr
+    np [shape=invtriangle,fillcolor=gray92,style=dashed]
+    np -> tz
+    rx [shape=box,color=red]
+    { rank=source; broadcaster }
+    { rank=sink; rx }
+    { rank=same; lh, fk, ff, mm }
+}
