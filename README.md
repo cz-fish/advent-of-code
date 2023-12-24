@@ -1,6 +1,7 @@
 # Advent of Code
 
 ## 2023
+* **24** - intersecting linear paths of hails
 * **23** - find longest path in maze
 * **22** - falling bricks of sand
 * **21** - making steps in the garden

@@ -53,6 +53,8 @@ def intersect_x_y(a: hail, b: hail):
         return None
     v = a.d.x * (b.p.y - a.p.y) - a.d.y * (b.p.x - a.p.x)
     t_b = v / div
+    if a.d.x == 0:
+        return None
     t_a = (b.p.x - a.p.x + t_b * b.d.x) / a.d.x
     x = a.p.x + t_a * a.d.x
     check_x = b.p.x + t_b * b.d.x
@@ -208,10 +210,85 @@ def find_viable_x_y_z(hails):
     print(f"viable dZ-s: {viable_z}")
 
 
+def inspect(hails):
+    coords = {}
+
+    def check(i, p, d, c):
+        nonlocal coords
+        key = (p, d, c)
+        if key in coords:
+            print(f"{i} and {coords[key]}")
+            print(hail)
+            print(hails[coords[key]])
+        else:
+            coords[key] = i
+
+    for i, hail in enumerate(hails):
+        check(i, hail.p.x, hail.d.x, 'x')
+        check(i, hail.p.y, hail.d.y, 'y')
+        check(i, hail.p.z, hail.d.z, 'z')
+    print(len(coords))
+
+
+def intersection(first, second, dx, dy):
+    a = hail(p=first.p, d=point(x=first.d.x + dx, y=first.d.y + dy, z=0))
+    b = hail(p=second.p, d=point(x=second.d.x + dx, y=second.d.y + dy, z=0))
+    i = intersect_x_y(a, b)
+    if i is None:
+        return None, None
+    return i.t_b, (i.x, i.y)
+
+
+def try_all_velocity(hails):
+    assert len(hails) >= 4
+    # Try all velocities Vx and Vy in range (-limit, limit) (starting from 0 and increasing)
+    limit = 300
+    for dx in range(2 * limit + 1):
+        vx = (1 if (dx % 2) else -1) * (dx // 2)
+        for dy in range(2 * limit + 1):
+            vy = (1 if (dy % 2) else - 1) * (dy // 2)
+            # Having Vx and Vy, take 4 hails. Adjust the velocities by Vx, Vy,
+            # as if the rock wasn't moving and the hails were moving towards it.
+            # If the Vx, Vy are the right velocities then the 4 lines should
+            # intersect in the same point (possibly different times). Other
+            # hails should intersect at that point as well, but we only check 4
+            # and it's hopefully enough.
+            t1, pos1 = intersection(hails[0], hails[1], vx, vy)
+            if t1 is None:
+                continue
+            t2, pos2 = intersection(hails[0], hails[2], vx, vy)
+            if t2 is None:
+                continue
+            t3, pos3 = intersection(hails[0], hails[3], vx, vy)
+            if t3 is None:
+                continue
+            if pos1 != pos2 or pos1 != pos3:
+                continue
+
+            # If the Vx and Vy produce a match, check that Z coordinates match
+            # as well
+            for vz in range(-limit, limit+1):
+                z1 = hails[1].p.z + t1 * (hails[1].d.z + vz)
+                z2 = hails[2].p.z + t2 * (hails[2].d.z + vz)
+                z3 = hails[3].p.z + t3 * (hails[3].d.z + vz)
+                if z1 != z2 or z1 != z3:
+                    continue
+                print(f"t1 {t1} pos1 {pos1} z1 {z1}")
+                print(f"t2 {t2} pos2 {pos2} z2 {z2}")
+                print(f"t3 {t3} pos3 {pos3} z3 {z3}")
+                print(f"vx {vx} vy {vy} vz {vz}")
+                # Since the rock is not moving, the place when the hails
+                # intersect must be the rock's position; so devise our
+                # solution.
+                return int(pos1[0]) + int(pos1[1]) + int(z1)
+    print(f"Solution not found in range {-limit} .. {limit}")
+    return None
+
+
 def part2(input):
     hails = parse_input(input)
 
-    if True:
+    if False:
         cr = ranges([p.p for p in hails])
         print(f"coord ranges: {cr[1]-cr[0]}, {cr[3]-cr[2]}, {cr[5]-cr[4]}")
         dr = ranges([p.d for p in hails])
@@ -246,6 +323,12 @@ def part2(input):
     
     if False:
         find_viable_x_y_z(hails)
+    
+    if False:
+        inspect(hails)
+
+    if True:
+        return try_all_velocity(hails)
 
     return 0
 
