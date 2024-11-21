@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import defaultdict
 
 e = Env(24)
@@ -29,7 +29,7 @@ class Group:
         self.atk = atk
         self.atk_type = atk_type
         self.initiative = initiative
-    
+
     def copy_with_boost(self, boost):
         return Group(self.army, self.id, self.units, self.hp, self.immune, self.weak, self.atk + boost, self.atk_type, self.initiative)
 

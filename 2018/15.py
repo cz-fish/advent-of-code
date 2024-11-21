@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid
+from pyaoc import Env, Grid
 #from collections import Namedtuple
 from collections import deque
 
@@ -115,7 +115,7 @@ def find_move(unit, grid):
             # Already in range of an enemy - don't move
             return y, x, True
 
-    # BFS in the reading order - up, left, right, down    
+    # BFS in the reading order - up, left, right, down
     q = deque()
     seen = set()
     for nei in grid_neighbors_in_reading_order(grid, y, x):

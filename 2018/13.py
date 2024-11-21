@@ -1,17 +1,17 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid
+from pyaoc import Env, Grid
 
 e = Env(13, raw_lines=True)
-e.T(r"""/->-\        
+e.T(r"""/->-\
 |   |  /----\
 | /-+--+-\  |
 | | |  | v  |
 \-+-/  \-+--/
   \------/   """, "7,3", None)
 
-e.T(r"""/>-<\  
-|   |  
+e.T(r"""/>-<\
+|   |
 | /<+-\
 | | | v
 \>+</ |
@@ -25,6 +25,8 @@ def find_carts(grid):
     repl = '-|-|'
     for y in range(grid.h):
         for x in range(grid.w):
+            if not grid.is_in(y, x):
+                continue
             v = grid.get(y, x)
             if v in symb:
                 # Remove the cart from the grid
@@ -108,7 +110,7 @@ def move_carts(carts, grid):
 
 
 def part1(input):
-    g = Grid(input.get_valid_lines())
+    g = Grid(input.get_valid_lines(), rectangular=False)
     carts = find_carts(g)
     counter = 0
     while True:
@@ -149,7 +151,7 @@ def move_and_crash_carts(carts, grid):
 
 
 def part2(input):
-    g = Grid(input.get_valid_lines())
+    g = Grid(input.get_valid_lines(), rectangular=False)
     carts = find_carts(g)
     counter = 0
     while True:

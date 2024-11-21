@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import deque
 import heapq
 
@@ -91,7 +91,7 @@ class Caves:
     def find_friend(self):
         # precalculate regions at least in the given rectangle
         self._find_region_type(self.tx, self.ty)
-        
+
         tools = 'NTC' # neither, torch, climbing
         TORCH = 1
         # Ordered tools in such a way that tool with index X is not allowed
@@ -121,7 +121,7 @@ class Caves:
         count = 0
         while q:
             _, time, pos, tool, region, switched = heapq.heappop(q)
-            
+
             count += 1
             #if count % 10000 == 0:
             #    print(f"step {count}: time={time}, pos={pos}, tool={tool}, region={region}, switched={switched}, queue={len(q)}")
@@ -159,7 +159,7 @@ class Caves:
                     continue
                 new_time = time + 1
                 heapq.heappush(q, (new_time + dist(new_pos), new_time, new_pos, tool, new_region, False))
-            
+
         assert False, "All paths exhausted, didn't find the friend!"
 
 

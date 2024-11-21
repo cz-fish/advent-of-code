@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import defaultdict
 
 e = Env(9)
@@ -57,7 +57,7 @@ def play_game(players, max_marble):
             vals += [start.val]
             start = start.next
         print(vals)
-    
+
     max_score = max(points.values())
     return max_score
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from aoc import Env
+from pyaoc import Env
 import re
 
 e = Env(4)

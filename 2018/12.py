@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(12)
 #e = Env(13, different_input='input12-old.txt')
@@ -64,7 +64,7 @@ class Line:
     def __init__(self, pattern=""):
         self.left = []
         self.right = [c for c in pattern]
-        
+
     def min(self):
         for i in range(len(self.left) - 1, -1, -1):
             if self.left[i] == '#':

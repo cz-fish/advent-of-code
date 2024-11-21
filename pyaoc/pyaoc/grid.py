@@ -29,7 +29,7 @@ class Grid:
                 min_width = min(min_width, len(ln))
         if rectangular:
             # Check that all lines are of the same size
-            assert(max_width == min_width)
+            assert(max_width == min_width), f"Max width {max_width} != Min width {min_width}"
         self.max_width = max_width
         self.min_width = min_width
         self.w = max_width

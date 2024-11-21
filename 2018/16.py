@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 import re
 from typing import Dict, List, Tuple
 from wristwatch import WristwatchComputer

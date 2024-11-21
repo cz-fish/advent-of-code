@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(8)
 e.T("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2", 138, 66)

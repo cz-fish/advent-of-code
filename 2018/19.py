@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Integers
+from pyaoc import Env, Integers
 from wristwatch import WristwatchComputer
 
 e = Env(19)

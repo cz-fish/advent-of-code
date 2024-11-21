@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from dataclasses import dataclass
 import heapq
 import re
@@ -41,10 +41,10 @@ class Nanobot:
 
     def dist(self, other):
         return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
-    
+
     def in_range(self, other):
         return self.dist(other) <= self.r
-    
+
     def overlaps(self, other):
         return self.dist(other) <= self.r + other.r
 
@@ -102,7 +102,7 @@ class Quad:
         yield Quad([[rcut[0], maxs[0]], [mins[1], lcut[1]], [rcut[2], maxs[2]]], bots)
         yield Quad([[mins[0], lcut[0]], [rcut[1], maxs[1]], [rcut[2], maxs[2]]], bots)
         yield Quad([[rcut[0], maxs[0]], [rcut[1], maxs[1]], [rcut[2], maxs[2]]], bots)
-    
+
     def __lt__(self, other):
         return (-self.num, self.dist, self.size) < (-other.num, other.dist, other.size)
 

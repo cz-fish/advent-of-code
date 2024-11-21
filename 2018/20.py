@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import deque
 from dataclasses import dataclass
 from typing import List, Optional
@@ -164,7 +164,7 @@ class Map:
                         dists[p] = dist + 1
                         q.append((nx, ny, dist + 1))
         return max(dists.values())
-    
+
     def count_distant_over(self, limit):
         visited = set()
         q = deque()
