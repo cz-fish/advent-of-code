@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid
+from pyaoc import Env, Grid
 
 e = Env(14)
 e.T("""O....#....
@@ -136,7 +136,7 @@ def part2(input):
     while steps < target:
         stones = run_cycle(rocks, stones, g.w, g.h)
         #print(f"\nAfter cycle {i+1}\n")
-        #print_state(rocks, stones, g.w, g.h, None) 
+        #print_state(rocks, stones, g.w, g.h, None)
         key = make_key(stones)
         steps += 1
         if key in configs:
@@ -156,7 +156,7 @@ def part2(input):
             break
     else:
         assert False, f"Configuration for state {A} not found in configs"
-    
+
     total = 0
     for col in final_stones:
         total += sum([g.h - s for s in col])

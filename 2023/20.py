@@ -1,8 +1,8 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import defaultdict, deque
-from aoc import integers
+from pyaoc import integers
 
 
 e = Env(20)

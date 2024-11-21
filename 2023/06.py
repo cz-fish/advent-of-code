@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 import re
 import math
 
@@ -63,7 +63,7 @@ def part2(input):
     dists = [int(x) for x in re.findall(r'\d+', dists_ln)]
     assert len(times) == len(dists)
     assert len(times) == 1
-    
+
     time = times[0]
     dist_to_beat = dists[0]
     k1, k2 = hold_button(time, dist_to_beat)

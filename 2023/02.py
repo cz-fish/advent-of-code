@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(2)
 e.T("""Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green

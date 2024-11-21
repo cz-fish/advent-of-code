@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid
+from pyaoc import Env, Grid
 from collections import deque
 
 e = Env(16)

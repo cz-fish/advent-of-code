@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 import re
 from dataclasses import dataclass
 import numpy as np
@@ -320,10 +320,10 @@ def part2(input):
                         print(f"solution {s}")
                         return s.x + s.y + s.z
         print("solution not found")
-    
+
     if False:
         find_viable_x_y_z(hails)
-    
+
     if False:
         inspect(hails)
 

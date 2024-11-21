@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid
+from pyaoc import Env, Grid
 from collections import deque, defaultdict
 
 def eT(*args,**kvargs):
@@ -215,7 +215,7 @@ def analyze_input(grid, start):
     reachable, _ = flood_fill(grid, 0, 0)
     #print(f"non-rocks in tile {count_non_rocks}. Of them reachable: {reachable}")
     #if count_non_rocks != reachable: return f"Not all non-rocks are reachable: reached {reachable} out of {count_non_rocks}"
-    
+
     srow, scol = start
     # Verify assumption: start is in the center of the grid
     if srow + 1 != (grid.h + 1) // 2 or scol + 1 != (grid.w + 1) // 2: return f"Start not in the center. Start {start}"
@@ -326,7 +326,7 @@ def part2(input):
     if outcome is not None:
         print(f"Special input assumptions failed: {outcome}")
         return count_reachable_pt2(grid, start, steps)
-        #return extended_pathfinding(grid, start, steps)    
+        #return extended_pathfinding(grid, start, steps)
     else:
         print("Special input assumptions verified")
 

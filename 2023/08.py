@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Integers
+from pyaoc import Env, Integers
 
 e = Env(8)
 e.T("""RL
@@ -81,7 +81,7 @@ def reach_any_z_node(start, instr, nodes):
                     return offset, period
                 reached[where][i] = steps
             else:
-                #print(f"reached {where} for the first time. i={i}") 
+                #print(f"reached {where} for the first time. i={i}")
                 # new Z node reached
                 reached[where] = {i : steps}
         where = nodes[where][0 if instr[i] == 'L' else 1]

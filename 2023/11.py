@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid
+from pyaoc import Env, Grid
 e = Env(11, param=1000000)
 e.T("""...#......
 .......#..

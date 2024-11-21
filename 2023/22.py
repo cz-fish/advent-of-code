@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import defaultdict, deque
 
 
@@ -114,7 +114,7 @@ def part2(input):
     for above, below in supports.items():
         for brick in below:
             pillars[brick].add(above)
-    
+
     # supports: for each brick (key), set of all bricks supporting it (value)
     # pillars: for each brick (key), set of all bricks supported by it (value)
     return count_chain_drops(len(bricks), supports, pillars)
