@@ -17,3 +17,5 @@ inputs/
 .vs/
 **/Properties/launchSettings.json
 **/dist/
+dev/
+*.egg-info

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyaoc"
+version = "2024.0.0"
+authors = [
+    {name = "Filip Simek"}
+]
+license = {file = "LICENSE"}
+
+[project.scripts]
+newday = "pyaoc:generate_new_day"
+
+[tool.setuptools.package-data]
+pyaoc = ["test_input.txt"]
