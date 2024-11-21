@@ -1,4 +1,4 @@
-from aoc.input import Input
+from .input import Input
 from typing import Any, Callable, List, NamedTuple, Optional, Type
 
 RED = "\033[0;31m"

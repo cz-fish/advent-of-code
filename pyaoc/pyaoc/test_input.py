@@ -1,14 +1,7 @@
-from aoc import Input
+from . import Input
+import os.path
 
-IFILE = '../../2020/input01.txt'
-
-
-def test_read_file():
-    inp = Input(IFILE)
-    ints = inp.get_ints()
-    assert(len(ints) == 200)
-    assert(ints[0] == 1918)
-    assert(ints[-1] == 1407)
+IFILE = os.path.join(os.path.dirname(__file__), "test_input.txt")
 
 
 def test_use_tests():
@@ -78,17 +71,30 @@ def test_get_all_ints():
 
 
 def test_read_stripped_lines():
-    inp = Input(IFILE, raw_lines=False)
+    inp = Input(IFILE, ["""1
+                        2
+                        3"""], raw_lines=False)
+    inp.use_test(0)
     ln = inp.get_lines()
-    assert(len(ln) > 0)
-    assert(not ln[0].endswith('\n'))
+    assert(len(ln) == 3)
+    assert(ln[0] == "1")
+    assert(ln[1] == "2")
+    assert(ln[2] == "3")
 
 
 def test_read_raw_lines():
-    inp = Input(IFILE, raw_lines=True)
+    # Note: reading from the provided test string is not really the same as reading from the
+    # input file, as the test lines don't have \n at the end, but when read from a file, they
+    # would have
+    inp = Input(IFILE, ["""1
+                        2
+                        3"""], raw_lines=True)
+    inp.use_test(0)
     ln = inp.get_lines()
-    assert(len(ln) > 0)
-    assert(ln[0].endswith('\n'))
+    assert(len(ln) == 3)
+    assert(ln[0] == "1")
+    assert(ln[1] == "                        2")
+    assert(ln[2] == "                        3")
 
 
 def test_get_valid_lines():
@@ -117,4 +123,4 @@ def test_use_main_input():
     assert(len(ln) == 2)
     inp.use_main_input()
     ln = inp.get_all_ints()
-    assert(len(ln) == 200)
+    assert(len(ln) == 4)

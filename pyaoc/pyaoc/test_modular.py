@@ -1,4 +1,4 @@
-from aoc import Modular
+from . import Modular
 
 def test_bezout_identity():
     assert(Modular.bezout(3, 5) == (2, -1))

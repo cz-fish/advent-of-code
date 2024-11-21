@@ -1,4 +1,4 @@
-from aoc import Grid
+from . import Grid
 
 TEST_GRID_RECT = [
     "#####",

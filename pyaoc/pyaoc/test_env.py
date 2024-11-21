@@ -1,3 +1,3 @@
-from aoc import Env
+from . import Env
 
 # TODO:

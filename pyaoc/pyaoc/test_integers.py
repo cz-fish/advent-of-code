@@ -1,4 +1,4 @@
-from aoc import Integers
+from . import Integers
 
 def test_prime_factors():
     assert Integers.prime_factors(0) == []

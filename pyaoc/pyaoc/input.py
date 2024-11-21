@@ -1,17 +1,29 @@
 import re
-from typing import List
+from typing import List, Optional
 
 
 class Input:
-    def __init__(self, fname: str, tests: List[str] = [], raw_lines: bool = False):
+    def __init__(self, fname: Optional[str], tests: List[str] = [], raw_lines: bool = False):
         """Initialize input with the name of the input file and
            optionally also a list of other test inputs (strings)"""
-        self.tests = [
-            test.split('\n')
-            for test in tests
-        ]
+        if raw_lines:
+            self.tests = [
+                test.split('\n')
+                for test in tests
+            ]
+        else:
+            self.tests = [
+                [
+                    ln.strip()
+                    for ln in test.split('\n')
+                ]
+                for test in tests
+            ]
         self.test_num = None
-        self._read_file(fname, raw_lines)
+        if fname is None:
+            self._orig_lines = []
+        else:
+            self._read_file(fname, raw_lines)
         self.lines = self._orig_lines
 
     def use_test(self, test_num: int) -> None:
@@ -67,7 +79,7 @@ class Input:
             else:
                 ints += [default]
         return ints
-    
+
     def get_all_ints(self) -> List[int]:
         """Get a list of all ints found in the input. There
            can be more than one int per line."""
