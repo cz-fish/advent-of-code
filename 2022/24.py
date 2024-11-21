@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid, Integers
+from pyaoc import Env, Grid, Integers
 from collections import deque
 
 e = Env(24)
@@ -64,7 +64,7 @@ def find_shortest_time(start, end, free, period, time_offset):
         iter += 1
         if (x, y) == end:
             return time
-        
+
         for dx, dy in d:
             ntime = time + 1
             nmtime = (ntime + time_offset) % period

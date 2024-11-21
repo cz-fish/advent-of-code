@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(20)
 e.T("""1
@@ -27,7 +27,7 @@ def mix(numbers):
             prev = i - 1
         next = (i + 1) % len(numbers)
         mixed.append([num, prev, next])
-    
+
     for i in range(len(mixed)):
         val = mixed[i][VAL]
         for j in range(abs(val)):
@@ -53,7 +53,7 @@ def mix(numbers):
                 mixed[n][PREV] = p
                 mixed[i][PREV] = n
                 mixed[p][NEXT] = n
-    
+
     return mixed
 
 
@@ -111,7 +111,7 @@ def mix_big(numbers):
             left = new_pos + 1
             right = old_pos + 1
             diff = 1
-        
+
         for j in range(i+1, l):
             if order[j] >= left and order[j] < right:
                 order[j] += diff
@@ -152,7 +152,7 @@ def mix_big_in_order_0(numbers, order):
             numbers = numbers[:old_pos] + numbers[old_pos+1:new_pos] + [val] + numbers[new_pos:]
         else:
             numbers = numbers[:new_pos] + [val] + numbers[new_pos:old_pos] + numbers[old_pos+1:]
-        
+
         #print(numbers)
     return numbers
 """

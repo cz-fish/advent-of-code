@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(21)
 e.T("""root: pppw + sjmn
@@ -158,7 +158,7 @@ class MonkeyNode:
             v = self.right.pass_down(right_inverse(self.op, target, left))
             self.value = apply_op(left, v, self.op)
         return self.value
-    
+
     def print(self, indent):
         i = ' ' * indent
         print(f"{i}[\"{self.name}\" {'R' if self.is_root else 'H' if self.is_human else ''} {self.value} {self.op}]")

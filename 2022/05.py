@@ -1,12 +1,12 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
-e = Env(5)
-e.T("""    [D]    
-[N] [C]    
+e = Env(5, raw_lines=True)
+e.T("""    [D]
+[N] [C]
 [Z] [M] [P]
- 1   2   3 
+ 1   2   3
 
 move 1 from 2 to 1
 move 3 from 1 to 3

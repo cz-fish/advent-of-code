@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 import re
 from collections import deque
 import heapq
@@ -45,7 +45,7 @@ class Map:
     def __init__(self):
         self.rates = {}
         self.adj = {}
-    
+
     def add(self, valve, rate, leads):
         assert valve not in self.rates, f"valve {valve} redefined. New rate {rate}, old rate {self.rates[valve]}"
         self.rates[valve] = rate
@@ -93,7 +93,7 @@ class SimplerMap:
     def __init__(self):
         self.rates = {}
         self.distances = {}
-    
+
     def add(self, valve, rate, distances):
         self.rates[valve] = rate
         self.distances[valve] = distances
@@ -346,7 +346,7 @@ class SimplerMap:
             # Take the most promising state from the priority queue
             est, state = heapq.heappop(q)
             est = -est
-            
+
             counter += 1
             if counter % 10000 == 0:
                 print(f"{counter}: best_state {best_state.value if best_state is not None else 0}, head_est {est}, q size {len(q)}")

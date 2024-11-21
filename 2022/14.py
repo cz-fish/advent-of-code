@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(14)
 e.T("""498,4 -> 498,6 -> 496,6

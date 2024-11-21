@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(23)
 e.T("""....#..
@@ -48,7 +48,7 @@ step_dir = [
 def move(elves, step):
     propo = {}
     stopped = set()
-    
+
     for elf in elves:
         # look all around the elf
         sur = [1 if (elf[0] + p[0], elf[1] + p[1]) in elves else 0 for p in around]

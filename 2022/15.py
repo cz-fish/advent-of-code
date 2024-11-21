@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 import re
 
 e = Env(15, param={'y': 2000000, 'limit': 4000000})
@@ -61,7 +61,7 @@ class Sensor:
         """
         # if the ranges crossed, the interval will be considered empty
         return [i_min, i_max]
-    
+
     def covers(self, point):
         return self.strength >= dist(self.sx, self.sy, point[0], point[1])
 
@@ -205,7 +205,7 @@ def find_empty_subdividing(sensors, square):
                 if corners_covered_by_sensor == 4:
                     fully_covered = True
                     break
-                
+
                 points_inside = sum([
                     1 for point in [
                         (sensor.sx, sensor.sy),

@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(17)
 e.T(">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>", 3068, 1514285714288)
@@ -173,7 +173,7 @@ def find_stone_period(jets, chamber, start_jet_index, start_shape_index):
         jet_index, _ = move_one_stone(jets, jet_index, shape_index, chamber, True)
 
         num_period_stones += 1
-    
+
     return num_period_stones, chamber, jet_index
 
 

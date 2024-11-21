@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid
+from pyaoc import Env, Grid
 
 side_none = 0
 side_front = 1
@@ -252,7 +252,7 @@ def seam_points(side, a_x, a_y, a_rot, a_edge, b_x, b_y, b_rot, b_edge, flip_hor
         else:
             wrap_start = (tgt_left, tgt_top)
             d_wrap_y = 1
-    
+
     return edge_start, overstep_start, d_edge_x, d_edge_y, wrap_start, d_wrap_x, d_wrap_y, facing
 
 
@@ -306,7 +306,7 @@ def get_hardcoded_seams():
                 (o_s[0] + d_y * i, o_s[1] + d_x * i),
                 (e_s[0] + d_y * i, e_s[1] + d_x * i)
             )] = ((w_s[0] + dw_y * i, w_s[1] + dw_x * i), f)
-    
+
     one_seam((0, 50), (-1, 50), 1, 0, (150, 0), 0, 1, RIGHT)
     one_seam((0, 100), (-1, 100), 1, 0, (199, 0), 1, 0, UP)
     one_seam((0, 149), (0, 150), 0, 1, (149, 99), 0, -1, LEFT)
@@ -321,7 +321,7 @@ def get_hardcoded_seams():
     one_seam((100, 0), (99, 0), 1, 0, (50, 50), 0, 1, RIGHT)
     one_seam((50, 50), (50, 49), 0, 1, (100, 0), 1, 0, DOWN)
     one_seam((0, 50), (0, 49), 0, 1, (149, 0), 0, -1, RIGHT)
-    
+
     return seams
 
 
