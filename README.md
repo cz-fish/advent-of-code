@@ -1,6 +1,27 @@
 # Advent of Code
 
+Solutions for AoC are in respective directories, by year. Python utility library is called `pyaoc`. To use it, create Python virtual environment, and install the library and its requirements into it.
+
+```sh
+python3.12 -m venv dev
+source dev/bin/activate
+pip install -e pyaoc/
+```
+
+If any year's solutions have additional dependencies, those might be in their respective `requirements.txt` files
+
+```sh
+pip install -r 2023/requirements.txt
+```
+
+Import required modules from the pyaoc library
+
+```py
+from pyaoc import Env, Grid #...
+```
+
 ## 2023
+* **25** - connected components
 * **24** - intersecting linear paths of hails
 * **23** - find longest path in maze
 * **22** - falling bricks of sand
