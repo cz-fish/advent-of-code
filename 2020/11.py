@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Input, Grid
+from pyaoc import Input, Grid
 from collections import defaultdict, deque
 
 inp = Input('input11.txt', ["""L.LL.LL.LL

@@ -2,7 +2,7 @@
 
 # Note: https://oeis.org/A181391
 
-from aoc import Env
+from pyaoc import Env
 import numpy
 
 e = Env(15)

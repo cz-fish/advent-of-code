@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import defaultdict
 from functools import reduce
 import math
@@ -269,7 +269,7 @@ def remove_borders(tile_grid, coords, xtiles):
     frame_write()
     frame_write()
     frame_write()
-    
+
     frame_clear(0, 0, 12*10, 12*10)
 
     offset = 12

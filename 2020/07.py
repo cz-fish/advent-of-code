@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Input
+from pyaoc import Input
 from collections import defaultdict, deque
 import re
 

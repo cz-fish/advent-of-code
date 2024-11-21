@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Input
+from pyaoc import Input
 
 inp = Input('input12.txt', ["""F10
 N3

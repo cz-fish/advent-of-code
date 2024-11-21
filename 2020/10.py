@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Input
+from pyaoc import Input
 
 inp = Input('input10.txt', ["""16
 10

@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Modular
+from pyaoc import Env, Modular
 
 e = Env(13)
 e.T("""939
