@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 import math
 import re
 
@@ -89,7 +89,7 @@ def run(input, what):
                 if highest is None or height > highest:
                     highest = height
                     highest_vel = (vx, vy)
-    
+
     if what == HIGHEST:
         print(highest_vel)
         return highest

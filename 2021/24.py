@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(24)
 
@@ -68,14 +68,14 @@ def analyze_program(program):
             assert instr[c] == i
             assert var[c] == a
         val[digit] += [b]
-    
+
     for i, j in enumerate(val):
         s = ', '.join(str(x) for x in j)
         Z = j[4]
         A = j[5]
         B = j[15]
         print(f"digit {i:02} [{Z:2}, {A:2}, {B:2}]  {s}")
-        
+
 
 def get_key_variables(program):
     assert len(program) == L * 18
@@ -279,7 +279,7 @@ carry 357 = (D0 + 4) * 26 + D1 + 10
 10 - 1 -> 9
 
 9 - -2 -> 11
-11 - 
+11 -
 ----------
 
 F - (A) - B' -> valid digit, ideally 9

@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(7)
 e.T("16,1,2,0,4,2,7,1,2,14", 37, 168)
@@ -33,9 +33,9 @@ def bruteforce(crabs, cost):
 
 def part1(input):
     crabs = sorted(input.get_all_ints())
-    
+
     # return bruteforce(crabs, cost_pt1)
-    
+
     # Let's choose some position X. Then A crabs are to the left
     # of X, and B crabs to the right. If we were to move X one position
     # to the left (X-1), the total cost would decrease by A, and

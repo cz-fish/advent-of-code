@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(16)
 e.T("D2FE28", 6, None)
@@ -24,7 +24,7 @@ class Stream():
         self.nibble = 0
         self.bit = 3
         self.pos = 0
-    
+
     def get_bit(self):
         v = (self.digits[self.nibble] >> self.bit) & 1
         self.bit -= 1
@@ -44,7 +44,7 @@ class Stream():
 class Packet():
     def __init__(self, ver):
         self.ver = ver
-    
+
     def sum_versions(self):
         return self.ver
 
@@ -53,7 +53,7 @@ class LiteralPacket(Packet):
     def __init__(self, ver, value):
         super().__init__(ver)
         self.value = value
-    
+
     def eval(self):
         return self.value
 

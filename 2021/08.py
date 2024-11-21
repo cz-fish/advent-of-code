@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(8)
 e.T("acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf", 0, 5353)
@@ -100,7 +100,7 @@ def make_map(left):
             break
     else:
         assert False
-    
+
     seg2 = seg24 - seg4
     assert len(seg2) == 1
 

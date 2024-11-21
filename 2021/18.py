@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 
 e = Env(18)
 e.T("[[1,2],[[3,4],5]]", 143, None)
@@ -151,7 +151,7 @@ class Number():
         node, isLeft = find_big_node(self)
         if not node:
             return False
-        
+
         val = node.left if isLeft else node.right
         a = val // 2
         b = val - a
@@ -173,7 +173,7 @@ class Number():
         else:
             rval = self.right
         return 3 * lval + 2 * rval
-    
+
     def __str__(self):
         return '[' + str(self.left) + ',' + str(self.right) + ']'
 

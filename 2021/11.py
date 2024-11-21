@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env, Grid
+from pyaoc import Env, Grid
 from collections import deque
 
 e = Env(11)
@@ -34,7 +34,7 @@ def step(grid):
         row, col = update.popleft()
         if (row, col) not in flashed:
             light(row, col)
-        
+
     return len(flashed)
 
 

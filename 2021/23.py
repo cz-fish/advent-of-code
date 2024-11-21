@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 import heapq
 
 e = Env(23)
@@ -79,7 +79,7 @@ between 2 lines
         col = x // 2
         row = x % 2
         return 4 * col + 3 - row
-    
+
     def p2p2(x):
         col = x // 2
         row = x % 2
@@ -165,7 +165,7 @@ def find_min_cost(state):
             print(counter, cost, state)
         if is_final_state(state):
             return cost
-        
+
         pos_map = {
             v: i // 2 for i, v in enumerate(state)
         }

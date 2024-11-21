@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import deque
 import re
 
@@ -171,7 +171,7 @@ class Cuboid():
                 # no intersection
                 return None
             return (max(a, x), min(b, y))
-        
+
         nx = int_coord(self.xr[0], self.xr[1], other.xr[0], other.xr[1])
         ny = int_coord(self.yr[0], self.yr[1], other.yr[0], other.yr[1])
         nz = int_coord(self.zr[0], self.zr[1], other.zr[0], other.zr[1])
@@ -179,14 +179,14 @@ class Cuboid():
             return Cuboid(other.on, nx, ny, nz)
         else:
             return None
-    
+
     def intersect_quad(self, quad):
         def int_coord(a, b, x, y):
             if b < x or a > y:
                 # no intersection
                 return None
             return (max(a, x), min(b, y))
-        
+
         nx = int_coord(self.xr[0], self.xr[1], quad[0], quad[1]-1)
         ny = int_coord(self.yr[0], self.yr[1], quad[2], quad[3]-1)
         nz = int_coord(self.zr[0], self.zr[1], quad[4], quad[5]-1)
@@ -295,7 +295,7 @@ def group_cuboids(cuboids):
             # i doesn't intersect anything, needs a group for itself
             groups[i] = set([i])
             cub_to_group[i] = i
-    
+
     # Each cuboid should have been added to some group
     assert len(cub_to_group) == len(cuboids)
 
@@ -445,7 +445,7 @@ def bsp(cuboids):
             if cub.on:
                 total += cub.size()
             continue
-        
+
         cuts.add(cut)
         left = []
         right = []

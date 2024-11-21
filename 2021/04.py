@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import defaultdict
 import re
 
@@ -85,7 +85,7 @@ class Bingo():
                     bingo = True
                 break
         return bingo
-    
+
     def sumTicket(self, ticketNr):
         ticket = self.tickets[ticketNr]
         s = 0

@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 
-from aoc import Env
+from pyaoc import Env
 from collections import defaultdict
 
 e = Env(12)
@@ -44,12 +44,12 @@ start-RW""", 226, 3509)
 class RouteFinder:
     def __init__(self):
         self.adj = defaultdict(list)
-    
+
     def add_edge(self, edge):
         start, end = edge.split('-')
         self.adj[start] += [end]
         self.adj[end] += [start]
-    
+
     def _next_step(self, current, visited, double_small):
         if current == 'end':
             return 1
