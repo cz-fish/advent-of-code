@@ -1,13 +1,26 @@
 #!/usr/bin/python3.12
 
+from pyaoc import Env
+
 from collections import defaultdict, deque
 import re
 
 
+e = Env(19)
+e.T("""e => H
+e => O
+H => HO
+H => OH
+O => HH
+
+HOHOHO
+""", 7, 6)
+
+
 def parse_input(full_input):
-    lines = [ln.strip() for ln in full_input.split("\n") if ln.strip()]
+    lines = full_input.get_valid_lines()
     transforms = defaultdict(list)
-    formula = lines.pop()    
+    formula = lines.pop()
     for ln in lines:
         assert " => " in ln
         source, dest = ln.split(" => ")
@@ -33,6 +46,10 @@ def part1(full_input):
     return len(options)
 
 
+e.run_tests(1, part1)
+e.run_main(1, part1)
+
+
 def num_transforms(rev_subs, formula):
     q = deque([(formula, 0)])
     seen = set([formula])
@@ -41,7 +58,7 @@ def num_transforms(rev_subs, formula):
     shortest = len(formula)
     while q:
         form, depth = q.popleft()
-        
+
         counter += 1
         max_depth = max(max_depth, depth)
         shortest = min(shortest, len(form))
@@ -50,7 +67,7 @@ def num_transforms(rev_subs, formula):
 
         if form == 'e':
             return depth
-        
+
         for right, sub in rev_subs.items():
             start = 0
             while True:
@@ -115,19 +132,11 @@ def part2(full_input):
     return 0
 
 
-def main():
-    with open("input19.txt", "rt") as f:
-        main_input = f.read()
-    test_inputs = [("""e => H
-e => O
-H => HO
-H => OH
-O => HH
+e.run_tests(2, part2)
+#e.run_main(2, part2)
 
-HOHOHO
-""", 7, 6)]
-    # test cases
-    num = 1
+
+"""
     for test_case, exp1, exp2 in test_inputs:
         res = part1(test_case)
         print(f"Test case {num}, part 1, expected {exp1} got {res} {'not a ' if res != exp1 else ''}match")
@@ -141,3 +150,4 @@ HOHOHO
 
 if __name__ == "__main__":
     main()
+"""
