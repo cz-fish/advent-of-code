@@ -20,6 +20,13 @@ Import required modules from the pyaoc library
 from pyaoc import Env, Grid #...
 ```
 
+Generate boilerplate file for a new day with
+
+```sh
+newday     # for current day
+newday 11  # create day 11 regardless of current date
+```
+
 ## 2023
 * **25** - connected components
 * **24** - intersecting linear paths of hails
