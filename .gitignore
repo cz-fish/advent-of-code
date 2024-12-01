@@ -19,3 +19,4 @@ inputs/
 **/dist/
 dev/
 *.egg-info
+**/build/
