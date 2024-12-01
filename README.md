@@ -27,6 +27,9 @@ newday     # for current day
 newday 11  # create day 11 regardless of current date
 ```
 
+## 2024
+* **1** - list similarity score
+
 ## 2023
 * **25** - connected components
 * **24** - intersecting linear paths of hails
