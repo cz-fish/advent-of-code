@@ -1,0 +1,32 @@
+<html>
+<head>
+<script type="importmap">
+    {
+        "imports": {
+            "day01": "../build/01.js"
+        }
+    }
+</script>
+<script type="module">
+import {part1, part2} from "day01";
+
+function run()
+{
+    const input_text = document.getElementById("input").value;
+    const p1_solution = part1(input_text);
+    const p2_solution = part2(input_text);
+    document.getElementById("part1span").innerText = p1_solution;
+    document.getElementById("part2span").innerText = p2_solution;
+}
+
+window.run = run;
+</script>
+</head>
+<body>
+<div>
+    <textarea id="input" rows="40" cols="80">Paste input here</textarea>
+    <button id="calculate" onclick="run()">Calculate</button>
+    <p>Solution: part 1 = <span id="part1span"></span>, part 2 = <span id="part2span"></span></p>
+</div>
+</body>
+</html>
