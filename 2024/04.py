@@ -16,65 +16,6 @@ MAMMMXMMMM
 MXMXAXMASX""", 18, 9)
 
 
-def get_direction(g, sr, sc, dr, dc):
-    line = []
-    while g.is_in(sr, sc):
-        line.append(g.get(sr, sc))
-        sr += dr
-        sc += dc
-    ln = ''.join(line)
-    print(sr, sc, dr, dc, ln)
-    return ln
-
-
-def count_line(line):
-    return len(re.findall("XMAS", line))
-
-
-def count_xmas(g):
-    directions = [
-        (1, 0),
-        (-1, 0),
-        (0, 1),
-        (0, -1),
-        (1, 1),
-        (1, -1),
-        (-1, 1),
-        (-1, -1),
-    ]
-    total = 0
-    lines = []
-    # top row
-    for col in range(g.w):
-        # down and diagonals down
-        lines.append(get_direction(g, 0, col, 1, 0))
-        lines.append(get_direction(g, 0, col, 1, 1))
-        lines.append(get_direction(g, 0, col, 1, -1))
-    # bottom row
-    for col in range(g.w):
-        # up and diagonals up
-        lines.append(get_direction(g, g.h-1, 0, -1, 0))
-        lines.append(get_direction(g, g.h-1, 0, -1, 1))
-        lines.append(get_direction(g, g.h-1, 0, -1, -1))
-    # left col
-    for row in range(g.h):
-        # right and diagonals right
-        lines.append(get_direction(g, row, 0, 0, 1))
-        if row != 0:
-            lines.append(get_direction(g, row, 0, 1, 1))
-        if row != g.h-1:
-            lines.append(get_direction(g, row, 0, -1, 1))
-    # right col
-    for row in range(g.h):
-        # left and diagonals left
-        lines.append(get_direction(g, row, g.w-1, 0, -1))
-        if row != 0:
-            lines.append(get_direction(g, row, g.w-1, 1, -1))
-        if row != g.h-1:
-            lines.append(get_direction(g, row, g.w-1, -1, -1))
-    return sum([count_line(ln) for ln in lines])
-
-
 def check_xmas(g, row, col, dr, dc):
     er = row + 3 * dr
     ec = col + 3 * dc
@@ -84,7 +25,7 @@ def check_xmas(g, row, col, dr, dc):
     return 1 if s == "XMAS" else 0
 
 
-def count_xmas2(g):
+def count_xmas(g):
     directions = [
         (1, 0),
         (-1, 0),
@@ -105,7 +46,7 @@ def count_xmas2(g):
 
 def part1(input):
     g = Grid(input.get_valid_lines())
-    return count_xmas2(g)
+    return count_xmas(g)
 
 
 e.run_tests(1, part1)
