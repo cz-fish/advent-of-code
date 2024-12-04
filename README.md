@@ -28,9 +28,10 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2024
-* **1** - list similarity score
-* **2** - count monotonous sequences
+* **4** - X-MAS word search
 * **3** - valid multiplications
+* **2** - count monotonous sequences
+* **1** - list similarity score
 
 ## 2023
 * **25** - connected components
