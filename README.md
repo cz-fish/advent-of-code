@@ -28,6 +28,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2024
+* **6** - guard roaming around
 * **5** - ordering pages
 * **4** - X-MAS word search
 * **3** - valid multiplications
