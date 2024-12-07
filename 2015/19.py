@@ -94,12 +94,15 @@ def part2_a(full_input):
     return num_transforms(reverse, formula)
 
 
+_atom_re = re.compile(r'[A-Z][a-z]*')
+
+
+def tokenize(formula):
+    return list(_atom_re.findall(formula))
+
+
 def get_terminals(subs, formula):
-    atom_re = re.compile(r'[A-Z][a-z]*')
-    def split_formula(form):
-        tokens = atom_re.findall(form)
-        return set(tokens)
-    formula_tokens = split_formula(formula)
+    formula_tokens = set(tokenize(formula))
     non_terminals = set(subs.keys())
     terminals = formula_tokens - non_terminals
     # assumption - all rules' right sides only contain terminals and non-terminals found in the final formula
@@ -109,7 +112,7 @@ def get_terminals(subs, formula):
     rule_atoms = set()
     for rules in subs.values():
         for rule in rules:
-            tokens = split_formula(rule)
+            tokens = set(tokenize(rule))
             #assert formula_tokens.issuperset(tokens), f"formula {formula_tokens}, tokens {tokens}"
             rule_atoms.update(tokens)
     assert rule_atoms.issuperset(formula_tokens)
@@ -117,23 +120,78 @@ def get_terminals(subs, formula):
     return terminals, non_terminals
 
 
-def part2(full_input):
-    # Context-free grammar
-    # Assumption: all formulas made up of atoms
-    #    each atom starts with capital letter -> tokenization
-    # Find terminals and non-terminals
-    # Is the grammar LL1?
-    # Construct First and Follow sets
-    # Parse formula using backtracking, get abstract tree, count its nodes
-    subs, formula = parse_input(full_input)
-    terminals, nonterminals = get_terminals(subs, formula)
-    print(f"terminals: {terminals}")
-    print(f"non terminals: {nonterminals}")
+def make_rule_map(rules):
+    # map: for each left side - a list of different possible right side expansions
+    #      for each expansion: (the first atom, the rest, and number of steps, list of numbers of rules applied)
+    rule_map = {}
+    for left, rights in rules.items():
+        expansions = []
+        firsts = set()
+        for rule, number in rights:
+            expansions.append((rule[0], rule[1:], 1, [number]))
+            firsts.add(rule[0])
+        rule_map[left] = (expansions, firsts)
+
+    # TODO: this somehow has to be done transitively
+    lefts = set(rule_map.keys())
+    transitive_map = defaultdict(set)
+    for left in lefts:
+        transitive_map[left] = set(rule_map[left][1])
+    change = True
+    while change:
+        change = False
+        for left in lefts:
+            new_set = set(transitive_map[left])
+            for first in transitive_map[left]:
+                if first not in transitive_map:
+                    continue
+                new_set.update(transitive_map[first])
+            if transitive_map[left] != new_set:
+                transitive_map[left] = new_set
+                change = True
+    for left, firsts in transitive_map.items():
+        print(f"Firsts of {left}: {list(firsts)}")
+    return rule_map
+
+
+def count_rule_expansions(rule_map, formula):
     return 0
 
 
+def part2(full_input):
+    subs, formula = parse_input(full_input)
+
+    # tokenize all rules, and give them all unique numbers
+    # Assumption: all formulas made up of atoms
+    #    each atom starts with capital letter -> tokenization
+    rules = {}
+    counter = 0
+    for left, rights in subs.items():
+        rules_of_left = []
+        for right in rights:
+            rules_of_left.append((tokenize(right), counter))
+            counter += 1
+        rules[left] = rules_of_left
+    token_formula = tokenize(formula)
+
+    # Find terminals and non-terminals -> not really that useful because the formula doesn't only contain
+    #    terminals, but some non-terminals, too.
+    #terminals, nonterminals = get_terminals(subs, formula)
+    #print(f"terminals: {terminals}")
+    #print(f"non terminals: {nonterminals}")
+
+    # Is the grammar LL1? Does it matter?
+
+    # Construct First and Follow sets
+    # map: for each non-terminal a list of firsts. For each first in the list - full expansion from the non-terminal and number of steps
+    rule_map = make_rule_map(rules)
+
+    # Parse formula using prefix matching. We should be able to accumulate number of rules applied as we go
+    return count_rule_expansions(rule_map, token_formula)
+
+
 e.run_tests(2, part2)
-#e.run_main(2, part2)
+e.run_main(2, part2)
 
 
 """
