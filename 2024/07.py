@@ -24,47 +24,36 @@ def parse_input(input):
     return records
 
 
-def calculate(test, vals, pos, running):
+def concatenate(a, b):
+    return int(str(a) + str(b))
+
+
+def calculate(test, vals, pos, running, use_concatenation=False):
     if pos == len(vals):
         return running == test
     if running > test:
         return False
-    return calculate(test, vals, pos + 1, running + vals[pos]) or calculate(test, vals, pos + 1, running * vals[pos])
-
-
-def formula_match(test, vals):
-    return calculate(test, vals, 1, vals[0])
+    if calculate(test, vals, pos + 1, running + vals[pos], use_concatenation):
+        return True
+    if calculate(test, vals, pos + 1, running * vals[pos], use_concatenation):
+        return True
+    if use_concatenation and calculate(test, vals, pos + 1, concatenate(running, vals[pos]), use_concatenation):
+        return True
+    return False
 
 
 def part1(input):
     records = parse_input(input)
-    return sum([test for test, vals in records if formula_match(test, vals)])
+    return sum([test for test, vals in records if calculate(test, vals, 1, vals[0], use_concatenation=False)])
 
 
 e.run_tests(1, part1)
 e.run_main(1, part1)
 
-def concatenate(a, b):
-    return int(str(a) + str(b))
-
-
-def calculate2(test, vals, pos, running):
-    if pos == len(vals):
-        return running == test
-    if running > test:
-        return False
-    return calculate2(test, vals, pos + 1, running + vals[pos]) or \
-           calculate2(test, vals, pos + 1, running * vals[pos]) or \
-           calculate2(test, vals, pos + 1, concatenate(running , vals[pos]))
-
-
-def formula_match2(test, vals):
-    return calculate2(test, vals, 1, vals[0])
-
 
 def part2(input):
     records = parse_input(input)
-    return sum([test for test, vals in records if formula_match2(test, vals)])
+    return sum([test for test, vals in records if calculate(test, vals, 1, vals[0], use_concatenation=True)])
 
 
 e.run_tests(2, part2)
