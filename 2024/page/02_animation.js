@@ -8,7 +8,7 @@ const img_h = 800;
 
 function wait_for_images()
 {
-    const names = ["base"];
+    const names = ["base", "scene"];
     for (const index of [1, 2, 3, 4, 5, 6]) {
         for (const type of ["hat", "outfit", "shoes"]) {
             names.push(type + index);
@@ -36,8 +36,7 @@ const state = {
 function draw()
 {
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(images["scene"], 0, 0, width, height);
     const left = (width - img_w) / 2;
     const top = (height - img_h) / 2;
     ctx.drawImage(images["base"], left, top, img_w, img_h);
@@ -73,40 +72,46 @@ function draw()
     ctx.drawImage(images[state.hat], hat_l, hat_t, img_w, img_h);
 
     if (speechBubble) {
-        const x = 620;
-        const y = 250;
-        const radius = 20;
-        const w = 100;
-        const h = 50;
-
-        const r = x + w;
-        const b = y + h;
-        ctx.beginPath();
-        ctx.strokeStyle="black";
-        ctx.lineWidth="2";
-        ctx.moveTo(x+radius, y);
-        ctx.lineTo(x+radius/2, y-10);
-        ctx.lineTo(x+radius * 2, y);
-        ctx.lineTo(r-radius, y);
-        ctx.quadraticCurveTo(r, y, r, y+radius);
-        ctx.lineTo(r, y+h-radius);
-        ctx.quadraticCurveTo(r, b, r-radius, b);
-        ctx.lineTo(x+radius, b);
-        ctx.quadraticCurveTo(x, b, x, b-radius);
-        ctx.lineTo(x, y+radius);
-        ctx.quadraticCurveTo(x, y, x+radius, y);
-        ctx.stroke();
-
-        ctx.textAligh = "center";
-        ctx.fillStyle = "black";
-        ctx.font = "30px Arial";
-        ctx.fillText("" + state.number, x + 30, y + 35);
+        drawBubble("" + state.number, 640, 280);
     }
 
     state.phase += 5;
 
     window.requestAnimationFrame(draw);
-    //window.setTimeout(draw, 1500);
+}
+
+function drawBubble(text, x, y) {
+    ctx.font = "30px Arial";
+    const measure = ctx.measureText(text);
+    const margin = 20;
+    const radius = 20;
+    const left = x - measure.width / 2 - margin;
+    const right = x + measure.width / 2 + margin;
+    const top = y - 15 - margin;
+    const bottom = y + margin;
+
+    ctx.strokeStyle = "black";
+    ctx.fillStyle = "white";
+    ctx.lineWidth="2";
+    ctx.beginPath();
+    ctx.moveTo(left + radius, top);
+    ctx.lineTo(left + radius / 2, top - 10);
+    ctx.lineTo(left + radius * 2, top);
+    ctx.lineTo(right - radius, top);
+    ctx.quadraticCurveTo(right, top, right, top + radius);
+    ctx.lineTo(right, bottom - radius);
+    ctx.quadraticCurveTo(right, bottom, right - radius, bottom);
+    ctx.lineTo(left + radius, bottom);
+    ctx.quadraticCurveTo(left, bottom, left, bottom - radius);
+    ctx.lineTo(left, top + radius);
+    ctx.quadraticCurveTo(left, top, left + radius, top);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fill();
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "black";
+    ctx.fillText(text, x, y);
 }
 
 wait_for_images();
