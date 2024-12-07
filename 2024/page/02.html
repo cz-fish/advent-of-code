@@ -33,10 +33,12 @@ function run()
     }
     console.log("numbers", g_numbers.length);
 
-    g_finished = false;
     if (g_animFrame) {
         window.cancelAnimationFrame(g_animFrame);
     }
+    g_finished = false;
+    g_state.number_index = -1;
+    g_state.phase = k_max_phase;
     g_animFrame = window.requestAnimationFrame(draw);
 }
 
@@ -75,8 +77,12 @@ function setupCanvas()
 {
     g_canvas = document.getElementById("screen");
     g_ctx = g_canvas.getContext("2d");
-    g_ctx.fillStyle = "grey";
-    g_ctx.fillRect(0, 0, k_width, k_height);
+
+    g_ctx.clearRect(0, 0, k_width, k_height);
+    g_ctx.drawImage(g_images["scene"], 0, 0, k_width, k_height);
+    const left = (k_width - k_img_w) / 2;
+    const top = (k_height - k_img_h) / 2;
+    g_ctx.drawImage(g_images["base"], left, top, k_img_w, k_img_h);
 }
 
 window.setupCanvas = setupCanvas;
@@ -95,7 +101,7 @@ const g_state = {
     phase: k_max_phase,
 };
 const k_speed = 5;
-const k_max_numbers = 20;
+const k_max_numbers = 15;
 
 function draw()
 {
@@ -109,18 +115,14 @@ function draw()
     g_ctx.drawImage(g_images["base"], left, top, k_img_w, k_img_h);
 
     if (g_state.phase >= k_max_phase) {
-        // Move to next number of stop if enough numbers were shown
+        // Move to next number
         g_state.number_index++;
-        if (g_state.number_index == g_numbers.length || g_state.number_index >= k_max_numbers) {
-            g_finished = true;
-        } else {
-            const outfit = g_numbers[g_state.number_index];
-            g_state.hat = "hat" + (outfit % 6 + 1);
-            g_state.outfit = "outfit" + (Math.floor(outfit / 6) % 6 + 1);
-            g_state.shoes = "shoes" + (Math.floor(outfit / 36) + 1);
-            g_state.phase = 0;
-            //console.log(state);
-        }
+        const outfit = g_numbers[g_state.number_index];
+        g_state.hat = "hat" + (outfit % 6 + 1);
+        g_state.outfit = "outfit" + (Math.floor(outfit / 6) % 6 + 1);
+        g_state.shoes = "shoes" + (Math.floor(outfit / 36) + 1);
+        g_state.phase = 0;
+        //console.log(state);
     }
 
     let range = 0;
@@ -129,6 +131,11 @@ function draw()
         range = 1 - g_state.phase / (k_max_phase / 4);
     } else if (g_state.phase < 3 * k_max_phase / 4) {
         speechBubble = true;
+        // Stop if enough numbers shown
+        if (g_state.phase >= (3 * k_max_phase / 4 - k_speed) &&
+            (g_state.number_index == g_numbers.length - 1 || g_state.number_index >= k_max_numbers)) {
+            g_finished = true;
+        }
     } else {
         range = (g_state.phase - 3 * k_max_phase / 4) / (k_max_phase / 4);
     }
@@ -144,12 +151,18 @@ function draw()
     g_ctx.drawImage(g_images[g_state.hat], hat_l, hat_t, k_img_w, k_img_h);
 
     if (speechBubble) {
-        drawBubble("" + g_numbers[g_state.number_index], 640, 280);
+        if (g_finished) {
+            drawBubble(`part 1: ${g_p1_solution}, part 2: ${g_p2_solution}`, 750, 280);
+        } else {
+            drawBubble("remove " + g_numbers[g_state.number_index], 680, 280);
+        }
     }
 
     g_state.phase += k_speed;
 
-    window.requestAnimationFrame(draw);
+    if (!g_finished) {
+        g_animFrame = window.requestAnimationFrame(draw);
+    }
 }
 
 function drawBubble(text, x, y) {
