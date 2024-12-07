@@ -1,0 +1,265 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="importmap">
+    {
+        "imports": {
+            "day02": "../build/02.js"
+        }
+    }
+</script>
+<script type="module">
+import {maybe_remove_one, parse_input, part1, part2} from "day02";
+
+let g_numbers = [];
+let g_p1_solution = undefined;
+let g_p2_solution = undefined;
+
+function run()
+{
+    const input_text = document.getElementById("input").value;
+    g_p1_solution = part1(input_text);
+    g_p2_solution = part2(input_text);
+    document.getElementById("part1span").innerText = g_p1_solution;
+    document.getElementById("part2span").innerText = g_p2_solution;
+
+    const number_rows = parse_input(input_text);
+    g_numbers = [];
+    for (const row of number_rows) {
+        const [_, number] = maybe_remove_one(row);
+        if (number !== undefined) {
+            g_numbers.push(number);
+        }
+    }
+    console.log("numbers", g_numbers.length);
+
+    g_finished = false;
+    if (g_animFrame) {
+        window.cancelAnimationFrame(g_animFrame);
+    }
+    g_animFrame = window.requestAnimationFrame(draw);
+}
+
+window.run = run;
+
+// FIXME: Change to 1280 x 720
+const k_width = 1024;
+const k_height = 768;
+const k_img_w = 560;
+const k_img_h = 800;
+let g_canvas = undefined;
+let g_ctx = undefined;
+const g_images = {};
+
+function loadImages()
+{
+    const names = ["base", "scene"];
+    for (const index of [1, 2, 3, 4, 5, 6]) {
+        for (const type of ["hat", "outfit", "shoes"]) {
+            names.push(type + index);
+        }
+    }
+    for (const img of names) {
+        if (!document.getElementById(img).complete) {
+            window.setTimeout(loadImages, 50);
+            return;
+        }
+        g_images[img] = document.getElementById(img);
+    }
+    setupCanvas();
+}
+
+window.loadImages = loadImages;
+
+function setupCanvas()
+{
+    g_canvas = document.getElementById("screen");
+    g_ctx = g_canvas.getContext("2d");
+    g_ctx.fillStyle = "grey";
+    g_ctx.fillRect(0, 0, k_width, k_height);
+}
+
+window.setupCanvas = setupCanvas;
+
+/////// cinematics
+
+let g_finished = true;
+let g_animFrame = undefined;
+
+const k_max_phase = 400;
+const g_state = {
+    number_index: -1,
+    hat: undefined,
+    outfit: undefined,
+    shoes: undefined,
+    phase: k_max_phase,
+};
+const k_speed = 5;
+const k_max_numbers = 20;
+
+function draw()
+{
+    if (g_finished) {
+        return;
+    }
+    g_ctx.clearRect(0, 0, k_width, k_height);
+    g_ctx.drawImage(g_images["scene"], 0, 0, k_width, k_height);
+    const left = (k_width - k_img_w) / 2;
+    const top = (k_height - k_img_h) / 2;
+    g_ctx.drawImage(g_images["base"], left, top, k_img_w, k_img_h);
+
+    if (g_state.phase >= k_max_phase) {
+        // Move to next number of stop if enough numbers were shown
+        g_state.number_index++;
+        if (g_state.number_index == g_numbers.length || g_state.number_index >= k_max_numbers) {
+            g_finished = true;
+        } else {
+            const outfit = g_numbers[g_state.number_index];
+            g_state.hat = "hat" + (outfit % 6 + 1);
+            g_state.outfit = "outfit" + (Math.floor(outfit / 6) % 6 + 1);
+            g_state.shoes = "shoes" + (Math.floor(outfit / 36) + 1);
+            g_state.phase = 0;
+            //console.log(state);
+        }
+    }
+
+    let range = 0;
+    let speechBubble = false;
+    if (g_state.phase < k_max_phase / 4) {
+        range = 1 - g_state.phase / (k_max_phase / 4);
+    } else if (g_state.phase < 3 * k_max_phase / 4) {
+        speechBubble = true;
+    } else {
+        range = (g_state.phase - 3 * k_max_phase / 4) / (k_max_phase / 4);
+    }
+    const shoes_l = left - 200 * range;
+    const shoes_t = top + 150 * range;
+    const outfit_l = left + 600 * range;
+    const outfit_t = top + 50 * range;
+    const hat_l = left + 120 * range;
+    const hat_t = top - 400 * range;
+
+    g_ctx.drawImage(g_images[g_state.shoes], shoes_l, shoes_t, k_img_w, k_img_h);
+    g_ctx.drawImage(g_images[g_state.outfit], outfit_l, outfit_t, k_img_w, k_img_h);
+    g_ctx.drawImage(g_images[g_state.hat], hat_l, hat_t, k_img_w, k_img_h);
+
+    if (speechBubble) {
+        drawBubble("" + g_numbers[g_state.number_index], 640, 280);
+    }
+
+    g_state.phase += k_speed;
+
+    window.requestAnimationFrame(draw);
+}
+
+function drawBubble(text, x, y) {
+    g_ctx.font = "30px Arial";
+    const measure = g_ctx.measureText(text);
+    const margin = 20;
+    const radius = 20;
+    const left = x - measure.width / 2 - margin;
+    const right = x + measure.width / 2 + margin;
+    const top = y - 15 - margin;
+    const bottom = y + margin;
+
+    g_ctx.strokeStyle = "black";
+    g_ctx.fillStyle = "white";
+    g_ctx.lineWidth="2";
+    g_ctx.beginPath();
+    g_ctx.moveTo(left + radius, top);
+    g_ctx.lineTo(left + radius / 2, top - 10);
+    g_ctx.lineTo(left + radius * 2, top);
+    g_ctx.lineTo(right - radius, top);
+    g_ctx.quadraticCurveTo(right, top, right, top + radius);
+    g_ctx.lineTo(right, bottom - radius);
+    g_ctx.quadraticCurveTo(right, bottom, right - radius, bottom);
+    g_ctx.lineTo(left + radius, bottom);
+    g_ctx.quadraticCurveTo(left, bottom, left, bottom - radius);
+    g_ctx.lineTo(left, top + radius);
+    g_ctx.quadraticCurveTo(left, top, left + radius, top);
+    g_ctx.closePath();
+    g_ctx.stroke();
+    g_ctx.fill();
+
+    g_ctx.textAlign = "center";
+    g_ctx.fillStyle = "black";
+    g_ctx.fillText(text, x, y);
+}
+
+</script>
+<style>
+    textarea {
+        display: block;
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        height: 300px;
+    }
+
+    #control_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    #output_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 10px;
+    }
+
+    #debug {
+        display: none;
+    }
+</style>
+</head>
+<body onload="loadImages()">
+<div id="input_section">
+    <textarea id="input" rows="40" cols="80">7 6 4 2 1
+1 2 7 8 9
+9 7 6 2 1
+1 3 2 4 5
+8 6 4 4 1
+1 3 6 7 9
+    </textarea>
+</div>
+<div id="control_section">
+    <button id="calculate" onclick="run()">Dress an Elf</button>
+</div>
+<div id="output_section">
+    <canvas id="screen" width="1024" height="768"></canvas>
+</div>
+<div id="debug">
+    <p>Solution: part 1 = <span id="part1span"></span>, part 2 = <span id="part2span"></span></p>
+</div>
+<div style="display: none;">
+    <img src="img02/base.png" id="base"/>
+    <img src="img02/scene.png" id="scene"/>
+    <img src="img02/hats/1.png" id="hat1"/>
+    <img src="img02/hats/2.png" id="hat2"/>
+    <img src="img02/hats/3.png" id="hat3"/>
+    <img src="img02/hats/4.png" id="hat4"/>
+    <img src="img02/hats/5.png" id="hat5"/>
+    <img src="img02/hats/6.png" id="hat6"/>
+    <img src="img02/outfits/1.png" id="outfit1"/>
+    <img src="img02/outfits/2.png" id="outfit2"/>
+    <img src="img02/outfits/3.png" id="outfit3"/>
+    <img src="img02/outfits/4.png" id="outfit4"/>
+    <img src="img02/outfits/5.png" id="outfit5"/>
+    <img src="img02/outfits/6.png" id="outfit6"/>
+    <img src="img02/shoes/1.png" id="shoes1"/>
+    <img src="img02/shoes/2.png" id="shoes2"/>
+    <img src="img02/shoes/3.png" id="shoes3"/>
+    <img src="img02/shoes/4.png" id="shoes4"/>
+    <img src="img02/shoes/5.png" id="shoes5"/>
+    <img src="img02/shoes/6.png" id="shoes6"/>
+</div>
+
+</body>
+</html>
