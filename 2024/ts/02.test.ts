@@ -7,7 +7,7 @@ const test_input = `7 6 4 2 1
 8 6 4 4 1
 1 3 6 7 9`;
 
-describe('test 01', () => {
+describe('test 02', () => {
     test('parse numbers from input', () => {
         const nums = parse_input(test_input);
         expect(nums.length).toBe(6);

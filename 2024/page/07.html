@@ -1,0 +1,142 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="importmap">
+    {
+        "imports": {
+            "day07": "../build/07.js"
+        }
+    }
+</script>
+<script type="module">
+import {make_formula, parse_input, part1, part2} from "day07";
+
+let g_numbers = [];
+let g_p1_solution = undefined;
+let g_p2_solution = undefined;
+
+function run()
+{
+    const input_text = document.getElementById("input").value;
+    g_p1_solution = part1(input_text);
+    g_p2_solution = part2(input_text);
+    document.getElementById("part1span").innerText = g_p1_solution;
+    document.getElementById("part2span").innerText = g_p2_solution;
+}
+
+window.run = run;
+
+const k_width = 1280;
+const k_height = 720;
+let g_canvas = undefined;
+let g_ctx = undefined;
+const g_images = {};
+
+function loadImages()
+{
+    const names = ["scene"];
+    for (const img of names) {
+        if (!document.getElementById(img).complete) {
+            window.setTimeout(loadImages, 50);
+            return;
+        }
+        g_images[img] = document.getElementById(img);
+    }
+    setupCanvas();
+}
+
+window.loadImages = loadImages;
+
+function setupCanvas()
+{
+    g_canvas = document.getElementById("screen");
+    g_ctx = g_canvas.getContext("2d");
+
+    g_ctx.clearRect(0, 0, k_width, k_height);
+    g_ctx.drawImage(g_images["scene"], 0, 0, k_width, k_height);
+}
+
+window.setupCanvas = setupCanvas;
+
+/////// cinematics
+
+let g_finished = true;
+let g_animFrame = undefined;
+
+function draw()
+{
+    if (g_finished) {
+        return;
+    }
+    g_ctx.clearRect(0, 0, k_width, k_height);
+    g_ctx.drawImage(g_images["scene"], 0, 0, k_width, k_height);
+
+    //TODO: implement
+
+    if (!g_finished) {
+        g_animFrame = window.requestAnimationFrame(draw);
+    }
+}
+
+</script>
+<style>
+    textarea {
+        display: block;
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        height: 300px;
+    }
+
+    #control_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    #output_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 10px;
+    }
+
+    #debug {
+        display: none;
+    }
+</style>
+</head>
+<body onload="loadImages()">
+<div id="input_section">
+    <textarea id="input" rows="40" cols="80">190: 10 19
+3267: 81 40 27
+83: 17 5
+156: 15 6
+7290: 6 8 6 15
+161011: 16 10 13
+192: 17 8 14
+21037: 9 7 18 13
+292: 11 6 16 20
+</textarea>
+</div>
+<div id="control_section">
+    <button id="calculate" onclick="run()">Formulate Formulas</button>
+</div>
+<div id="output_section">
+    <canvas id="screen" width="1280" height="720"></canvas>
+</div>
+<div id="debug">
+    <p>Solution: part 1 = <span id="part1span"></span>, part 2 = <span id="part2span"></span></p>
+</div>
+<div style="display: none;">
+    <!-- FIXME -->
+    <img src="img02/scene.png" id="scene"/>
+</div>
+
+</body>
+</html>
