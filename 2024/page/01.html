@@ -58,8 +58,8 @@ function run()
 
 window.run = run;
 
-const k_width = 640;
-const k_height = 480;
+const k_width = 1280;
+const k_height = 720;
 let g_canvas = undefined;
 let g_ctx = undefined;
 function setupCanvas()
@@ -141,7 +141,7 @@ let g_y_offset = k_height;
 let g_finished = true;
 let g_animFrame = undefined;
 
-const k_speed = 3;
+const k_speed = 8;
 
 function draw()
 {
@@ -157,34 +157,34 @@ function draw()
     let y = g_y_offset;
     for (const [kind, content] of g_creditLines) {
         if (kind === "heading") {
-            g_ctx.font = "30px Arial";
+            g_ctx.font = "40px Arial";
             g_ctx.fillText(`⭐ ${content} ⭐`, k_width / 2, y);
-            y += 32;
+            y += 45;
         } else if (kind === "solution") {
-            g_ctx.font = "20px Sans";
+            g_ctx.font = "30px Sans";
             g_ctx.fillText(content, k_width / 2, y);
-            y += 22;
+            y += 35;
         } else if (kind === "blank") {
             y += 30;
         } else if (kind === "copyrights") {
-            g_ctx.font = "16px Arial";
+            g_ctx.font = "22px Arial";
             g_ctx.fillStyle = "gold";
             g_ctx.fillText(content, k_width / 2, y);
-            y += 18;
+            y += 25;
         } else if (kind === "star") {
-            g_ctx.font = "20px Arial";
+            g_ctx.font = "30px Arial";
             g_ctx.fillText(content, k_width / 2, y);
-            y += 22;
+            y += 35;
         } else if (kind === "credits") {
-            g_ctx.font = "20px Arial";
+            g_ctx.font = "30px Arial";
             g_ctx.fillText(content.join("       "), k_width / 2, y);
-            y += 22;
+            y += 35;
         }
     }
 
     g_y_offset -= k_speed;
 
-    if (y < 0) {
+    if (y < k_height / 3) {
         g_finished = true;
     }
 
@@ -238,7 +238,7 @@ function draw()
     <button id="calculate" onclick="run()">Roll credits</button>
 </div>
 <div id="output_section">
-    <canvas id="credits" width="640" height="480"></canvas>
+    <canvas id="credits" width="1280" height="720"></canvas>
 </div>
 <div id="debug">
     <p>Solution: part 1 = <span id="part1span"></span>, part 2 = <span id="part2span"></span></p>
