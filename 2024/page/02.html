@@ -44,11 +44,10 @@ function run()
 
 window.run = run;
 
-// FIXME: Change to 1280 x 720
-const k_width = 1024;
-const k_height = 768;
-const k_img_w = 560;
-const k_img_h = 800;
+const k_width = 1280;
+const k_height = 720;
+const k_img_w = 448;
+const k_img_h = 640;
 let g_canvas = undefined;
 let g_ctx = undefined;
 const g_images = {};
@@ -81,7 +80,7 @@ function setupCanvas()
     g_ctx.clearRect(0, 0, k_width, k_height);
     g_ctx.drawImage(g_images["scene"], 0, 0, k_width, k_height);
     const left = (k_width - k_img_w) / 2;
-    const top = (k_height - k_img_h) / 2;
+    const top = (k_height - k_img_h) / 2 + 20;
     g_ctx.drawImage(g_images["base"], left, top, k_img_w, k_img_h);
 }
 
@@ -111,7 +110,7 @@ function draw()
     g_ctx.clearRect(0, 0, k_width, k_height);
     g_ctx.drawImage(g_images["scene"], 0, 0, k_width, k_height);
     const left = (k_width - k_img_w) / 2;
-    const top = (k_height - k_img_h) / 2;
+    const top = (k_height - k_img_h) / 2 + 20;
     g_ctx.drawImage(g_images["base"], left, top, k_img_w, k_img_h);
 
     if (g_state.phase >= k_max_phase) {
@@ -120,9 +119,12 @@ function draw()
         const outfit = g_numbers[g_state.number_index];
         g_state.hat = "hat" + (outfit % 6 + 1);
         g_state.outfit = "outfit" + (Math.floor(outfit / 6) % 6 + 1);
-        g_state.shoes = "shoes" + (Math.floor(outfit / 36) + 1);
+        // The numbers in input all seem to be <= 99. That means that only the first
+        // three shoe types would ever be used. To make use of all 6 types, we randomize
+        // a bit.
+        let shoe_number = Math.floor(outfit / 36 * (Math.random() * 3 + 1)) % 6 + 1;
+        g_state.shoes = "shoes" + shoe_number;
         g_state.phase = 0;
-        //console.log(state);
     }
 
     let range = 0;
@@ -152,9 +154,9 @@ function draw()
 
     if (speechBubble) {
         if (g_finished) {
-            drawBubble(`part 1: ${g_p1_solution}, part 2: ${g_p2_solution}`, 750, 280);
+            drawBubble(`Part 1: ${g_p1_solution}, Part 2: ${g_p2_solution}`, 860, 300);
         } else {
-            drawBubble("remove " + g_numbers[g_state.number_index], 680, 280);
+            drawBubble("Tolerate " + g_numbers[g_state.number_index], 800, 300);
         }
     }
 
@@ -246,7 +248,7 @@ function drawBubble(text, x, y) {
     <button id="calculate" onclick="run()">Dress an Elf</button>
 </div>
 <div id="output_section">
-    <canvas id="screen" width="1024" height="768"></canvas>
+    <canvas id="screen" width="1280" height="720"></canvas>
 </div>
 <div id="debug">
     <p>Solution: part 1 = <span id="part1span"></span>, part 2 = <span id="part2span"></span></p>
