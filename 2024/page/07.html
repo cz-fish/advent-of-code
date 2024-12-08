@@ -11,17 +11,34 @@
 <script type="module">
 import {make_formula, parse_input, part1, part2} from "day07";
 
-let g_numbers = [];
+let g_formulas = [];
 let g_p1_solution = undefined;
 let g_p2_solution = undefined;
 
 function run()
 {
+    // calculate result
     const input_text = document.getElementById("input").value;
     g_p1_solution = part1(input_text);
-    g_p2_solution = part2(input_text);
+    //g_p2_solution = part2(input_text);
+    const parsed = parse_input(input_text);
+    g_p2_solution = 0;
+    for (const [target, vals] of parsed) {
+        const [success, repr] = make_formula(target, vals, 1, vals[0], true, "" + vals[0]);
+        if (success) {
+            g_p2_solution += target;
+            g_formulas.push(`${target} = ${repr}`);
+        }
+    }
+    console.log(`Formulas: ${g_formulas.length}`);
+
     document.getElementById("part1span").innerText = g_p1_solution;
     document.getElementById("part2span").innerText = g_p2_solution;
+
+    // start animation
+    g_formula_counter = 0;
+    g_current_formula = undefined;
+    g_show_solutions = false;
     g_finished = false;
     if (g_animFrame) {
         window.cancelAnimationFrame(g_animFrame);
@@ -82,8 +99,12 @@ let g_eye_dx = 0.04;
 let g_scale_d = 0.06;
 
 const k_math_pictures = 8;
-let g_formulas = [];
-const k_max_formulas = 8;
+let g_diagrams = [];
+const k_max_diagrams = 8;
+let g_current_formula = undefined;
+let g_formula_counter = 0;
+const k_max_formulas = 12;
+let g_show_solutions = false;
 
 function clear_and_draw_face()
 {
@@ -117,10 +138,20 @@ function draw()
     // move face scale and offset
     g_scale += g_scale_d;
 
-    // --move formulas--
+    if (g_show_solutions) {
+        g_finished = true;
+        // draw results
+        g_ctx.font = `40px Sans`;
+        g_ctx.fillStyle = "white";
+        g_ctx.fillText(`Part 1: ${g_p1_solution}`, 150, 150);
+        g_ctx.fillText(`Part 2: ${g_p2_solution}`, 150, 200);
+        return;
+    }
+
+    // --move diagrams--
     // remove expired
-    g_formulas = g_formulas.filter(f => f.ttl > 0);
-    if (g_formulas.length < k_max_formulas) {
+    g_diagrams = g_diagrams.filter(f => f.ttl > 0);
+    if (g_diagrams.length < k_max_diagrams) {
         if (Math.random() > 0.1) {
             let formula = {
                 image: 1 + Math.floor(Math.random() * k_math_pictures),
@@ -132,10 +163,10 @@ function draw()
                 dy: Math.random() * 50 - 30,
                 scale: 1 + Math.random() * 0.05
             };
-            g_formulas.push(formula);
+            g_diagrams.push(formula);
         }
     }
-    for (const formula of g_formulas) {
+    for (const formula of g_diagrams) {
         const image = g_images[`math${formula.image}`];
         g_ctx.drawImage(image, formula.x, formula.y, formula.width, formula.width / image.width * image.height);
         formula.ttl -= 1;
@@ -144,7 +175,42 @@ function draw()
         formula.width *= formula.scale;
     }
 
-    // TODO: print results
+    // --move formulas--
+    if (g_current_formula && g_current_formula.ttl <= 0) {
+        // expire old formula
+        g_current_formula = undefined;
+    }
+    if (g_current_formula === undefined) {
+        // get next formula
+        g_formula_counter++;
+        if (g_formula_counter >= k_max_formulas || g_formula_counter >= g_formulas.length) {
+            // already shown enough; draw solution in the next frame
+            g_show_solutions = true;
+        } else {
+            // take next formula
+            const x = Math.random() * k_width - 200;
+            let dx = 3 + Math.random() * 10;
+            if (x > k_width / 2 - 100) {
+                dx = -dx;
+            }
+            g_current_formula = {
+                text: g_formulas[g_formula_counter],
+                ttl: 30 + Math.floor(Math.random() * 30),
+                x: x,
+                dx: dx,
+                y: 40 + Math.random() * (k_height - 80),
+                size: 50 + Math.floor(Math.random() * 20),
+            };
+        }
+    }
+    if (g_current_formula !== undefined) {
+        // draw current formula and move it
+        g_ctx.font = `${g_current_formula.size}px Sans`;
+        g_ctx.fillStyle = "white";
+        g_ctx.fillText(g_current_formula.text, g_current_formula.x, g_current_formula.y);
+        g_current_formula.ttl--;
+        g_current_formula.x += g_current_formula.dx;
+    }
 
     if (!g_finished) {
         g_animFrame = window.requestAnimationFrame(draw);
