@@ -22,6 +22,11 @@ function run()
     g_p2_solution = part2(input_text);
     document.getElementById("part1span").innerText = g_p1_solution;
     document.getElementById("part2span").innerText = g_p2_solution;
+    g_finished = false;
+    if (g_animFrame) {
+        window.cancelAnimationFrame(g_animFrame);
+    }
+    g_animFrame = window.requestAnimationFrame(draw);
 }
 
 window.run = run;
@@ -34,7 +39,10 @@ const g_images = {};
 
 function loadImages()
 {
-    const names = ["scene"];
+    const names = ["confused", "confused-eyes"];
+    for (let i = 1; i <= k_math_pictures; ++i) {
+        names.push(`math${i}`);
+    }
     for (const img of names) {
         if (!document.getElementById(img).complete) {
             window.setTimeout(loadImages, 50);
@@ -52,8 +60,7 @@ function setupCanvas()
     g_canvas = document.getElementById("screen");
     g_ctx = g_canvas.getContext("2d");
 
-    g_ctx.clearRect(0, 0, k_width, k_height);
-    g_ctx.drawImage(g_images["scene"], 0, 0, k_width, k_height);
+    clear_and_draw_face();
 }
 
 window.setupCanvas = setupCanvas;
@@ -63,15 +70,81 @@ window.setupCanvas = setupCanvas;
 let g_finished = true;
 let g_animFrame = undefined;
 
+let g_scale = 1.0;
+let g_face_x = 300;
+let g_face_y = 50;
+let g_eyes_x = 0;
+//let g_eyes_y = 0;
+let k_face_w = 872;
+let k_face_h = 800;
+
+let g_eye_dx = 0.04;
+let g_scale_d = 0.06;
+
+const k_math_pictures = 8;
+let g_formulas = [];
+const k_max_formulas = 8;
+
+function clear_and_draw_face()
+{
+    g_ctx.clearRect(0, 0, k_width, k_height);
+    g_ctx.fillStyle = "#117a65";
+    g_ctx.fillRect(0, 0, k_width, k_height);
+
+    const scale = (1 + 0.02 * Math.sin(g_scale));
+    const d_y = 10 * Math.sin(g_scale);
+    const eye_offset = 5 + 18 * Math.sin(g_eyes_x)
+    g_ctx.drawImage(g_images["confused-eyes"], g_face_x + eye_offset, g_face_y - d_y, k_face_w * scale, k_face_h * scale);
+    g_ctx.drawImage(g_images["confused"], g_face_x, g_face_y - d_y, k_face_w * scale, k_face_h * scale);
+}
+
 function draw()
 {
     if (g_finished) {
         return;
     }
-    g_ctx.clearRect(0, 0, k_width, k_height);
-    g_ctx.drawImage(g_images["scene"], 0, 0, k_width, k_height);
 
-    //TODO: implement
+    clear_and_draw_face();
+
+    // move eyes
+    g_eyes_x += g_eye_dx;
+    if (g_eyes_x >= 1) {
+        g_eye_dx = -g_eye_dx;
+    } else if (g_eyes_x <= -1) {
+        g_eye_dx = -g_eye_dx;
+    }
+
+    // move face scale and offset
+    g_scale += g_scale_d;
+
+    // --move formulas--
+    // remove expired
+    g_formulas = g_formulas.filter(f => f.ttl > 0);
+    if (g_formulas.length < k_max_formulas) {
+        if (Math.random() > 0.1) {
+            let formula = {
+                image: 1 + Math.floor(Math.random() * k_math_pictures),
+                ttl: 30 + Math.floor(Math.random() * 30),
+                x: 50 + Math.random() * (k_width - 200),
+                y: 50 + Math.random() * (k_height - 200),
+                width: 150 + Math.random() * 150,
+                dx: Math.random() * 50 - 30,
+                dy: Math.random() * 50 - 30,
+                scale: 1 + Math.random() * 0.05
+            };
+            g_formulas.push(formula);
+        }
+    }
+    for (const formula of g_formulas) {
+        const image = g_images[`math${formula.image}`];
+        g_ctx.drawImage(image, formula.x, formula.y, formula.width, formula.width / image.width * image.height);
+        formula.ttl -= 1;
+        formula.x += formula.dx;
+        formula.y += formula.dy;
+        formula.width *= formula.scale;
+    }
+
+    // TODO: print results
 
     if (!g_finished) {
         g_animFrame = window.requestAnimationFrame(draw);
@@ -134,8 +207,16 @@ function draw()
     <p>Solution: part 1 = <span id="part1span"></span>, part 2 = <span id="part2span"></span></p>
 </div>
 <div style="display: none;">
-    <!-- FIXME -->
-    <img src="img02/scene.png" id="scene"/>
+    <img src="img07/math1.png" id="math1"/>
+    <img src="img07/math2.png" id="math2"/>
+    <img src="img07/math3.png" id="math3"/>
+    <img src="img07/math4.png" id="math4"/>
+    <img src="img07/math5.png" id="math5"/>
+    <img src="img07/math6.png" id="math6"/>
+    <img src="img07/math7.png" id="math7"/>
+    <img src="img07/math8.png" id="math8"/>
+    <img src="img07/confused-eyes.png" id="confused-eyes"/>
+    <img src="img07/confused.png" id="confused"/>
 </div>
 
 </body>
