@@ -40,8 +40,8 @@ const count_xmas = (grid: string[]): number => {
     return count;
 }
 
-const count_x_mas = (grid: string[]): number => {
-    let count = 0;
+const count_x_mas = (grid: string[]): [number, number][] => {
+    let pos: [number, number][] = [];
     for (let row = 1; row < grid.length - 1; ++row) {
         for (let col = 1; col < grid[row].length - 1; ++col) {
             if (grid[row][col] === 'A') {
@@ -51,12 +51,12 @@ const count_x_mas = (grid: string[]): number => {
                 }
                 const diag2 = grid[row-1][col+1] + 'A' + grid[row+1][col-1];
                 if (diag2 === "MAS" || diag2 === "SAM") {
-                    count++;
+                    pos.push([row, col]);
                 }
             }
         }
     }
-    return count;
+    return pos;
 }
 
 const part1 = (raw_input: string): number => {
@@ -66,10 +66,11 @@ const part1 = (raw_input: string): number => {
 
 const part2 = (raw_input: string): number => {
     const grid = parse_input(raw_input);
-    return count_x_mas(grid);
+    return count_x_mas(grid).length;
 }
 
 export {
+    count_x_mas,
     parse_input,
     part1,
     part2,
