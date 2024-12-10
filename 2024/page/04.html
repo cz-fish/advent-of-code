@@ -1,0 +1,304 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="importmap">
+    {
+        "imports": {
+            "day04": "../build/04.js"
+        }
+    }
+</script>
+<script type="module">
+import {count_x_mas, parse_input, part1, part2} from "day04";
+
+let g_grid = undefined;
+let g_center_points = undefined;
+let g_p1_solution = undefined;
+let g_p2_solution = undefined;
+
+function run()
+{
+    // calculate result
+    const input_text = document.getElementById("input").value;
+    g_p1_solution = part1(input_text);
+    g_grid = parse_input(input_text);
+    g_center_points = count_x_mas(g_grid);
+    g_p2_solution = g_center_points.length;
+
+    document.getElementById("part1span").innerText = g_p1_solution;
+    document.getElementById("part2span").innerText = g_p2_solution;
+
+    // start animation
+    shuffle_quotes();
+    g_current_point = 0;
+    g_xmas_points = new Map();
+    g_xmas_shown = 0;
+    if (g_center_points.length < 20) {
+        g_max_quotes = 6;
+    } else {
+        g_max_quotes = g_quotes.length;
+    }
+    g_start = Date.now();
+    g_finished = false;
+    if (g_animFrame) {
+        window.cancelAnimationFrame(g_animFrame);
+    }
+    g_animFrame = window.requestAnimationFrame(draw);
+}
+
+window.run = run;
+
+const k_width = 1280;
+const k_height = 720;
+let g_canvas = undefined;
+let g_ctx = undefined;
+const g_images = {};
+
+function loadImages()
+{
+    const names = ["mcclane"];
+    for (const img of names) {
+        if (!document.getElementById(img).complete) {
+            window.setTimeout(loadImages, 50);
+            return;
+        }
+        g_images[img] = document.getElementById(img);
+    }
+    setupCanvas();
+}
+
+window.loadImages = loadImages;
+
+function setupCanvas()
+{
+    g_canvas = document.getElementById("screen");
+    g_ctx = g_canvas.getContext("2d");
+
+    clear();
+    g_ctx.drawImage(g_images["mcclane"], k_face_x, k_face_y, k_face_w, k_face_h);
+}
+
+window.setupCanvas = setupCanvas;
+
+/////// cinematics
+
+let g_finished = true;
+let g_animFrame = undefined;
+
+const g_quotes = [
+    "Welcome to the party, pal.",
+    "Now I have a machine gun. Ho ho ho.",
+    "Yippee-ki-yay.",
+    "Does it sound like I'm ordering a pizza?",
+    "Now I know what a TV dinner feels like.",
+    "Who's driving this car, Stevie Wonder?",
+    "Come out the coast, we'll get together, have a few laughs…",
+    "But, all things being equal, I'd rather be in Philadelphia.",
+    //"You throw quite a party. I didn't realize they celebrated Christmas in Japan.",
+    "Yeah. I got invited to a Christmas party by mistake. Who knew?",
+    //"I promise I will never even think about going up in a tall building again.",
+    "Just a fly in the ointment, Hans. The monkey in the wrench.",
+    "You'd have made a pretty good cowboy yourself, Hans.",
+    //"Nine million terrorists in the world and I gotta kill one with smaller feet than my sister.",
+];
+
+const k_colors = [
+    "green", "yellow", "white", "pink", "#bb99ff", "#00ffff", "#ff1a1a", "#ff9900",
+];
+
+let g_current_point = 0;
+let g_start = undefined;
+let g_quote_time = 2500;  // in milliseconds
+let g_max_quotes = g_quotes.length;
+let g_xmas_points = undefined;
+let g_xmas_shown = 0;
+
+const k_face_x = 650;
+const k_face_y = 250;
+const k_face_w = 872 / 1.5;
+const k_face_h = 800 / 1.5;
+
+function clear()
+{
+    g_ctx.clearRect(0, 0, k_width, k_height);
+    g_ctx.fillStyle = "#800000";
+    g_ctx.fillRect(0, 0, k_width, k_height);
+}
+
+function highlight_one()
+{
+    const color = k_colors[g_xmas_shown % k_colors.length];
+    const width = g_grid[0].length;
+    const [row, col] = g_center_points[g_xmas_shown];
+
+    g_xmas_points.set((row-1) * width + (col-1), color);
+    g_xmas_points.set(row * width + col, color);
+    g_xmas_points.set((row+1) * width + (col+1), color);
+    g_xmas_points.set((row-1) * width + (col+1), color);
+    g_xmas_points.set((row+1) * width + (col-1), color);
+
+    g_xmas_shown++;
+}
+
+function shuffle_quotes() {
+    let currentIndex = g_quotes.length;
+    while (currentIndex != 0) {
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [g_quotes[currentIndex], g_quotes[randomIndex]] = [g_quotes[randomIndex], g_quotes[currentIndex]];
+    }
+}
+
+function draw()
+{
+    if (g_finished) {
+        return;
+    }
+
+    clear();
+
+    // draw letter grid
+    const grey = "#444444";
+    const margin = 40;
+    let lines = g_grid.length;
+    let row_height = Math.max(10, (k_height - margin) / lines);
+    const gridScale = 1.2;
+    const fontSize = Math.floor(row_height / gridScale);
+    g_ctx.font = `${fontSize}px Sans`;
+    g_ctx.textAlign = "center";
+    const lineWidth = g_grid[0].length;
+    for (let row = 0; row < g_grid.length; ++row) {
+        for (let col = 0; col < g_grid[row].length; ++col) {
+            const idx = row * lineWidth + col;
+            const style = g_xmas_points.get(idx) ?? grey;
+            g_ctx.fillStyle = style;
+            g_ctx.fillText(g_grid[row][col], fontSize + fontSize * gridScale * col, fontSize + fontSize * gridScale * row);
+        }
+    }
+
+    g_ctx.drawImage(g_images["mcclane"], k_face_x, k_face_y, k_face_w, k_face_h);
+
+    // animate XMAS reveal
+    const now = Date.now();
+    const anim_time = now - g_start;
+    const quote_index = Math.floor(anim_time / g_quote_time);
+    if (quote_index >= g_max_quotes) {
+        // draw solution
+        // TODO:
+        drawBubble(`Part 1: ${g_p1_solution}, Part 2: ${g_p2_solution}`, 800, 300);
+        console.log("Finished");
+        g_finished = true;
+    } else {
+        // draw quote
+        drawBubble(g_quotes[quote_index], 800, 300);
+    }
+
+    const percentage = anim_time / Math.max(1, g_max_quotes * g_quote_time);
+    const max_xmas = Math.min(percentage * g_center_points.length, g_center_points.length - 1);
+    while (max_xmas > g_xmas_shown) {
+        highlight_one();
+    }
+
+    if (!g_finished) {
+        g_animFrame = window.requestAnimationFrame(draw);
+    }
+}
+
+function drawBubble(text, x, y) {
+    g_ctx.font = "25px Arial";
+    const measure = g_ctx.measureText(text);
+    const margin = 20;
+    const radius = 20;
+    const left = x - measure.width - 2 * margin;
+    const right = x;
+    const top = y - 15 - margin;
+    const bottom = y + margin;
+
+    g_ctx.strokeStyle = "black";
+    g_ctx.fillStyle = "white";
+    g_ctx.lineWidth="2";
+
+    g_ctx.beginPath();
+    g_ctx.moveTo(right - radius, bottom);
+    g_ctx.lineTo(right - radius / 2, bottom + 10);
+    g_ctx.lineTo(right - radius * 2, bottom);
+    g_ctx.lineTo(left + radius, bottom);
+    g_ctx.quadraticCurveTo(left, bottom, left, bottom - radius);
+    g_ctx.lineTo(left, top + radius);
+    g_ctx.quadraticCurveTo(left, top, left + radius, top);
+    g_ctx.lineTo(right - radius, top);
+    g_ctx.quadraticCurveTo(right, top, right, top + radius);
+    g_ctx.lineTo(right, bottom - radius);
+    g_ctx.quadraticCurveTo(right, bottom, right - radius, bottom);
+    g_ctx.closePath();
+    g_ctx.stroke();
+    g_ctx.fill();
+
+    g_ctx.textAlign = "right";
+    g_ctx.fillStyle = "black";
+    g_ctx.fillText(text, x - margin, y);
+}
+
+</script>
+<style>
+    textarea {
+        display: block;
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        height: 300px;
+    }
+
+    #control_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    #output_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 10px;
+    }
+
+    #debug {
+        display: none;
+    }
+</style>
+</head>
+<body onload="loadImages()">
+<div id="input_section">
+    <textarea id="input" rows="40" cols="80">MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX
+</textarea>
+</div>
+<div id="control_section">
+    <button id="calculate" onclick="run()">Endlessly Quotable</button>
+</div>
+<div id="output_section">
+    <canvas id="screen" width="1280" height="720"></canvas>
+</div>
+<div id="debug">
+    <p>Solution: part 1 = <span id="part1span"></span>, part 2 = <span id="part2span"></span></p>
+</div>
+<div style="display: none;">
+    <!-- FIXME:! -->
+    <img src="img07/confused.png" id="mcclane"/>
+</div>
+
+</body>
+</html>
