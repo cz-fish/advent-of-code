@@ -28,6 +28,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2024
+* **11** - blinking at stones
 * **10** - find hiking trails
 * **9** - defragmenting hard disk
 * **8** - antennas
