@@ -55,7 +55,7 @@ const g_images = {};
 function loadImages()
 {
     const names = ["base", "scene"];
-    for (const index of [1, 2, 3, 4, 5, 6]) {
+    for (const index of [1, 2, 3, 4, 5]) {
         for (const type of ["hat", "outfit", "shoes"]) {
             names.push(type + index);
         }
@@ -117,12 +117,12 @@ function draw()
         // Move to next number
         g_state.number_index++;
         const outfit = g_numbers[g_state.number_index];
-        g_state.hat = "hat" + (outfit % 6 + 1);
-        g_state.outfit = "outfit" + (Math.floor(outfit / 6) % 6 + 1);
+        g_state.hat = "hat" + (outfit % 5 + 1);
+        g_state.outfit = "outfit" + (Math.floor(outfit / 5) % 5 + 1);
         // The numbers in input all seem to be <= 99. That means that only the first
-        // three shoe types would ever be used. To make use of all 6 types, we randomize
+        // four shoe types would ever be used. To make use of all 5 types, we randomize
         // a bit.
-        let shoe_number = Math.floor(outfit / 36 * (Math.random() * 3 + 1)) % 6 + 1;
+        let shoe_number = Math.floor(outfit / 25 * (Math.random() * 3 + 1)) % 5 + 1;
         g_state.shoes = "shoes" + shoe_number;
         g_state.phase = 0;
     }
@@ -257,23 +257,20 @@ function drawBubble(text, x, y) {
     <img src="img02/base.png" id="base"/>
     <img src="img02/scene.png" id="scene"/>
     <img src="img02/hats/1.png" id="hat1"/>
-    <img src="img02/hats/2.png" id="hat2"/>
-    <img src="img02/hats/3.png" id="hat3"/>
-    <img src="img02/hats/4.png" id="hat4"/>
-    <img src="img02/hats/5.png" id="hat5"/>
-    <img src="img02/hats/6.png" id="hat6"/>
+    <img src="img02/hats/7.png" id="hat2"/>
+    <img src="img02/hats/8.png" id="hat3"/>
+    <img src="img02/hats/9.png" id="hat4"/>
+    <img src="img02/hats/10.png" id="hat5"/>
     <img src="img02/outfits/1.png" id="outfit1"/>
-    <img src="img02/outfits/2.png" id="outfit2"/>
-    <img src="img02/outfits/3.png" id="outfit3"/>
-    <img src="img02/outfits/4.png" id="outfit4"/>
-    <img src="img02/outfits/5.png" id="outfit5"/>
-    <img src="img02/outfits/6.png" id="outfit6"/>
+    <img src="img02/outfits/7.png" id="outfit2"/>
+    <img src="img02/outfits/8.png" id="outfit3"/>
+    <img src="img02/outfits/9.png" id="outfit4"/>
+    <img src="img02/outfits/10.png" id="outfit5"/>
     <img src="img02/shoes/1.png" id="shoes1"/>
-    <img src="img02/shoes/2.png" id="shoes2"/>
-    <img src="img02/shoes/3.png" id="shoes3"/>
-    <img src="img02/shoes/4.png" id="shoes4"/>
-    <img src="img02/shoes/5.png" id="shoes5"/>
-    <img src="img02/shoes/6.png" id="shoes6"/>
+    <img src="img02/shoes/7.png" id="shoes2"/>
+    <img src="img02/shoes/8.png" id="shoes3"/>
+    <img src="img02/shoes/9.png" id="shoes4"/>
+    <img src="img02/shoes/10.png" id="shoes5"/>
 </div>
 
 </body>
