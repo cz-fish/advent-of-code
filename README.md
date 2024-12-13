@@ -28,6 +28,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2024
+* **13** - clamp machines, vector addition
 * **12** - calculating fence
 * **11** - blinking at stones
 * **10** - find hiking trails
