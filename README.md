@@ -28,6 +28,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2024
+* **14** - robots moving in lines, forming a Christmas tree
 * **13** - clamp machines, vector addition
 * **12** - calculating fence
 * **11** - blinking at stones
