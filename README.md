@@ -1,5 +1,7 @@
 # Advent of Code
 
+[Pages](https://cz-fish.github.io/advent-of-code/)
+
 Solutions for AoC are in respective directories, by year. Python utility library is called `pyaoc`. To use it, create Python virtual environment, and install the library and its requirements into it.
 
 ```sh
