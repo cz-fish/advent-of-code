@@ -1,0 +1,173 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="importmap">
+    {
+        "imports": {
+            "day08": "../build/08.js"
+        }
+    }
+</script>
+<script type="module">
+import {find_antinodes, parse_input} from "day08";
+
+let g_grid = undefined
+let g_antinodes = undefined;
+let g_p1_solution = undefined;
+let g_p2_solution = undefined;
+
+function run()
+{
+    // calculate result
+    const input_text = document.getElementById("input").value;
+    const grid = parse_input(input_text);
+    g_p1_solution = find_antinodes(grid, false).size;
+    g_antinodes = find_antinodes(grid, true);
+    g_p2_solution = g_antinodes.size;
+
+    document.getElementById("part1span").innerText = g_p1_solution;
+    document.getElementById("part2span").innerText = g_p2_solution;
+
+    // start animation
+    g_show_solutions = false;
+    g_finished = false;
+    if (g_animFrame) {
+        window.cancelAnimationFrame(g_animFrame);
+    }
+    g_animFrame = window.requestAnimationFrame(draw);
+}
+
+window.run = run;
+
+const k_width = 1280;
+const k_height = 720;
+let g_canvas = undefined;
+let g_ctx = undefined;
+const g_images = {};
+
+function loadImages()
+{
+    const names = ["antenna"];
+    for (let i = 1; i <= k_env_pictures; ++i) {
+        names.push(`env${i}`);
+    }
+    for (const img of names) {
+        if (!document.getElementById(img).complete) {
+            window.setTimeout(loadImages, 50);
+            return;
+        }
+        g_images[img] = document.getElementById(img);
+    }
+    setupCanvas();
+}
+
+window.loadImages = loadImages;
+
+function setupCanvas()
+{
+    g_canvas = document.getElementById("screen");
+    g_ctx = g_canvas.getContext("2d");
+
+    clear();
+}
+
+window.setupCanvas = setupCanvas;
+
+/////// cinematics
+
+let g_finished = true;
+let g_animFrame = undefined;
+
+const k_env_pictures = 0; // FIXME
+let g_show_solutions = false;
+
+function clear()
+{
+    g_ctx.clearRect(0, 0, k_width, k_height);
+    g_ctx.fillStyle = "#117a65";
+    g_ctx.fillRect(0, 0, k_width, k_height);
+}
+
+function draw()
+{
+    if (g_finished) {
+        return;
+    }
+
+    clear();
+    // TODO: animate explosions
+
+    // FIXME
+    g_finished = true;
+
+    if (!g_finished) {
+        g_animFrame = window.requestAnimationFrame(draw);
+    }
+}
+
+</script>
+<style>
+    textarea {
+        display: block;
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        height: 300px;
+    }
+
+    #control_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    #output_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 10px;
+    }
+
+    #debug {
+        display: none;
+    }
+</style>
+</head>
+<body onload="loadImages()">
+<div id="input_section">
+    <textarea id="input" rows="40" cols="80">............
+........0...
+.....0......
+.......0....
+....0.......
+......A.....
+............
+............
+........A...
+.........A..
+............
+............
+</textarea>
+</div>
+<div id="control_section">
+    <button id="calculate" onclick="run()">Formulate Formulas</button>
+</div>
+<div id="output_section">
+    <canvas id="screen" width="1280" height="720"></canvas>
+</div>
+<div id="debug">
+    <p>Solution: part 1 = <span id="part1span"></span>, part 2 = <span id="part2span"></span></p>
+</div>
+<div style="display: none;">
+    <!-- FIXME:-->
+    <img src="img07/math1.png" id="antenna"/>
+    <img src="img07/math2.png" id="env1"/>
+</div>
+
+</body>
+</html>
