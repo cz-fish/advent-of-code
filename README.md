@@ -30,6 +30,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2024
+* **15** - pushing boxes Sokoban style
 * **14** - robots moving in lines, forming a Christmas tree
 * **13** - clamp machines, vector addition
 * **12** - calculating fence
