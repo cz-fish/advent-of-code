@@ -166,27 +166,10 @@ ONE=1
 X=2
 NOT=3
 
-table = {
-    # 0: [NOT, NOT, NOT],
-    # 1: [NOT, NOT, X],
-    # 2: [NOT, X, NOT],
-    # 3: [NOT, X, X],
-    # 4: [X, NOT, NOT],
-    # 5: [X, NOT, ONE],
-    # 6: [X, ONE, ONE],
-    # 7: [ONE, ONE, ONE]
-    0: [X, X, X],
-    1: [X, X, NOT],
-    2: [X, NOT, X],
-    3: [X, NOT, NOT],
-    4: [NOT, X, X],
-    5: [NOT, X, ZERO],
-    6: [NOT, ZERO, ONE],
-    7: [ZERO, ZERO, ZERO]
-}
 
 def num_to_bits(target_digit):
     return [(target_digit >> 2) & 1, (target_digit >> 1) & 1, target_digit & 1]
+
 
 def compute_c_lower_bits(B, target):
     C = target ^ B
@@ -198,40 +181,11 @@ def compute_c_lower_bits(B, target):
     if B == 7 and C & 7 != 7:
         return None
     return C
-    bits = []
-    mismatch = False
-    for i in range(3):
-        op = table[B][i]
-        if op == ZERO:
-            if target[i] != 0:
-                mismatch = True
-            bits.append(0)
-        elif op == ONE:
-            if target[i] != 1:
-                mismatch = True
-            bits.append(1)
-        elif op == X:
-            bits.append(target[i])
-        elif op == NOT:
-            bits.append(1 - target[i])
-    if mismatch:
-        return False, None
-    val = bits[0] * 4 + bits[1] * 2 + bits[2]
-    not_B = 7 - B
-    tgt_val = target[0] * 4 + target[1] * 2 + target[2]
-    test = 7 - (not_B ^ val)
-    print(f"target {tgt_val} ({target}), B {B}, not B {not_B}, C {val} ({bits}), test ~(~B ^ C) {test}")
-    if test != tgt_val:
-        return False, None
-    return True, bits
 
 
 def mask_apply(mask, array, index):
     out = []
     start_a = index - len(mask)
-    #if len(array) > 10:
-    #    print(' ' * 10 + ''.join(array))
-    #    print(' ' * (10+start_a) + ''.join(mask))
     for i in range(0, start_a):
         out.append(array[i])
     for i in range(len(mask)):
@@ -263,10 +217,6 @@ def calculate_a(output):
     solutions = []
     while q:
         pos, a = q.popleft()
-        #if pos == 11:
-        #    #print("pos11:", ''.join(a))
-        #    #import pdb
-        #    #pdb.set_trace()
         if pos == len(output):
             A = ''.join(['0' if x=='.' else x for x in a])
             solutions.append(int(A, base=2))
@@ -285,7 +235,7 @@ def calculate_a(output):
             assert match
             new_a, match = mask_apply(mask, a, index)
             if match:
-                print(''.join(new_a))
+                #print(''.join(new_a))
                 q.append((pos + 1, new_a))
                 pass
     print(f"Found {len(solutions)} solutions: {solutions}")
@@ -296,31 +246,11 @@ def part2(input):
     computer = parse_input(input)
     print(computer)
     A = calculate_a(computer.instr)
-    #A = 258394985014171
-    #for A in [47288752481179, 47294121190299, 3725972939675, 47288752481181, 47294121190301, 3725972939677]:
-    #    computer.regs[0] = A
-    #    #output = computer.run_debug()
-    #    output = computer.run_to_halt()
-    #    print(f"Computer output: {output}, matches expected: {output == computer.instr}")
     computer.regs[0] = A
     output = computer.run_to_halt()
     print(f"Computer output: {output}, matches expected: {output == computer.instr}")
     return A
 
-
-"""
-for t in range(8):
-    print("Target", t)
-    for b in range(8):
-        c = compute_c_lower_bits(b, t)
-        print(f"    b={b}, c={c}")
-"""
-
-"""
-import pdb
-pdb.set_trace()
-print(mask_apply("001..010", "..1010110000001001000101010010110010001110011011", 6))
-"""
 
 #e.run_tests(2, part2)
 e.run_main(2, part2)
