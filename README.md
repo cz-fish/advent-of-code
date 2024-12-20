@@ -30,6 +30,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2024
+* **20** - circuit race with cheating
 * **19** - arranging towels
 * **18** - shortest path with falling obstacles
 * **17** - computer producing a quine
