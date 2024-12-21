@@ -22,49 +22,6 @@ e.T("""029A
     +---+---+
 """
 
-def numeric_keypad(sequence):
-    coords = {
-        '7': (0, 0),
-        '8': (1, 0),
-        '9': (2, 0),
-        '4': (0, 1),
-        '5': (1, 1),
-        '6': (2, 1),
-        '1': (0, 2),
-        '2': (1, 2),
-        '3': (2, 2),
-        '0': (1, 3),
-        'A': (2, 3),
-    }
-    # Start above the A
-    x, y = coords['A']
-    instr = []
-    for key in sequence:
-        tx, ty = coords[key]
-        dx = tx - x
-        dy = ty - y
-        if dx < 0 and dy < 0:
-            # going top left. Go up first, then left
-            instr += ['^'] * abs(dx)
-            instr += ['<'] * abs(dy)
-        elif dx >= 0 and dy >= 0:
-            # going bottom right. Go right first, then down
-            instr += ['>'] * dx
-            instr += ['v'] * dy
-        elif dx >= 0:
-            # going top right, order doesn't matter
-            instr += ['>'] * dx
-            instr += ['^'] * abs(dy)
-        else:
-            # going bottom left. Go down first, then left
-            instr += ['v'] * dy
-            instr += ['<'] * abs(dx)
-        instr += 'A'
-        x = tx
-        y = ty
-    return ''.join(instr)
-
-
 """
     +---+---+
     | ^ | A |
@@ -72,39 +29,6 @@ def numeric_keypad(sequence):
 | < | v | > |
 +---+---+---+
 """
-
-def arrowkey_keypad(sequence):
-    coords = {
-        '^': (1, 0),
-        'A': (2, 0),
-        '<': (0, 1),
-        'v': (1, 1),
-        '>': (2, 1),
-    }
-    x, y = coords['A']
-    instr = []
-    for key in sequence:
-        tx, ty = coords[key]
-        dx = tx - x
-        dy = ty - y
-        # TODO: it seems exactly the same as for other keyboard
-        if dx < 0 and dy < 0:
-            instr += ['^'] * abs(dx)
-            instr += ['<'] * abs(dy)
-        elif dx >= 0 and dy >= 0:
-            instr += ['>'] * dx
-            instr += ['v'] * dy
-        elif dx >= 0:
-            # right first then up
-            instr += ['>'] * dx
-            instr += ['^'] * abs(dy)
-        else:
-            instr += ['v'] * dy
-            instr += ['<'] * abs(dx)
-        instr += 'A'
-        x = tx
-        y = ty
-    return ''.join(instr)
 
 
 def apply_robot(instr, is_numpad):
@@ -151,6 +75,7 @@ def apply_robot(instr, is_numpad):
 
 g_cache = {}
 g_top_cache = {}
+
 
 def numeric_code(code, intermediate_robots):
     coords = {
@@ -253,48 +178,29 @@ def next_robot_step(level, instr):
     return out
 
 
-def part1(input):
+def solve(input, intermediate_robots):
     global g_cache
     global g_top_cache
     g_cache = {}
     g_top_cache = {}
     total = 0
     for code in input.get_valid_lines():
-        seq = numeric_code(code, 2)
+        seq = numeric_code(code, intermediate_robots)
         v = seq * int(code[:-1])
         total += v
     return total
+
+
+def part1(input):
+    return solve(input, 2)
 
 
 e.run_tests(1, part1)
 e.run_main(1, part1)
 
-"""
-379A
-
-^A^^<<A>>AvvvA
-^A<<^^A>>AvvvA
-
-<A>A<AAv<AA>>^AvAA^Av<AAA>^A
-<A>Av<<AA>^AA>AvAA^A<vAAA>^A
-
-v<<A>>^AvA^Av<<A>>^AAv<A<A>>^AAvAA^<A>Av<A>^AA<A>Av<A<A>>^AAAvA^<A>A
-<v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A
-
-"""
-
 
 def part2(input):
-    global g_cache
-    global g_top_cache
-    g_cache = {}
-    g_top_cache = {}
-    total = 0
-    for code in input.get_valid_lines():
-        seq = numeric_code(code, 25)
-        v = seq * int(code[:-1])
-        total += v
-    return total
+    return solve(input, 25)
 
 
 e.run_tests(2, part2)
