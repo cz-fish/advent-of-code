@@ -255,6 +255,7 @@ newday 11  # create day 11 regardless of current date
 * **1** - Navigate in 2d street grid
 
 ## 2015
+* **19** - molecule formula; grammar
 * **18** - game of life
 * **17** - choose pots - kind of knapsack
 * **16** - Aunt Sue

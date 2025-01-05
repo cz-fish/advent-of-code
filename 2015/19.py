@@ -51,6 +51,60 @@ e.run_tests(1, part1)
 e.run_main(1, part1)
 
 
+# DFS reduce the formula until you reach 'e'
+# TODO: under what cirtumstances is it guaranteed to find the shortest path?
+def reduce_formula(formula, rules):
+    q = []
+    best = {}
+    heapq.heappush(q, (len(formula), 0, formula))
+    counter = 0
+    shortest = None
+    while q:
+        size, depth, f = heapq.heappop(q)
+        if f == 'e':
+            break
+        if shortest is None or size < shortest:
+            shortest = size
+        counter += 1
+        if counter % 1000 == 0:
+            print(f"{counter} {size} / {shortest}, {len(q)}")
+        for l, rights in rules.items():
+            for r in rights:
+                i = f.find(r)
+                if i == -1:
+                    continue
+                nf = f[:i] + l + f[i+len(r):]
+                if nf in best:
+                    if best[nf] <= depth + 1:
+                        continue
+                best[nf] = depth + 1
+                heapq.heappush(q, (len(nf), depth + 1, nf))
+    return best['e']
+
+
+def part2(full_input):
+    subs, formula = parse_input(full_input)
+    return reduce_formula(formula, subs)
+
+
+e.run_tests(2, part2)
+e.run_main(2, part2)
+
+
+# == Fruitless approaches ==
+# -----------
+# Reduce to atoms
+
+_atom_re = re.compile(r'[A-Z][a-z]*')
+
+
+def tokenize(formula):
+    return list(_atom_re.findall(formula))
+
+
+# ------------
+# BFS through string reductions
+
 def num_transforms(rev_subs, formula):
     q = deque([(formula, 0)])
     seen = set([formula])
@@ -94,13 +148,8 @@ def part2_a(full_input):
             reverse[right] = left
     return num_transforms(reverse, formula)
 
-
-_atom_re = re.compile(r'[A-Z][a-z]*')
-
-
-def tokenize(formula):
-    return list(_atom_re.findall(formula))
-
+#-------------
+# Do some simple grammar analysis
 
 def get_terminals(subs, formula):
     formula_tokens = set(tokenize(formula))
@@ -120,6 +169,8 @@ def get_terminals(subs, formula):
 
     return terminals, non_terminals
 
+#---------------
+# Find list of possible first atoms for each left side
 
 def make_rule_map(rules):
     firsts = {}
@@ -145,40 +196,10 @@ def make_rule_map(rules):
     #    for o, r in v.items():
     #        print(f"      {o} via {r}")
     return firsts
-"""
-    # map: for each left side - a list of different possible right side expansions
-    #      for each expansion: (the first atom, the rest, and number of steps, list of numbers of rules applied)
-    rule_map = {}
-    for left, rights in rules.items():
-        expansions = []
-        firsts = set()
-        for rule, number in rights:
-            expansions.append((rule[0], rule[1:], 1, [number]))
-            firsts.add(rule[0])
-        rule_map[left] = (expansions, firsts)
 
-    # TODO: this somehow has to be done transitively
-    lefts = set(rule_map.keys())
-    transitive_map = defaultdict(set)
-    for left in lefts:
-        transitive_map[left] = set(rule_map[left][1])
-    change = True
-    while change:
-        change = False
-        for left in lefts:
-            new_set = set(transitive_map[left])
-            for first in transitive_map[left]:
-                if first not in transitive_map:
-                    continue
-                new_set.update(transitive_map[first])
-            if transitive_map[left] != new_set:
-                transitive_map[left] = new_set
-                change = True
-    for left, firsts in transitive_map.items():
-        print(f"Firsts of {left}: {list(firsts)}")
-    return rule_map
-"""
 
+#-----------
+#BFS construction from 'e'
 
 def check_and_append(q, seen, formula, exp, depth, pos):
     if len(exp) > len(formula):
@@ -237,40 +258,10 @@ def count_rule_expansions(rule_map, rule_by_nr, formula):
             rule_tokens = rule_by_nr[rule_nr]
             #q.append((rule_tokens + exp[1:], depth + 1, pos))
             check_and_append(q, seen, formula, rule_tokens + exp[1:], depth + 1, pos)
-
     assert False, "Solution not found"
 
 
-def reduce_formula(formula, rules):
-    q = []
-    best = {}
-    heapq.heappush(q, (len(formula), 0, formula))
-    counter = 0
-    shortest = None
-    while q:
-        size, depth, f = heapq.heappop(q)
-        if f == 'e':
-            break
-        if shortest is None or size < shortest:
-            shortest = size
-        counter += 1
-        if counter % 1000 == 0:
-            print(f"{counter} {size} / {shortest}, {len(q)}")
-        for l, rights in rules.items():
-            for r in rights:
-                i = f.find(r)
-                if i == -1:
-                    continue
-                nf = f[:i] + l + f[i+len(r):]
-                if nf in best:
-                    if best[nf] <= depth + 1:
-                        continue
-                best[nf] = depth + 1
-                heapq.heappush(q, (len(nf), depth + 1, nf))
-    return best['e']
-
-
-def part2(full_input):
+def part2_b(full_input):
     subs, formula = parse_input(full_input)
 
     # tokenize all rules, and give them all unique numbers
@@ -289,23 +280,8 @@ def part2(full_input):
         rule_by_left[left] = rules_of_left
     token_formula = tokenize(formula)
 
-    # Find terminals and non-terminals -> not really that useful because the formula doesn't only contain
-    #    terminals, but some non-terminals, too.
-    #terminals, nonterminals = get_terminals(subs, formula)
-    #print(f"terminals: {terminals}")
-    #print(f"non terminals: {nonterminals}")
+    # Construct map of Firsts for each left hand side
+    rule_map = make_rule_map(rule_by_left)
 
-    # Is the grammar LL1? Does it matter?
-
-    # Construct First and Follow sets
-    # map: for each non-terminal a list of firsts. For each first in the list - full expansion from the non-terminal and number of steps
-    #rule_map = make_rule_map(rule_by_left)
-
-    # Parse formula using prefix matching. We should be able to accumulate number of rules applied as we go
-    #return count_rule_expansions(rule_map, rule_by_id, token_formula)
-
-    return reduce_formula(formula, subs)
-
-
-e.run_tests(2, part2)
-e.run_main(2, part2)
+    # Expand from 'e' until you find formula
+    return count_rule_expansions(rule_map, rule_by_id, token_formula)
