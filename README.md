@@ -255,6 +255,7 @@ newday 11  # create day 11 regardless of current date
 * **1** - Navigate in 2d street grid
 
 ## 2015
+* **21** - RPG boss fight
 * **20** - infinite houses
 * **19** - molecule formula; grammar
 * **18** - game of life
