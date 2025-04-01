@@ -128,12 +128,16 @@ def cast(state: State, spell: Spell) -> State:
     )
 
 
-def least_mana_spent_to_win(hp, mana, bhp, bdmg):
+def least_mana_spent_to_win(hp, mana, bhp, bdmg, lose_one_hp=False):
     state = State(hp=hp, mana=mana, armor=0, bhp=bhp, player_turn=True, effects=[])
     q = []
     heapq.heappush(q, (0, state))
     while q:
         cost, state = heapq.heappop(q)
+        if lose_one_hp and state.player_turn:
+            state.hp -= 1
+            if state.hp <= 0:
+                continue
         #print_state(cost, state)
         apply_effects(state)
         if state.hp <= 0:
@@ -178,8 +182,15 @@ e.run_main(1, part1)
 
 
 def part2(input):
-    pass
-
+    # Part2: before every player turn (before any effects), player loses 1 hp
+    setup = e.get_param()
+    hp = setup.hp
+    mana = setup.mana
+    vals = input.get_all_ints()
+    assert len(vals) == 2
+    boss_hp = int(vals[0])
+    boss_dmg = int(vals[1])
+    return least_mana_spent_to_win(hp, mana, boss_hp, boss_dmg, lose_one_hp=True)
 
 # e.run_tests(2, part2)
-# e.run_main(2, part2)
+e.run_main(2, part2)
