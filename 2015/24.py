@@ -39,6 +39,14 @@ def canSplitInTwo(items, tgt):
     return False
 
 
+def canSplitInThree(items, tgt):
+    for second in findMainSets(items, tgt):
+        rest = [i for i in items if i not in second]
+        for _ in findMainSets(rest, tgt):
+            return True
+    return False
+
+
 def qe(subset):
     p = 1
     for v in subset:
@@ -46,9 +54,10 @@ def qe(subset):
     return p
 
 
-def solve(items, tgt):
+def solve(items, tgt, groups):
     items.sort(reverse=True)
     best = None
+    checkFn = canSplitInTwo if groups == 3 else canSplitInThree
     #print(items)
     # find main set using the biggest numbers
     for mainset in findMainSets(items, tgt):
@@ -56,9 +65,9 @@ def solve(items, tgt):
         if best is not None:
             if len(mainset) > len(best):
                 return best
-        # check that the rest can be split in 2
+        # check that the rest can be split in 2 or 3
         rest = [i for i in items if i not in mainset]
-        if not canSplitInTwo(rest, tgt):
+        if not checkFn(rest, tgt):
             continue
         # tiebreakers
         if best is None or qe(best) > qe(mainset):
@@ -70,7 +79,7 @@ def part1(input):
     items = input.get_all_ints()
     total = sum(items)
     assert total % 3 == 0, f"Total weight {total} not divisible by 3"
-    best = solve(items, total // 3)
+    best = solve(items, total // 3, 3)
     assert best is not None
     return qe(best)
 
@@ -80,8 +89,13 @@ e.run_main(1, part1)
 
 
 def part2(input):
-    pass
+    items = input.get_all_ints()
+    total = sum(items)
+    assert total % 4 == 0, f"Total weight {total} not divisible by 4"
+    best = solve(items, total // 4, 4)
+    assert best is not None
+    return qe(best)
 
 
-# e.run_tests(2, part2)
-# e.run_main(2, part2)
+e.run_tests(2, part2)
+e.run_main(2, part2)
