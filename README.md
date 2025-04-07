@@ -255,6 +255,7 @@ newday 11  # create day 11 regardless of current date
 * **1** - Navigate in 2d street grid
 
 ## 2015
+* **25** - diagonal security code
 * **24** - balancing sleigh, split into equal weight groups
 * **23** - Collatz in assembly
 * **22** - RPG boss fight as wizard
