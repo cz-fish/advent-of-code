@@ -220,6 +220,7 @@ newday 11  # create day 11 regardless of current date
 * **1** - sum of ints
 
 ## 2017
+* **9** - remove garbage from string
 * **8** - conditional instructions
 * **7** - balance process tree
 * **6** - redistributing memory blocks - infinite loop
