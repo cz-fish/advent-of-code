@@ -220,6 +220,7 @@ newday 11  # create day 11 regardless of current date
 * **1** - sum of ints
 
 ## 2017
+* **15** - number generators using Mersenne prime
 * **14** - knot hash and counting clouds
 * **13** - periodic firewalls
 * **12** - connected components
