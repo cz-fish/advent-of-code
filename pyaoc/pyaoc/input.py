@@ -91,8 +91,12 @@ class Input:
         return ints
 
     def _read_file(self, fname: str, raw_lines: bool) -> None:
+        def without_newline(ln):
+            if ln and ln[-1] == '\n':
+                return ln[:-1]
+            return raw_lines
         with open(fname, 'rt') as f:
             if raw_lines:
-                self._orig_lines = [ln.rstrip() for ln in f.readlines()]
+                self._orig_lines = [without_newline(ln) for ln in f.readlines()]
             else:
                 self._orig_lines = [ln.strip() for ln in f.readlines()]

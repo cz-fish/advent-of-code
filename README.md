@@ -220,6 +220,7 @@ newday 11  # create day 11 regardless of current date
 * **1** - sum of ints
 
 ## 2017
+* **19** - trace a grid
 * **18** - duet of assembly programs
 * **17** - spinlock with circular buffer
 * **16** - dancing program permutations
