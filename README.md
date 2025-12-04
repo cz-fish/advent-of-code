@@ -30,6 +30,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2025
+* **04** - removing paper rolls
 * **03** - find biggest sub-sequence
 * **02** - invalid product ids in ranges of numbers
 * **01** - count clicks on a safe
