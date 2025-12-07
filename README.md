@@ -30,6 +30,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2025
+* **07** - quantum teleporters
 * **06** - vertical math
 * **05** - overlapping intervals
 * **04** - removing paper rolls
