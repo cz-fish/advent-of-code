@@ -30,6 +30,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2025
+* **06** - vertical math
 * **05** - overlapping intervals
 * **04** - removing paper rolls
 * **03** - find biggest sub-sequence
