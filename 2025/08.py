@@ -36,7 +36,6 @@ def parse_input(input):
 
 
 def calculate_distances(points):
-    matrix = defaultdict(dict)
     dists = []
     for i, p in enumerate(points):
         for j in range(i + 1, len(points)):
@@ -46,9 +45,7 @@ def calculate_distances(points):
             dz = p[2] - q[2]
             dist = dx*dx + dy*dy + dz*dz
             dists.append((dist, i, j))
-            matrix[i][j] = dist
-            matrix[j][i] = dist
-    return matrix, dists
+    return dists
 
 
 def make_connections(dists, iterations):
@@ -110,7 +107,7 @@ def merge_groups(grouping, todo_merge):
 
 def part1(input):
     points = sorted(parse_input(input))
-    matrix, dists = calculate_distances(points)
+    dists = calculate_distances(points)
     dists.sort()
     iterations = e.get_param()
     #print(dists)
@@ -139,8 +136,38 @@ e.run_main(1, part1)
 
 
 def part2(input):
-    pass
+    points = sorted(parse_input(input))
+    dists = calculate_distances(points)
+    dists.sort()
+    groups = defaultdict(set)
+    point_map = {}
+    for i in range(len(points)):
+        point_map[i] = i
+        groups[i].add(i)
+    connection = 0
+    while len(groups) > 1:
+        assert connection < len(dists)
+        _, a, b = dists[connection]
+        connection += 1
+        g_a = point_map[a]
+        g_b = point_map[b]
+        if g_a == g_b:
+            # already in the same gorup, no change
+            continue
+        g_merged = min(g_a, g_b)
+        g_other = max(g_a, g_b)
+        point_map[a] = g_merged
+        point_map[b] = g_merged
+        groups[g_merged].add(g_a)
+        groups[g_merged].add(g_b)
+        for x in groups[g_other]:
+            groups[g_merged].add(x)
+            point_map[x] = g_merged
+        del groups[g_other]
+    connection -= 1
+    _, i, j = dists[connection]
+    return points[i][0] * points[j][0]
 
 
-# e.run_tests(2, part2)
-# e.run_main(2, part2)
+e.run_tests(2, part2)
+e.run_main(2, part2)
