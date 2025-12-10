@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="800" height="800" viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect fill="#fff" stroke="#000" x="0" y="0" width="1100" height="700"/>
+<polyline points="700,100 1100,100 1100,700 900,700 900,500 200,500 200,300 700,300 700,100" stroke="red" stroke-width="100" fill="none" />
+<rect x="200" y="300" width="700" height="200" fill="blue" stroke-width="1" stroke="yellow" />
+</svg>

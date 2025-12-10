@@ -2,7 +2,7 @@
 
 from pyaoc import Env
 
-e = Env(9)
+e = Env(9, param=("09-p2.svg", 1))
 e.T("""7,1
 11,1
 11,7
@@ -10,7 +10,7 @@ e.T("""7,1
 9,5
 2,5
 2,3
-7,3""", 50, 24)
+7,3""", 50, 24, param=("09-test.svg", 100))
 
 
 def parse_input(input):
@@ -34,8 +34,9 @@ def part1(input):
     return biggest
 
 
-#e.run_tests(1, part1)
-#e.run_main(1, part1)
+e.run_tests(1, part1)
+e.run_main(1, part1)
+
 
 def intersect_coords(a, b, c, d):
     x1, y1 = a
@@ -92,6 +93,27 @@ def intersect_coords(a, b, c, d):
 
 def intersect(points, a, b, c, d):
     return intersect_coords(points[a], points[b], points[c], points[d])
+
+
+def intersect_rect(start, end, bl, tr):
+    x1, y1 = start
+    x2, y2 = end
+    if x1 > bl[0] and x1 < tr[0] and y1 > bl[1] and y1 < tr[1]:
+        # point 'start' inside rectangle
+        return True
+    if x2 > bl[0] and x2 < tr[0] and y2 > bl[1] and y2 < tr[1]:
+        # point 'end' inside rectangle
+        return True
+    mx = min(x1, x2)
+    MX = max(x1, x2)
+    my = min(y1, y2)
+    MY = max(y1, y2)
+    if mx == MX:
+        # vertical line
+        return mx > bl[0] and mx < tr[0] and my <= bl[1] and MY >= tr[1]
+    else:
+        # horizontal line
+        return my > bl[1] and my < tr[1] and mx <= bl[0] and MX >= tr[0]
 
 
 def ccw_triangle(A, B, C):
@@ -153,25 +175,67 @@ def all_red_green(points, first_i, second_i, trace):
     # Edges of the rectangle must not intersect the polygon
     for i in range(len(points)):
         j = (i+1) % len(points)
-        if intersect_coords(points[i], points[j], A, B) \
-            or intersect_coords(points[i], points[j], B, C) \
-            or intersect_coords(points[i], points[j], C, D) \
-            or intersect_coords(points[i], points[j], D, A):
+        #if intersect_coords(points[i], points[j], A, B) \
+        #    or intersect_coords(points[i], points[j], B, C) \
+        #    or intersect_coords(points[i], points[j], C, D) \
+        #    or intersect_coords(points[i], points[j], D, A):
+        if intersect_rect(points[i], points[j], A, C):
+            if trace:
+                print(f"intersecting line {points[i]}-{points[j]}")
             return False
         if point_in_rect(points[i], mX, mY, MX, MY) \
             or point_in_rect(points[j], mX, mY, MX, MY):
+            if trace:
+                print(f"point in rect {points[i]} or {points[j]}")
             return False
     # and the rectangle must be inside the polygon
     #  - if the point 'second' is on the left side of
     #    the edge leading to point 'first'
     prev_i = (first_i - 1) % len(points)
+    next_i = (first_i + 1) % len(points)
     if trace:
-        print(points[prev_i], first, second)
-    return ccw_triangle(points[prev_i], first, second)
+        print(f"{points[prev_i]} -> {first} -> {points[next_i]} and {second}")
+    #return ccw_triangle(points[prev_i], first, second) \
+    #    and ccw_triangle(first, points[next_i], second)
+    return ccw_triangle(first, points[next_i], second)
+
+
+def make_svg(points, multiplier):
+    xs = [p[0] for p in points]
+    ys = [p[1] for p in points]
+    #mx = min(xs) * multiplier
+    MX = max(xs) * multiplier
+    #my = min(ys) * multiplier
+    MY = max(ys) * multiplier
+    svg = [
+        '<?xml version="1.0" encoding="UTF-8" standalone="no"?>',
+        '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
+        f'<svg width="800" height="800" viewBox="0 0 {MX} {MY}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
+        f'<rect fill="#fff" stroke="#000" x="0" y="0" width="{MX}" height="{MY}"/>',
+    ]
+    coords = " ".join([f"{x * multiplier},{y * multiplier}" for x, y in (points + [points[0]])])
+    svg.append(f'<polyline points="{coords}" stroke="red" stroke-width="100" fill="none" />')
+    return svg
+
+
+def svg_add_rect(svg, rect, multiplier):
+    first, second = rect
+    x1, y1 = first
+    x2, y2 = second
+    mx = min(x1, x2) * multiplier
+    MX = max(x1, x2) * multiplier
+    my = min(y1, y2) * multiplier
+    MY = max(y1, y2) * multiplier
+    w = MX - mx
+    h = MY - my
+    svg.append(f'<rect x="{mx}" y="{my}" width="{w}" height="{h}" fill="blue" stroke-width="1" stroke="yellow" />')
+    svg.append("</svg>")
 
 
 def part2(input):
     points = parse_input(input)
+    fname, multiplier = e.get_param()
+    svg = make_svg(points, multiplier)
     # Assumption checks:
     #   too big to solve graphically
     #   polygon is counter-clockwise, non self-intersecting
@@ -196,20 +260,38 @@ def part2(input):
         print("No self intersection")
 
     biggest = 0
+    rect = None
     for first_i in range(len(points)):
         first = points[first_i]
         for second_i in range(first_i + 1, len(points)):
             second = points[second_i]
             size = (abs(second[0] - first[0]) + 1) * (abs(second[1] - first[1]) + 1)
-            #trace = size == 40
+            trace = False
+            #trace = size == 24
             #if trace:
             #    print(size)
-            if size > biggest and all_red_green(points, first_i, second_i, False):
+            if size > biggest and all_red_green(points, first_i, second_i, trace):
                 biggest = max(biggest, size)
+                rect = (first, second)
+    print(rect)
+    svg_add_rect(svg, rect, multiplier)
+    with open(fname, "wt") as f:
+        for ln in svg:
+            print(ln, file=f)
     return biggest
 
 
 e.run_tests(2, part2)
 e.run_main(2, part2)
 
-# 487137255 too low
+
+def test_intersect_rect():
+    # start point inside
+    #import pdb; pdb.set_trace()
+    assert intersect_rect((2, 2), (10, 2), (0, 0), (5, 5))
+    # end point inside
+    assert intersect_rect((0, 2), (3, 2), (2, 0), (5, 5))
+    # line above
+    assert not intersect_rect((0, 2), (5, 2), (0, 4), (10, 10))
+    # line touching
+    assert not intersect_rect((7, 3), (7, 1), (2, 3), (9, 5))
