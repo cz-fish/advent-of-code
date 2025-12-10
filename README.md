@@ -30,6 +30,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2025
+* **10** - button presses - integer linear programming
 * **09** - biggest rectangle inside polygon
 * **08** - wiring lightbulbs
 * **07** - quantum teleporters
