@@ -30,6 +30,7 @@ newday 11  # create day 11 regardless of current date
 ```
 
 ## 2025
+* **12** - packing presents
 * **11** - number of paths in graph
 * **10** - button presses - integer linear programming
 * **09** - biggest rectangle inside polygon
